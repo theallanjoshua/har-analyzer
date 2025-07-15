@@ -1,0 +1,45 @@
+import type { Har } from 'har-format';
+import { type ContentTypeGroup, getContentTypeGroup } from './content-type';
+
+export type HarContent = Har;
+
+export function getHARContentFromFile(fileContent: unknown): HarContent {
+	if (typeof fileContent !== 'string') {
+		throw new Error('File contents are invalid. Expected contents to be a stringified JSON.');
+	}
+	try {
+		const parsedContent = JSON.parse(fileContent);
+		// const isHarContent = harValidator(parsedContent);
+		// if (!isHarContent) {
+		// 	const errorMessagePrefix = 'File contents are not a valid HAR file. Validation errors:';
+		// 	const validationErrors = harValidator.errors?.map(({ message }) => message).join(', ');
+		// 	console.error(errorMessagePrefix, validationErrors);
+		// 	throw new Error(`${errorMessagePrefix} ${validationErrors}`);
+		// }
+		return parsedContent as unknown as HarContent;
+	} catch (error) {
+		const errorMessage = 'Failed to JSON parse file content';
+		console.error(errorMessage, error);
+		throw new Error(errorMessage);
+	}
+}
+
+export function getEntriesFromHAR(harContent?: Har) {
+	return harContent?.log?.entries || [];
+}
+
+export type HAREntry = ReturnType<typeof getEntriesFromHAR>[number];
+
+export function getHAREntriesFilteredByContentType(harEntries: HAREntry[], contentTypeFilters: ContentTypeGroup[]) {
+	if (!contentTypeFilters.length) {
+		return harEntries;
+	}
+
+	const harEntriesFilteredByContentType = harEntries.filter((harEntry) => {
+		const mimeType = harEntry?.response?.content?.mimeType;
+		const contentTypeGroup = getContentTypeGroup(mimeType);
+		return contentTypeFilters.includes(contentTypeGroup);
+	});
+
+	return harEntriesFilteredByContentType;
+}
