@@ -1,5 +1,5 @@
 {
-	"name": "har-viewer",
+	"name": "har-file-viewer",
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
@@ -33,6 +33,7 @@
 		"sass": "^1.89.2",
 		"typescript": "~5.8.3",
 		"vite": "^7.0.4",
+		"vite-plugin-gh-pages": "^1.0.1",
 		"vite-tsconfig-paths": "^5.1.4"
 	}
 }
