@@ -1,6 +1,6 @@
 import AppLayout, { type AppLayoutProps } from '@cloudscape-design/components/app-layout';
-import { useState } from 'react';
-import HARFileContentsViewer from '~/components/har-entries-viewer';
+import { useCallback, useState } from 'react';
+import HAREntriesViewer from '~/components/har-entries-viewer';
 import HAREntryViewer from '~/components/har-entry-viewer';
 import HARFileUploader from '~/components/har-file-uploader';
 import TopNavigation, { TOP_NAVIGATION_ID } from '~/components/top-navigation';
@@ -17,18 +17,18 @@ export default function App() {
 	const [splitPanelSize, setSplitPanelSize] = useLocalStorage('splitPanelSize', 480);
 	const [splitPanelPreferences, setSplitPanelPreferences] = useLocalStorage<AppLayoutProps.SplitPanelPreferences>(
 		'splitPanelPreferences',
-		{ position: 'bottom' },
+		{ position: 'side' },
 	);
 
-	const onHarContentChange = (newHarContent: HarContent) => {
+	const onHarContentChange = useCallback((newHarContent: HarContent) => {
 		setSelectedHAREntry(undefined);
 		setHarContent(newHarContent);
-	};
+	}, []);
 
-	const onSelectedHAREntryChange = (harEntry: HAREntry) => {
+	const onSelectedHAREntryChange = useCallback((harEntry: HAREntry) => {
 		setIsSplitPanelOpen(true);
 		setSelectedHAREntry(harEntry);
-	};
+	}, []);
 
 	return (
 		<>
@@ -41,7 +41,7 @@ export default function App() {
 				content={
 					<VerticalGap>
 						<HARFileUploader onChange={onHarContentChange} />
-						<HARFileContentsViewer harContent={harContent} onChange={onSelectedHAREntryChange} />
+						<HAREntriesViewer harContent={harContent} onChange={onSelectedHAREntryChange} />
 					</VerticalGap>
 				}
 				splitPanel={selectedHAREntry && <HAREntryViewer harEntry={selectedHAREntry} />}

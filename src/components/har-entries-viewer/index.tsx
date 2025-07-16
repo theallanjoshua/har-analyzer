@@ -5,12 +5,12 @@ import VerticalGap from '../vertical-gap';
 import ContentTypeFilter from './content-type-filter';
 import ListHAREntries from './list-har-entries';
 
-interface HARFileContentsViewerProps {
+interface HAREntriesViewerProps {
 	harContent?: HarContent;
 	onChange: (selectedHAREntry: HAREntry) => void;
 }
 
-export default function HARFileContentsViewer({ harContent, onChange }: HARFileContentsViewerProps) {
+export default function HAREntriesViewer({ harContent, onChange }: HAREntriesViewerProps) {
 	const [contentTypeFilters, setContentTypeFilters] = useState<ContentTypeGroup[]>([]);
 
 	const harEntries = useMemo(() => getEntriesFromHAR(harContent), [harContent]);

@@ -2,7 +2,7 @@ import { type PropertyFilterProperty, useCollection } from '@cloudscape-design/c
 import PropertyFilter from '@cloudscape-design/components/property-filter';
 import Table from '@cloudscape-design/components/table';
 import { getTime } from 'date-fns';
-import { type ReactNode, useEffect, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import { objectEntries } from '~/utils/common';
 
 interface BaseColumnDefinition {
@@ -155,7 +155,7 @@ export default function EnhancedTable<TItem>({
 	columnsDefinition: EnhancedTableColumnsDefinition<TItem>;
 	empty?: ReactNode;
 	selectionType?: 'single' | 'multi';
-	onSelectionChange: (selectedItems: TItem[]) => void;
+	onSelectionChange?: (selectedItems: TItem[]) => void;
 }) {
 	const enhancedTableItems = useMemo(
 		() => getEnhancedTableItems(originalItems, enhancedColumnDefinitions),
@@ -175,16 +175,6 @@ export default function EnhancedTable<TItem>({
 		selection: { keepSelection: true },
 	});
 
-	console.log({ propertyFilterProps });
-	const { selectedItems } = collectionProps;
-
-	useEffect(() => {
-		if (selectedItems) {
-			console.log('useEffect');
-			onSelectionChange(selectedItems.map((item) => item.__originalItem__));
-		}
-	}, [selectedItems, onSelectionChange]);
-
 	const columnDefinitions = useMemo(() => getColumnDefinitions(enhancedColumnDefinitions), [enhancedColumnDefinitions]);
 
 	return (
@@ -198,6 +188,14 @@ export default function EnhancedTable<TItem>({
 			items={items}
 			empty={empty}
 			selectionType={selectionType}
+			onSelectionChange={(event) => {
+				if (collectionProps.onSelectionChange) {
+					collectionProps.onSelectionChange(event);
+				}
+				if (onSelectionChange) {
+					onSelectionChange(event.detail.selectedItems.map((item) => item.__originalItem__));
+				}
+			}}
 			filter={<PropertyFilter {...propertyFilterProps} />}
 		/>
 	);
