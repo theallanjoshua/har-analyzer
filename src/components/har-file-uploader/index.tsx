@@ -14,16 +14,16 @@ interface HARFileUploaderProps {
 export default function HARFileUploader({ onChange }: HARFileUploaderProps) {
 	const [filesErrors, setFilesErrors] = useState<string[]>([]);
 
-	const onUpload = async (newFiles: File[]) => {
+	const onUpload = async (files: File[]) => {
 		setFilesErrors([]);
-		const errors = getFilesErrors(newFiles);
+		const errors = getFilesErrors(files);
 		if (errors.length > 0) {
 			setFilesErrors(errors);
 			return;
 		}
 
 		try {
-			const fileContents = await readFileContents(newFiles[0]);
+			const fileContents = await readFileContents(files[0]);
 			const harContent = getHARContentFromFile(fileContents);
 			onChange(harContent);
 		} catch (error) {

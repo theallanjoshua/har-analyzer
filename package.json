@@ -17,7 +17,7 @@
 		"@cloudscape-design/design-tokens": "^3.0.59",
 		"@cloudscape-design/global-styles": "^1.0.44",
 		"buffer": "^6.0.3",
-		"date-fns": "^4.1.0",
+		"date-fns-tz": "^3.2.0",
 		"pretty-bytes": "^7.0.0",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",

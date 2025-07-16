@@ -1,7 +1,6 @@
 import { type PropertyFilterProperty, useCollection } from '@cloudscape-design/collection-hooks';
 import PropertyFilter from '@cloudscape-design/components/property-filter';
 import Table from '@cloudscape-design/components/table';
-import { getTime } from 'date-fns';
 import { type ReactNode, useMemo } from 'react';
 import { objectEntries } from '~/utils/common';
 
@@ -92,7 +91,7 @@ function getColumnDefinitions<TItem>(enhancedColumnDefinitions: EnhancedTableCol
 				return content;
 			}
 			if (value instanceof Date) {
-				return getTime(value);
+				return value.getTime();
 			}
 			if (Array.isArray(value)) {
 				return value.join(', ');

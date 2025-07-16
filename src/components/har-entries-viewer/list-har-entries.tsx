@@ -1,6 +1,7 @@
+import Link from '@cloudscape-design/components/link';
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
 import prettyBytes from 'pretty-bytes';
-import { formatDate } from '~/utils/date';
+import { getFormattedCurrentTimeZone, getFormattedDateTime } from '~/utils/date';
 import type { HAREntry } from '~/utils/har';
 import EnhancedTable, { type EnhancedTableColumnsDefinition } from '../enhanced-table';
 
@@ -14,7 +15,12 @@ const columnsDefinition: EnhancedTableColumnsDefinition<HAREntry> = {
 		header: 'URL',
 		cell: (item) => {
 			const value = item.request.url;
-			return { value };
+			const content = (
+				<Link external href={value}>
+					{value}
+				</Link>
+			);
+			return { value, content };
 		},
 	},
 	method: {
@@ -86,13 +92,23 @@ const columnsDefinition: EnhancedTableColumnsDefinition<HAREntry> = {
 			return { value, content };
 		},
 	},
-	startTime: {
-		header: 'Started on',
+	localStartTime: {
+		header: `Started on (${getFormattedCurrentTimeZone()})`,
 		type: 'date',
 		width: 280,
 		cell: ({ startedDateTime }) => {
 			const value = new Date(startedDateTime);
-			const content = formatDate(startedDateTime);
+			const content = getFormattedDateTime(startedDateTime);
+			return { value, content };
+		},
+	},
+	UTCstartTime: {
+		header: 'Started on (UTC)',
+		type: 'date',
+		width: 280,
+		cell: ({ startedDateTime }) => {
+			const value = new Date(startedDateTime);
+			const content = getFormattedDateTime(startedDateTime, 'UTC');
 			return { value, content };
 		},
 	},

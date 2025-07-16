@@ -1,7 +1,7 @@
 import CodeView from '@cloudscape-design/code-view/code-view';
-import CopyToClipboard from '@cloudscape-design/components/copy-to-clipboard';
 import { Buffer } from 'buffer';
 import { getContentTypeGroup, getSyntaxHighlight } from '~/utils/content-type';
+import EnhancedCopyToClipboard from '../enhanced-copy-to-clipboard';
 
 interface ContentViewerProps {
 	content: string;
@@ -44,7 +44,7 @@ export default function ContentViewer({ content, encoding, mimeType }: ContentVi
 			lineNumbers
 			content={prettifiedContent}
 			highlight={highlight}
-			actions={<CopyToClipboard copyErrorText="Copy failed" copySuccessText="Copied" textToCopy={prettifiedContent} />}
+			actions={<EnhancedCopyToClipboard textToCopy={prettifiedContent} />}
 		/>
 	);
 }
