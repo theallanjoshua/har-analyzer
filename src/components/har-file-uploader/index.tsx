@@ -38,10 +38,10 @@ export default function HARFileUploader({ onChange }: HARFileUploaderProps) {
 			<FileUploadError errors={filesErrors} />
 			<FileDropzone onChange={({ detail }) => onUpload(detail.value)}>
 				<VerticalGap alignItems="center" size="s">
-					<Box color="inherit">Drop your .har files here</Box>
+					<Box color="inherit">Drop your .har file here</Box>
 					<Box color="inherit">or</Box>
 					<FileInput accept={SUPPORT_FILE_EXT} value={[]} onChange={({ detail }) => onUpload(detail.value)}>
-						Choose files
+						Choose file
 					</FileInput>
 				</VerticalGap>
 			</FileDropzone>
