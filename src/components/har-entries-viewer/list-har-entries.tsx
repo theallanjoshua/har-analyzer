@@ -1,3 +1,4 @@
+import StatusIndicator from '@cloudscape-design/components/status-indicator';
 import prettyBytes from 'pretty-bytes';
 import { formatDate } from '~/utils/date';
 import type { HAREntry } from '~/utils/har';
@@ -30,7 +31,49 @@ const columnsDefinition: EnhancedTableColumnsDefinition<HAREntry> = {
 		width: 120,
 		cell: (item) => {
 			const value = item.response.status;
+			const errorStatusContent = <StatusIndicator type="error">{value}</StatusIndicator>;
+			try {
+				const statusCode = Number(value);
+				if (statusCode >= 400) {
+					return {
+						value,
+						content: errorStatusContent,
+					};
+				}
+				if (statusCode >= 300) {
+					return {
+						value,
+						content: <StatusIndicator type="warning">{value}</StatusIndicator>,
+					};
+				}
+				if (statusCode >= 200) {
+					return {
+						value,
+						content: <StatusIndicator type="success">{value}</StatusIndicator>,
+					};
+				}
+			} catch (error) {
+				console.error('Invalid status code:', value, error);
+			}
+			return { value, content: errorStatusContent };
+		},
+	},
+	mimeType: {
+		header: 'Mime type',
+		width: 240,
+		cell: (item) => {
+			const value = item.response.content.mimeType;
 			return { value };
+		},
+	},
+	timeTaken: {
+		header: 'Time taken',
+		type: 'number',
+		width: 160,
+		cell: (item) => {
+			const value = item.time;
+			const content = `${Math.ceil(value)} ms`;
+			return { value, content };
 		},
 	},
 	size: {
@@ -51,24 +94,6 @@ const columnsDefinition: EnhancedTableColumnsDefinition<HAREntry> = {
 			const value = new Date(startedDateTime);
 			const content = formatDate(startedDateTime);
 			return { value, content };
-		},
-	},
-	timeTaken: {
-		header: 'Time taken',
-		type: 'number',
-		width: 160,
-		cell: (item) => {
-			const value = item.time;
-			const content = `${Math.ceil(value)} ms`;
-			return { value, content };
-		},
-	},
-	mimeType: {
-		header: 'Mime type',
-		width: 240,
-		cell: (item) => {
-			const value = item.response.content.mimeType;
-			return { value };
 		},
 	},
 };
