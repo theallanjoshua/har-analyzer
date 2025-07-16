@@ -1,12 +1,15 @@
 import { type PropertyFilterProperty, useCollection } from '@cloudscape-design/collection-hooks';
+import CollectionPreferences from '@cloudscape-design/components/collection-preferences';
 import PropertyFilter from '@cloudscape-design/components/property-filter';
 import Table from '@cloudscape-design/components/table';
 import { type ReactNode, useMemo } from 'react';
+import { useTableColumnWidths, useTablePreferences } from '~/hooks/use-table-preferences';
 import { objectEntries } from '~/utils/common';
 
 interface BaseColumnDefinition {
 	header: string;
 	width?: number;
+	isVisible?: boolean;
 }
 
 type DefaultColumnDefinition<TItem> = {
@@ -142,7 +145,16 @@ function getFilteringProperties<TItem>(
 	});
 }
 
+function getContentDisplay<TItem>(columnsDefinition: EnhancedTableColumnsDefinition<TItem>) {
+	return objectEntries(columnsDefinition).map(([column, { header, isVisible }]) => ({
+		id: column,
+		label: header,
+		visible: isVisible ?? true,
+	}));
+}
+
 export default function EnhancedTable<TItem>({
+	id,
 	items: originalItems,
 	columnsDefinition: enhancedColumnDefinitions,
 	empty,
@@ -156,14 +168,14 @@ export default function EnhancedTable<TItem>({
 	selectionType?: 'single' | 'multi';
 	onSelectionChange?: (selectedItems: TItem[]) => void;
 }) {
-	const enhancedTableItems = useMemo(
-		() => getEnhancedTableItems(originalItems, enhancedColumnDefinitions),
-		[originalItems, enhancedColumnDefinitions],
-	);
-
 	const filteringProperties = useMemo(
 		() => getFilteringProperties(enhancedColumnDefinitions),
 		[enhancedColumnDefinitions],
+	);
+
+	const enhancedTableItems = useMemo(
+		() => getEnhancedTableItems(originalItems, enhancedColumnDefinitions),
+		[originalItems, enhancedColumnDefinitions],
 	);
 
 	const { items, collectionProps, propertyFilterProps } = useCollection(enhancedTableItems, {
@@ -174,7 +186,27 @@ export default function EnhancedTable<TItem>({
 		selection: { keepSelection: true },
 	});
 
+	const contentDisplay = useMemo(() => getContentDisplay(enhancedColumnDefinitions), [enhancedColumnDefinitions]);
+
+	const [tablePreferences, setTablePreferences] = useTablePreferences(id, {
+		contentDisplay,
+	});
+
 	const columnDefinitions = useMemo(() => getColumnDefinitions(enhancedColumnDefinitions), [enhancedColumnDefinitions]);
+
+	const [columnWidths, setColumnWidths] = useTableColumnWidths(id);
+
+	const columnDefinitionsWithWidths = useMemo(
+		() =>
+			columnDefinitions.map((column) => {
+				const width = columnWidths.find((columnWidth) => columnWidth.id === column.id)?.width;
+				return {
+					...column,
+					width: width ?? column.width,
+				};
+			}),
+		[columnDefinitions, columnWidths],
+	);
 
 	return (
 		<Table
@@ -183,7 +215,15 @@ export default function EnhancedTable<TItem>({
 			resizableColumns
 			stripedRows
 			stickyHeader
-			columnDefinitions={columnDefinitions}
+			columnDefinitions={columnDefinitionsWithWidths}
+			columnDisplay={tablePreferences?.contentDisplay}
+			onColumnWidthsChange={({ detail }) => {
+				const newColumnWidths = columnDefinitions.map(({ id }, index) => ({
+					id,
+					width: detail.widths[index],
+				}));
+				setColumnWidths(newColumnWidths);
+			}}
 			items={items}
 			empty={empty}
 			selectionType={selectionType}
@@ -196,6 +236,13 @@ export default function EnhancedTable<TItem>({
 				}
 			}}
 			filter={<PropertyFilter {...propertyFilterProps} />}
+			preferences={
+				<CollectionPreferences
+					contentDisplayPreference={{ options: contentDisplay, enableColumnFiltering: true }}
+					preferences={tablePreferences}
+					onConfirm={({ detail }) => setTablePreferences(detail)}
+				/>
+			}
 		/>
 	);
 }
