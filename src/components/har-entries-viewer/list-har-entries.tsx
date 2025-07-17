@@ -3,7 +3,7 @@ import StatusIndicator from '@cloudscape-design/components/status-indicator';
 import prettyBytes from 'pretty-bytes';
 import { useMemo } from 'react';
 import { getFormattedCurrentTimeZone, getFormattedDateTime } from '~/utils/date';
-import type { HAREntry } from '~/utils/har';
+import { type HAREntry, isErrorResponse } from '~/utils/har';
 import EnhancedTable, { type EnhancedTableColumnsDefinition } from '../enhanced-table';
 
 // This ID is used to store user's table preferences in local storage.
@@ -44,28 +44,23 @@ const DEFAULT_COLUMNS_DEFINITION: EnhancedTableColumnsDefinition<HAREntry> = {
 					{value} {error && `(${error})`}
 				</StatusIndicator>
 			);
-			try {
-				const statusCode = Number(value);
-				if (statusCode >= 400) {
-					return {
-						value,
-						content: errorStatusContent,
-					};
-				}
-				if (statusCode >= 300) {
-					return {
-						value,
-						content: <StatusIndicator type="warning">{value}</StatusIndicator>,
-					};
-				}
-				if (statusCode >= 200) {
-					return {
-						value,
-						content: <StatusIndicator type="success">{value}</StatusIndicator>,
-					};
-				}
-			} catch (error) {
-				console.error('Invalid status code:', value, error);
+			if (isErrorResponse(item)) {
+				return {
+					value,
+					content: errorStatusContent,
+				};
+			}
+			if (value >= 300) {
+				return {
+					value,
+					content: <StatusIndicator type="warning">{value}</StatusIndicator>,
+				};
+			}
+			if (value >= 200) {
+				return {
+					value,
+					content: <StatusIndicator type="success">{value}</StatusIndicator>,
+				};
 			}
 			return { value, content: errorStatusContent };
 		},
@@ -138,22 +133,13 @@ function getHeaderColumnsDefinition(headerNames: string[], type: 'request' | 're
 }
 
 interface ListHAREntriesProps {
-	harFileName: string;
 	harEntries: HAREntry[];
-	totalCount?: number;
 	requestHeaders: string[];
 	responseHeaders: string[];
 	onChange: (selectedHAREntry: HAREntry) => void;
 }
 
-export default function ListHAREntries({
-	harFileName,
-	harEntries,
-	totalCount,
-	requestHeaders,
-	responseHeaders,
-	onChange,
-}: ListHAREntriesProps) {
+export default function ListHAREntries({ harEntries, requestHeaders, responseHeaders, onChange }: ListHAREntriesProps) {
 	const columnsDefinition = useMemo(() => {
 		const requestHeaderColumnsDefinition = getHeaderColumnsDefinition(requestHeaders, 'request');
 		const responseHeaderColumnsDefinition = getHeaderColumnsDefinition(responseHeaders, 'response');
@@ -167,10 +153,8 @@ export default function ListHAREntries({
 	return (
 		<EnhancedTable
 			id={TABLE_ID}
-			title={harFileName}
 			columnsDefinition={columnsDefinition}
 			items={harEntries}
-			totalCount={totalCount}
 			empty={<div>No requests found in the HAR file.</div>}
 			selectionType="single"
 			onSelectionChange={(selectedHAREntries) => {

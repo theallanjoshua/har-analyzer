@@ -1,15 +1,18 @@
+import Container from '@cloudscape-design/components/container';
+import Header from '@cloudscape-design/components/header';
 import { useMemo, useState } from 'react';
-import { FALLBACK_HAR_FILE_NAME } from '~/constants/har';
 import type { ContentTypeGroup } from '~/utils/content-type';
 import {
 	getEntriesFromHAR,
 	getHAREntriesFilteredByContentType,
+	getHAREntriesWithErrorResponse,
 	getUniqueHeaderNames,
 	type HAREntry,
 	type HarContent,
 } from '~/utils/har';
-import VerticalGap from '../vertical-gap';
+import HorizontalGap from '../horizontal-gap';
 import ContentTypeFilter from './content-type-filter';
+import ErrorsFilter from './errors-filter';
 import ListHAREntries from './list-har-entries';
 
 interface HAREntriesViewerProps {
@@ -20,32 +23,46 @@ interface HAREntriesViewerProps {
 
 export default function HAREntriesViewer({ harFileName, harContent, onChange }: HAREntriesViewerProps) {
 	const [contentTypeFilters, setContentTypeFilters] = useState<ContentTypeGroup[]>([]);
+	const [shouldFilterErrors, setShouldFilterErrors] = useState(false);
 
 	const harEntries = useMemo(() => getEntriesFromHAR(harContent), [harContent]);
 
 	const requestHeaders = useMemo(() => getUniqueHeaderNames(harEntries, 'request'), [harEntries]);
 	const responseHeaders = useMemo(() => getUniqueHeaderNames(harEntries, 'response'), [harEntries]);
 
-	const harEntriesFilteredByContentType = useMemo(
-		() => getHAREntriesFilteredByContentType(harEntries, contentTypeFilters),
-		[harEntries, contentTypeFilters],
-	);
+	const harEntriesWithErrorResponse = useMemo(() => getHAREntriesWithErrorResponse(harEntries), [harEntries]);
+
+	const harEntriesFilteredByContentType = useMemo(() => {
+		const contentTypeFilterReadyHAREntries = shouldFilterErrors ? harEntriesWithErrorResponse : harEntries;
+		return getHAREntriesFilteredByContentType(contentTypeFilterReadyHAREntries, contentTypeFilters);
+	}, [shouldFilterErrors, harEntriesWithErrorResponse, harEntries, contentTypeFilters]);
 
 	if (!harEntries.length) {
 		return;
 	}
 
 	return (
-		<VerticalGap>
-			<ContentTypeFilter contentTypeFilters={contentTypeFilters} onChange={setContentTypeFilters} />
+		<Container
+			header={
+				<Header
+					counter={`(${harEntriesFilteredByContentType.length}/${harEntries.length})`}
+					actions={
+						<HorizontalGap>
+							<ContentTypeFilter contentTypeFilters={contentTypeFilters} onChange={setContentTypeFilters} />
+							<ErrorsFilter shouldFilterErrors={shouldFilterErrors} onChange={setShouldFilterErrors} />
+						</HorizontalGap>
+					}
+				>
+					{harFileName}
+				</Header>
+			}
+		>
 			<ListHAREntries
-				harFileName={harFileName || FALLBACK_HAR_FILE_NAME}
 				harEntries={harEntriesFilteredByContentType}
-				totalCount={harEntries.length}
 				requestHeaders={requestHeaders}
 				responseHeaders={responseHeaders}
 				onChange={onChange}
 			/>
-		</VerticalGap>
+		</Container>
 	);
 }

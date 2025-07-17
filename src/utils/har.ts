@@ -48,6 +48,15 @@ export function getHAREntriesFilteredByContentType(harEntries: HAREntry[], conte
 	return harEntriesFilteredByContentType;
 }
 
+export function isErrorResponse(harEntry: HAREntry) {
+	const statusCode = harEntry.response.status;
+	return statusCode < 200 || statusCode >= 400;
+}
+
+export function getHAREntriesWithErrorResponse(harEntries: HAREntry[]) {
+	return harEntries.filter((harEntry) => isErrorResponse(harEntry));
+}
+
 export function getUniqueHeaderNames(harEntries: HAREntry[], type: 'request' | 'response') {
 	const headerNames = new Set<string>();
 	harEntries.forEach((entry) => {

@@ -1,5 +1,3 @@
-import Button from '@cloudscape-design/components/button';
-import FormField from '@cloudscape-design/components/form-field';
 import Multiselect from '@cloudscape-design/components/multiselect';
 import { CONTENT_TYPE_GROUPS, type ContentTypeGroup } from '~/utils/content-type';
 
@@ -26,16 +24,11 @@ export default function ContentTypeFilter({ contentTypeFilters, onChange }: Cont
 	};
 
 	return (
-		<FormField
-			label="Filter by content type"
-			secondaryControl={<Button onClick={() => onContentTypeFilterChange([])}>Clear</Button>}
-		>
-			<Multiselect
-				placeholder={`${selectedContentTypeFilterOptions.length} selected`}
-				selectedOptions={selectedContentTypeFilterOptions}
-				onChange={({ detail }) => onContentTypeFilterChange(detail.selectedOptions as ContentTypeFilterOptions)}
-				options={CONTENT_TYPE_FILTER_OPTIONS}
-			/>
-		</FormField>
+		<Multiselect
+			placeholder={'Filter by content type'}
+			selectedOptions={selectedContentTypeFilterOptions}
+			onChange={({ detail }) => onContentTypeFilterChange(detail.selectedOptions as ContentTypeFilterOptions)}
+			options={CONTENT_TYPE_FILTER_OPTIONS}
+		/>
 	);
 }

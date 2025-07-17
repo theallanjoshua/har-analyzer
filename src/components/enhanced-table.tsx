@@ -2,7 +2,6 @@ import { type PropertyFilterProperty, useCollection } from '@cloudscape-design/c
 import CollectionPreferences, {
 	type CollectionPreferencesProps,
 } from '@cloudscape-design/components/collection-preferences';
-import Header from '@cloudscape-design/components/header';
 import PropertyFilter from '@cloudscape-design/components/property-filter';
 import Table, { type TableProps } from '@cloudscape-design/components/table';
 import { type ReactNode, useMemo } from 'react';
@@ -189,9 +188,7 @@ function getTablePreferencesWithoutStaleColumns<TItem>(
 
 interface EnhancedTableProps<TItem> {
 	id: string;
-	title: string;
 	items: TItem[];
-	totalCount?: number;
 	columnsDefinition: EnhancedTableColumnsDefinition<TItem>;
 	empty?: ReactNode;
 	selectionType?: 'single' | 'multi';
@@ -200,9 +197,7 @@ interface EnhancedTableProps<TItem> {
 
 export default function EnhancedTable<TItem>({
 	id,
-	title,
 	items: originalItems,
-	totalCount,
 	columnsDefinition: enhancedColumnDefinitions,
 	empty,
 	selectionType,
@@ -253,10 +248,10 @@ export default function EnhancedTable<TItem>({
 	return (
 		<Table
 			{...collectionProps}
+			variant="borderless"
 			resizableColumns
 			stripedRows
 			stickyHeader
-			header={<Header counter={`(${enhancedTableItems.length}${totalCount ? `/${totalCount}` : ''})`}>{title}</Header>}
 			wrapLines={tablePreferencesWithoutStaleColumns?.wrapLines}
 			columnDefinitions={columnDefinitionsWithPreferredWidths}
 			columnDisplay={tablePreferencesWithoutStaleColumns?.contentDisplay}
