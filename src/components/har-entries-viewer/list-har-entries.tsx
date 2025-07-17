@@ -155,7 +155,7 @@ export default function ListHAREntries({ harEntries, requestHeaders, responseHea
 			id={TABLE_ID}
 			columnsDefinition={columnsDefinition}
 			items={harEntries}
-			empty={<div>No requests found in the HAR file.</div>}
+			empty="No HAR entries found"
 			selectionType="single"
 			onSelectionChange={(selectedHAREntries) => {
 				const selectedHAREntry = selectedHAREntries[0];
