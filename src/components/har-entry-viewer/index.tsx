@@ -1,6 +1,7 @@
 import SplitPanel from '@cloudscape-design/components/split-panel';
 import Tabs from '@cloudscape-design/components/tabs';
 import type { HAREntry } from '~/utils/har';
+import ContentViewer from './content-viewer';
 import HeadersViewer from './headers-viewer';
 import PayloadViewer from './payload-viewer';
 import ResponseViewer from './response-viewer';
@@ -27,6 +28,11 @@ export default function HAREntryViewer({ harEntry }: HAREntryViewerProps) {
 						label: 'Response',
 						id: 'response',
 						content: <ResponseViewer harEntry={harEntry} />,
+					},
+					{
+						label: 'HAR Entry',
+						id: 'har-entry',
+						content: <ContentViewer content={JSON.stringify(harEntry)} mimeType="json" />,
 					},
 				]}
 			/>

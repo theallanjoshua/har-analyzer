@@ -28,7 +28,11 @@ export function getEntriesFromHAR(harContent?: Har) {
 	return harContent?.log.entries || [];
 }
 
-export type HAREntry = ReturnType<typeof getEntriesFromHAR>[number];
+type HAREntryWithoutError = ReturnType<typeof getEntriesFromHAR>[number];
+type HARResponseWithError = HAREntryWithoutError['response'] & { _error?: string };
+export type HAREntry = Omit<HAREntryWithoutError, 'response'> & {
+	response: HARResponseWithError;
+};
 
 export function getHAREntriesFilteredByContentType(harEntries: HAREntry[], contentTypeFilters: ContentTypeGroup[]) {
 	if (!contentTypeFilters.length) {

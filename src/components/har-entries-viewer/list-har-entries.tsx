@@ -38,7 +38,12 @@ const DEFAULT_COLUMNS_DEFINITION: EnhancedTableColumnsDefinition<HAREntry> = {
 		width: 120,
 		cell: (item) => {
 			const value = item.response.status;
-			const errorStatusContent = <StatusIndicator type="error">{value}</StatusIndicator>;
+			const error = item.response._error;
+			const errorStatusContent = (
+				<StatusIndicator type="error">
+					{value} {error && `(${error})`}
+				</StatusIndicator>
+			);
 			try {
 				const statusCode = Number(value);
 				if (statusCode >= 400) {
@@ -107,6 +112,7 @@ const DEFAULT_COLUMNS_DEFINITION: EnhancedTableColumnsDefinition<HAREntry> = {
 		header: 'Started on (UTC)',
 		type: 'date',
 		width: 280,
+		isVisibleByDefault: false,
 		cell: ({ startedDateTime }) => {
 			const value = new Date(startedDateTime);
 			const content = getFormattedDateTime(startedDateTime, 'UTC');
