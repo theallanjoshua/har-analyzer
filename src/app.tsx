@@ -1,37 +1,41 @@
-import AppLayout, { type AppLayoutProps } from '@cloudscape-design/components/app-layout';
-import { useCallback, useState } from 'react';
+import AppLayout from '@cloudscape-design/components/app-layout';
+import { I18nProvider } from '@cloudscape-design/components/i18n';
+import enMessages from '@cloudscape-design/components/i18n/messages/all.en';
+import { useState } from 'react';
 import HAREntriesViewer from '~/components/har-entries-viewer';
 import HAREntryViewer from '~/components/har-entry-viewer';
 import HARFileUploader from '~/components/har-file-uploader';
 import TopNavigation, { TOP_NAVIGATION_ID } from '~/components/top-navigation';
-import useLocalStorage from '~/hooks/use-local-storage';
 import type { HAREntry, HarContent } from '~/utils/har';
 import VerticalGap from './components/vertical-gap';
-import useContentWidth from './hooks/use-content-width';
+import useAppContentWidth from './hooks/app-content-width';
+import '@cloudscape-design/global-styles/index.css';
+import { FALLBACK_HAR_FILE_NAME } from './constants/har';
+import { useSplitPanelPreferences, useSplitPanelSize } from './hooks/split-panel-preferences';
 
 export default function App() {
-	const [isFullContentWidth] = useContentWidth();
+	const [isFullContentWidth] = useAppContentWidth();
+	const [splitPanelSize, setSplitPanelSize] = useSplitPanelSize();
+	const [splitPanelPreferences, setSplitPanelPreferences] = useSplitPanelPreferences();
+
+	const [harFileName, setHarFileName] = useState<string>();
 	const [harContent, setHarContent] = useState<HarContent>();
 	const [selectedHAREntry, setSelectedHAREntry] = useState<HAREntry>();
 	const [isSplitPanelOpen, setIsSplitPanelOpen] = useState(false);
-	const [splitPanelSize, setSplitPanelSize] = useLocalStorage('splitPanelSize', 480);
-	const [splitPanelPreferences, setSplitPanelPreferences] = useLocalStorage<AppLayoutProps.SplitPanelPreferences>(
-		'splitPanelPreferences',
-		{ position: 'side' },
-	);
 
-	const onHarContentChange = useCallback((newHarContent: HarContent) => {
-		setSelectedHAREntry(undefined);
+	const onHarContentChange = (newHarContent: HarContent, newHarFileName?: string) => {
 		setHarContent(newHarContent);
-	}, []);
+		setHarFileName(newHarFileName || FALLBACK_HAR_FILE_NAME);
+		setSelectedHAREntry(undefined);
+	};
 
-	const onSelectedHAREntryChange = useCallback((harEntry: HAREntry) => {
-		setIsSplitPanelOpen(true);
+	const onSelectedHAREntryChange = (harEntry: HAREntry) => {
 		setSelectedHAREntry(harEntry);
-	}, []);
+		setIsSplitPanelOpen(true);
+	};
 
 	return (
-		<>
+		<I18nProvider locale="en" messages={[enMessages]}>
 			<TopNavigation />
 			<AppLayout
 				headerSelector={`#${TOP_NAVIGATION_ID}`}
@@ -41,7 +45,7 @@ export default function App() {
 				content={
 					<VerticalGap>
 						<HARFileUploader onChange={onHarContentChange} />
-						<HAREntriesViewer harContent={harContent} onChange={onSelectedHAREntryChange} />
+						<HAREntriesViewer harFileName={harFileName} harContent={harContent} onChange={onSelectedHAREntryChange} />
 					</VerticalGap>
 				}
 				splitPanel={selectedHAREntry && <HAREntryViewer harEntry={selectedHAREntry} />}
@@ -52,6 +56,6 @@ export default function App() {
 				splitPanelPreferences={splitPanelPreferences}
 				onSplitPanelPreferencesChange={({ detail }) => setSplitPanelPreferences(detail)}
 			/>
-		</>
+		</I18nProvider>
 	);
 }

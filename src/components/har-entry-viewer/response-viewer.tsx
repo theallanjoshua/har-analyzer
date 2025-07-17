@@ -7,9 +7,9 @@ interface ResponseViewerProps {
 }
 
 export default function ResponseViewer({ harEntry }: ResponseViewerProps) {
-	const content = harEntry?.response?.content?.text || '';
-	const encoding = harEntry?.response?.content?.encoding;
-	const mimeType = harEntry?.response?.content?.mimeType;
+	const content = harEntry.response.content.text || '';
+	const encoding = harEntry.response.content.encoding;
+	const mimeType = harEntry.response.content.mimeType;
 
 	return (
 		<CollapsibleSection title="Response">

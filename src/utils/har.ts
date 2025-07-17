@@ -25,7 +25,7 @@ export function getHARContentFromFile(fileContent: unknown): HarContent {
 }
 
 export function getEntriesFromHAR(harContent?: Har) {
-	return harContent?.log?.entries || [];
+	return harContent?.log.entries || [];
 }
 
 export type HAREntry = ReturnType<typeof getEntriesFromHAR>[number];
@@ -36,10 +36,21 @@ export function getHAREntriesFilteredByContentType(harEntries: HAREntry[], conte
 	}
 
 	const harEntriesFilteredByContentType = harEntries.filter((harEntry) => {
-		const mimeType = harEntry?.response?.content?.mimeType;
+		const mimeType = harEntry.response.content.mimeType;
 		const contentTypeGroup = getContentTypeGroup(mimeType);
 		return contentTypeFilters.includes(contentTypeGroup);
 	});
 
 	return harEntriesFilteredByContentType;
+}
+
+export function getUniqueHeaderNames(harEntries: HAREntry[], type: 'request' | 'response') {
+	const headerNames = new Set<string>();
+	harEntries.forEach((entry) => {
+		const headers = entry[type].headers || [];
+		headers.forEach((header) => {
+			headerNames.add(header.name);
+		});
+	});
+	return Array.from(headerNames);
 }

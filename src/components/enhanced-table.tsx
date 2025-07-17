@@ -1,15 +1,19 @@
 import { type PropertyFilterProperty, useCollection } from '@cloudscape-design/collection-hooks';
-import CollectionPreferences from '@cloudscape-design/components/collection-preferences';
+import CollectionPreferences, {
+	type CollectionPreferencesProps,
+} from '@cloudscape-design/components/collection-preferences';
+import Header from '@cloudscape-design/components/header';
 import PropertyFilter from '@cloudscape-design/components/property-filter';
-import Table from '@cloudscape-design/components/table';
+import Table, { type TableProps } from '@cloudscape-design/components/table';
 import { type ReactNode, useMemo } from 'react';
-import { useTableColumnWidths, useTablePreferences } from '~/hooks/use-table-preferences';
+import { useTablePreferences, useTablePreferredColumnWidths } from '~/hooks/table-preferences';
 import { objectEntries } from '~/utils/common';
 
 interface BaseColumnDefinition {
 	header: string;
 	width?: number;
-	isVisible?: boolean;
+	isVisibleByDefault?: boolean;
+	isSortable?: boolean;
 }
 
 type DefaultColumnDefinition<TItem> = {
@@ -82,28 +86,6 @@ function getEnhancedTableItems<TItem>(
 
 type EnhancedTableItem<TItem> = ReturnType<typeof getEnhancedTableItems<TItem>>[number];
 
-function getColumnDefinitions<TItem>(enhancedColumnDefinitions: EnhancedTableColumnsDefinition<TItem>) {
-	return objectEntries(enhancedColumnDefinitions).map(([id, { header, width, cell }]) => ({
-		id,
-		header,
-		width,
-		sortingField: id,
-		cell: (item: EnhancedTableItem<TItem>) => {
-			const { value, content } = cell(item.__originalItem__);
-			if (content) {
-				return content;
-			}
-			if (value instanceof Date) {
-				return value.getTime();
-			}
-			if (Array.isArray(value)) {
-				return value.join(', ');
-			}
-			return value;
-		},
-	}));
-}
-
 type FilteringProperties<TItem> = readonly PropertyFilterProperty<TItem>[];
 
 function getFilteringProperties<TItem>(
@@ -145,29 +127,87 @@ function getFilteringProperties<TItem>(
 	});
 }
 
-function getContentDisplay<TItem>(columnsDefinition: EnhancedTableColumnsDefinition<TItem>) {
-	return objectEntries(columnsDefinition).map(([column, { header, isVisible }]) => ({
+function getColumnDefinitions<TItem>(enhancedColumnDefinitions: EnhancedTableColumnsDefinition<TItem>) {
+	return objectEntries(enhancedColumnDefinitions).map(([id, { header, width, isSortable = true, cell }]) => {
+		return {
+			id,
+			header,
+			width,
+			sortingField: isSortable ? id : undefined,
+			cell: (item: EnhancedTableItem<TItem>) => {
+				const { value, content } = cell(item.__originalItem__);
+				if (content) {
+					return content;
+				}
+				if (value instanceof Date) {
+					return value.getTime();
+				}
+				if (Array.isArray(value)) {
+					return value.join(', ');
+				}
+				return value;
+			},
+		};
+	});
+}
+
+function getColumnDisplayPreferenceOptions<TItem>(columnsDefinition: EnhancedTableColumnsDefinition<TItem>) {
+	return objectEntries(columnsDefinition).map(([column, { header, isVisibleByDefault = true }]) => ({
 		id: column,
 		label: header,
-		visible: isVisible ?? true,
+		visible: isVisibleByDefault,
 	}));
 }
 
-export default function EnhancedTable<TItem>({
-	id,
-	items: originalItems,
-	columnsDefinition: enhancedColumnDefinitions,
-	empty,
-	selectionType,
-	onSelectionChange,
-}: {
+function getColumnDefinitionsWithPreferredWidths<TItem>(
+	columnDefinitions: TableProps.ColumnDefinition<TItem>[],
+	preferredColumnWidths: { id: string; width?: number }[],
+) {
+	return columnDefinitions.map((column) => {
+		const preferredColumnWidth = preferredColumnWidths.find((columnWidth) => columnWidth.id === column.id)?.width;
+		return {
+			...column,
+			width: preferredColumnWidth ?? column.width,
+		};
+	});
+}
+
+function getTablePreferencesWithoutStaleColumns<TItem>(
+	tablePreferences: CollectionPreferencesProps.Preferences,
+	columnDefinitions: TableProps.ColumnDefinition<TItem>[],
+) {
+	if (!tablePreferences.contentDisplay) {
+		return tablePreferences;
+	}
+	const currentAvailableColumns = columnDefinitions.map(({ id }) => id);
+	const contentDisplay = tablePreferences.contentDisplay.filter(({ id }) => currentAvailableColumns.includes(id));
+	return {
+		...tablePreferences,
+		contentDisplay,
+	};
+}
+
+interface EnhancedTableProps<TItem> {
 	id: string;
+	title: string;
 	items: TItem[];
+	totalCount?: number;
 	columnsDefinition: EnhancedTableColumnsDefinition<TItem>;
 	empty?: ReactNode;
 	selectionType?: 'single' | 'multi';
 	onSelectionChange?: (selectedItems: TItem[]) => void;
-}) {
+}
+
+export default function EnhancedTable<TItem>({
+	id,
+	title,
+	items: originalItems,
+	totalCount,
+	columnsDefinition: enhancedColumnDefinitions,
+	empty,
+	selectionType,
+	onSelectionChange,
+}: EnhancedTableProps<TItem>) {
 	const filteringProperties = useMemo(
 		() => getFilteringProperties(enhancedColumnDefinitions),
 		[enhancedColumnDefinitions],
@@ -178,7 +218,7 @@ export default function EnhancedTable<TItem>({
 		[originalItems, enhancedColumnDefinitions],
 	);
 
-	const { items, collectionProps, propertyFilterProps } = useCollection(enhancedTableItems, {
+	const { items, collectionProps, propertyFilterProps, filteredItemsCount } = useCollection(enhancedTableItems, {
 		propertyFiltering: {
 			filteringProperties,
 		},
@@ -186,43 +226,46 @@ export default function EnhancedTable<TItem>({
 		selection: { keepSelection: true },
 	});
 
-	const contentDisplay = useMemo(() => getContentDisplay(enhancedColumnDefinitions), [enhancedColumnDefinitions]);
+	const columnDisplayPreferenceOptions = useMemo(
+		() => getColumnDisplayPreferenceOptions(enhancedColumnDefinitions),
+		[enhancedColumnDefinitions],
+	);
 
 	const [tablePreferences, setTablePreferences] = useTablePreferences(id, {
-		contentDisplay,
+		contentDisplay: columnDisplayPreferenceOptions,
+		wrapLines: false,
 	});
 
 	const columnDefinitions = useMemo(() => getColumnDefinitions(enhancedColumnDefinitions), [enhancedColumnDefinitions]);
 
-	const [columnWidths, setColumnWidths] = useTableColumnWidths(id);
+	const tablePreferencesWithoutStaleColumns = useMemo(
+		() => getTablePreferencesWithoutStaleColumns(tablePreferences, columnDefinitions),
+		[tablePreferences, columnDefinitions],
+	);
 
-	const columnDefinitionsWithWidths = useMemo(
-		() =>
-			columnDefinitions.map((column) => {
-				const width = columnWidths.find((columnWidth) => columnWidth.id === column.id)?.width;
-				return {
-					...column,
-					width: width ?? column.width,
-				};
-			}),
-		[columnDefinitions, columnWidths],
+	const [preferredColumnWidths, setPreferredColumnWidths] = useTablePreferredColumnWidths(id);
+
+	const columnDefinitionsWithPreferredWidths = useMemo(
+		() => getColumnDefinitionsWithPreferredWidths(columnDefinitions, preferredColumnWidths),
+		[columnDefinitions, preferredColumnWidths],
 	);
 
 	return (
 		<Table
 			{...collectionProps}
-			wrapLines
 			resizableColumns
 			stripedRows
 			stickyHeader
-			columnDefinitions={columnDefinitionsWithWidths}
-			columnDisplay={tablePreferences?.contentDisplay}
+			header={<Header counter={`(${enhancedTableItems.length}${totalCount ? `/${totalCount}` : ''})`}>{title}</Header>}
+			wrapLines={tablePreferencesWithoutStaleColumns?.wrapLines}
+			columnDefinitions={columnDefinitionsWithPreferredWidths}
+			columnDisplay={tablePreferencesWithoutStaleColumns?.contentDisplay}
 			onColumnWidthsChange={({ detail }) => {
-				const newColumnWidths = columnDefinitions.map(({ id }, index) => ({
+				const newPreferredColumnWidths = columnDefinitions.map(({ id }, index) => ({
 					id,
 					width: detail.widths[index],
 				}));
-				setColumnWidths(newColumnWidths);
+				setPreferredColumnWidths(newPreferredColumnWidths);
 			}}
 			items={items}
 			empty={empty}
@@ -235,11 +278,17 @@ export default function EnhancedTable<TItem>({
 					onSelectionChange(event.detail.selectedItems.map((item) => item.__originalItem__));
 				}
 			}}
-			filter={<PropertyFilter {...propertyFilterProps} />}
+			filter={
+				<PropertyFilter
+					countText={filteredItemsCount ? `${filteredItemsCount} matches` : undefined}
+					{...propertyFilterProps}
+				/>
+			}
 			preferences={
 				<CollectionPreferences
-					contentDisplayPreference={{ options: contentDisplay, enableColumnFiltering: true }}
-					preferences={tablePreferences}
+					wrapLinesPreference={{}}
+					contentDisplayPreference={{ options: columnDisplayPreferenceOptions, enableColumnFiltering: true }}
+					preferences={tablePreferencesWithoutStaleColumns}
 					onConfirm={({ detail }) => setTablePreferences(detail)}
 				/>
 			}

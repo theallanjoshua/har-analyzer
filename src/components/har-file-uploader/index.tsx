@@ -8,7 +8,7 @@ import VerticalGap from '../vertical-gap';
 import FileUploadError from './file-upload-error';
 
 interface HARFileUploaderProps {
-	onChange: (harContent: HarContent) => void;
+	onChange: (harContent: HarContent, harFileName?: string) => void;
 }
 
 export default function HARFileUploader({ onChange }: HARFileUploaderProps) {
@@ -23,9 +23,11 @@ export default function HARFileUploader({ onChange }: HARFileUploaderProps) {
 		}
 
 		try {
-			const fileContents = await readFileContents(files[0]);
+			const file = files[0];
+			const fileName = file?.name;
+			const fileContents = await readFileContents(file);
 			const harContent = getHARContentFromFile(fileContents);
-			onChange(harContent);
+			onChange(harContent, fileName);
 		} catch (error) {
 			console.error('Error reading HAR file:', error);
 			const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';

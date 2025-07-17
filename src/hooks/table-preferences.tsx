@@ -1,10 +1,10 @@
 import type { CollectionPreferencesProps } from '@cloudscape-design/components/collection-preferences';
-import useLocalStorage from './use-local-storage';
+import useLocalStorage from './local-storage';
 
 export function useTablePreferences(tableId: string, defaultPreferences: CollectionPreferencesProps.Preferences) {
 	return useLocalStorage(`tablePreferences_${tableId}`, defaultPreferences);
 }
 
-export function useTableColumnWidths(tableId: string, defaultWidths: { id: string; width?: number }[] = []) {
+export function useTablePreferredColumnWidths(tableId: string, defaultWidths: { id: string; width?: number }[] = []) {
 	return useLocalStorage(`tableColumnWidths_${tableId}`, defaultWidths);
 }

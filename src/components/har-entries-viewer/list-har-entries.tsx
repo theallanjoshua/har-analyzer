@@ -1,6 +1,7 @@
 import Link from '@cloudscape-design/components/link';
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
 import prettyBytes from 'pretty-bytes';
+import { useMemo } from 'react';
 import { getFormattedCurrentTimeZone, getFormattedDateTime } from '~/utils/date';
 import type { HAREntry } from '~/utils/har';
 import EnhancedTable, { type EnhancedTableColumnsDefinition } from '../enhanced-table';
@@ -10,7 +11,7 @@ import EnhancedTable, { type EnhancedTableColumnsDefinition } from '../enhanced-
 // Changing this ID will reset user's table preferences.
 const TABLE_ID = 'list-har-entries';
 
-const columnsDefinition: EnhancedTableColumnsDefinition<HAREntry> = {
+const DEFAULT_COLUMNS_DEFINITION: EnhancedTableColumnsDefinition<HAREntry> = {
 	url: {
 		header: 'URL',
 		cell: (item) => {
@@ -114,17 +115,56 @@ const columnsDefinition: EnhancedTableColumnsDefinition<HAREntry> = {
 	},
 };
 
+function getHeaderColumnsDefinition(headerNames: string[], type: 'request' | 'response') {
+	return headerNames.reduce<EnhancedTableColumnsDefinition<HAREntry>>((acc, headerName) => {
+		acc[`${type}_${headerName}`] = {
+			header: `${type}.${headerName}`,
+			width: 200,
+			isVisibleByDefault: false,
+			type: 'list',
+			cell: (item) => {
+				const value = item[type].headers.filter(({ name }) => name === headerName).map(({ value }) => value);
+				return { value };
+			},
+		};
+		return acc;
+	}, {});
+}
+
 interface ListHAREntriesProps {
+	harFileName: string;
 	harEntries: HAREntry[];
+	totalCount?: number;
+	requestHeaders: string[];
+	responseHeaders: string[];
 	onChange: (selectedHAREntry: HAREntry) => void;
 }
 
-export default function ListHAREntries({ harEntries, onChange }: ListHAREntriesProps) {
+export default function ListHAREntries({
+	harFileName,
+	harEntries,
+	totalCount,
+	requestHeaders,
+	responseHeaders,
+	onChange,
+}: ListHAREntriesProps) {
+	const columnsDefinition = useMemo(() => {
+		const requestHeaderColumnsDefinition = getHeaderColumnsDefinition(requestHeaders, 'request');
+		const responseHeaderColumnsDefinition = getHeaderColumnsDefinition(responseHeaders, 'response');
+		return {
+			...DEFAULT_COLUMNS_DEFINITION,
+			...requestHeaderColumnsDefinition,
+			...responseHeaderColumnsDefinition,
+		};
+	}, [requestHeaders, responseHeaders]);
+
 	return (
 		<EnhancedTable
 			id={TABLE_ID}
+			title={harFileName}
 			columnsDefinition={columnsDefinition}
 			items={harEntries}
+			totalCount={totalCount}
 			empty={<div>No requests found in the HAR file.</div>}
 			selectionType="single"
 			onSelectionChange={(selectedHAREntries) => {

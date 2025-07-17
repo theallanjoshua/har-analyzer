@@ -1,7 +1,7 @@
 import Toggle from '@cloudscape-design/components/toggle';
 import { applyMode, Mode } from '@cloudscape-design/global-styles';
 import { useEffect } from 'react';
-import useTheme from '~/hooks/use-theme';
+import useTheme from '~/hooks/theme';
 
 export default function ThemeSwitcher() {
 	const [isDarkTheme, setIsDarkTheme] = useTheme();
@@ -13,7 +13,7 @@ export default function ThemeSwitcher() {
 
 	return (
 		<Toggle onChange={({ detail }) => setIsDarkTheme(detail.checked)} checked={isDarkTheme}>
-			Use dark theme?
+			Use dark theme
 		</Toggle>
 	);
 }

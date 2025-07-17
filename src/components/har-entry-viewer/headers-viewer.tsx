@@ -14,20 +14,20 @@ export default function HeadersViewer({ harEntry }: HeadersViewerProps) {
 				items={[
 					{
 						name: 'URL',
-						value: harEntry?.request?.url,
+						value: harEntry.request.url,
 					},
 					{
 						name: 'Method',
-						value: harEntry?.request?.method,
+						value: harEntry.request.method,
 					},
 					{
 						name: 'Status',
-						value: `${harEntry?.response?.status}`,
+						value: `${harEntry.response.status}`,
 					},
 				]}
 			/>
-			<ListItems title="Response Headers" items={harEntry?.response?.headers} />
-			<ListItems title="Request Headers" items={harEntry?.request?.headers} />
+			<ListItems title="Request Headers" items={harEntry.request.headers} />
+			<ListItems title="Response Headers" items={harEntry.response.headers} />
 		</VerticalGap>
 	);
 }

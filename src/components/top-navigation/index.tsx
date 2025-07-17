@@ -8,7 +8,7 @@ const BLUR_CSS = 'blur(16px)';
 
 export default function TopNavigation() {
 	return (
-		<div
+		<nav
 			id={TOP_NAVIGATION_ID}
 			style={{
 				position: 'sticky',
@@ -21,6 +21,6 @@ export default function TopNavigation() {
 			}}
 		>
 			<Header actions={<AppLevelUserPreferences />}>HAR File Viewer</Header>
-		</div>
+		</nav>
 	);
 }
