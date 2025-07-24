@@ -1,24 +1,6 @@
 {
 	"private": true,
 	"name": "har-analyzer",
-	"version": "0.0.1",
-	"description": "A monorepo for HAR Analyzer tools and components",
-	"author": "Allan Joshua",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/theallanjoshua/har-analyzer.git"
-	},
-	"homepage": "https://github.com/theallanjoshua/har-analyzer#readme",
-	"bugs": {
-		"url": "https://github.com/theallanjoshua/har-analyzer/issues"
-	},
-	"keywords": [
-		"har",
-		"har analyzer",
-		"har file",
-		"har file viewer"
-	],
 	"type": "module",
 	"scripts": {
 		"lint": "biome check",
