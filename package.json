@@ -1,14 +1,31 @@
 {
+	"private": true,
 	"name": "har-analyzer",
 	"version": "0.0.1",
+	"description": "A monorepo for HAR Analyzer tools and components",
+	"author": "Allan Joshua",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/theallanjoshua/har-analyzer.git"
+	},
+	"homepage": "https://github.com/theallanjoshua/har-analyzer#readme",
+	"bugs": {
+		"url": "https://github.com/theallanjoshua/har-analyzer/issues"
+	},
+	"keywords": [
+		"har",
+		"har analyzer",
+		"har file",
+		"har file viewer"
+	],
 	"type": "module",
-	"private": true,
 	"scripts": {
 		"lint": "biome check",
 		"lint:fix": "biome format --write",
-		"dev": "pnpm --filter @har-analyzer/website dev",
+		"dev": "pnpm -r run dev",
 		"build": "pnpm -r run build",
-		"release": "pnpm run lint && pnpm run build"
+		"prepublishOnly": "pnpm run lint && pnpm run build"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.1.1",
@@ -16,6 +33,7 @@
 		"@types/react": "^19.1.8",
 		"@types/react-dom": "^19.1.6",
 		"@vitejs/plugin-react": "^4.6.0",
+		"concurrently": "^9.2.0",
 		"sass": "^1.89.2",
 		"typescript": "~5.8.3",
 		"vite": "^7.0.4",

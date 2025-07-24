@@ -1,6 +1,27 @@
 {
 	"name": "@har-analyzer/components",
 	"version": "0.0.1",
+	"description": "Reusable React components for HAR Analyzer",
+	"author": "Allan Joshua",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/theallanjoshua/har-analyzer.git",
+		"directory": "packages/components"
+	},
+	"homepage": "https://github.com/theallanjoshua/har-analyzer#readme",
+	"bugs": {
+		"url": "https://github.com/theallanjoshua/har-analyzer/issues"
+	},
+	"keywords": [
+		"har",
+		"har analyzer",
+		"har file",
+		"har file viewer"
+	],
+	"publishConfig": {
+    "access": "public"
+  },
 	"type": "module",
 	"files": [
 		"dist"
@@ -8,7 +29,10 @@
 	"main": "dist/components.js",
 	"types": "dist/lib/index.d.ts",
 	"scripts": {
-		"build": "tsc && vite build"
+		"lint": "biome check",
+		"dev": "concurrently -k \"tsc --emitDeclarationOnly --watch\" \"vite build --watch\"",
+		"build": "tsc && vite build",
+		"prepublishOnly": "pnpm run lint && pnpm run build"
 	},
 	"dependencies": {
 		"buffer": "^6.0.3",
