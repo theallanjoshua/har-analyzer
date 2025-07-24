@@ -1,4 +1,4 @@
-import VerticalGap from '~/components/shared/vertical-gap';
+import VerticalGap from '~/components/vertical-gap';
 import type { HAREntry } from '~/utils/har';
 import ListItems from './list-items';
 

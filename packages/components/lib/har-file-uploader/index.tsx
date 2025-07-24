@@ -2,7 +2,7 @@ import Box from '@cloudscape-design/components/box';
 import FileDropzone from '@cloudscape-design/components/file-dropzone';
 import FileInput from '@cloudscape-design/components/file-input';
 import { useState } from 'react';
-import VerticalGap from '~/components/shared/vertical-gap';
+import VerticalGap from '~/components/vertical-gap';
 import { getFilesErrors, readFileContents, SUPPORT_FILE_EXT } from '~/utils/file-upload';
 import { getHARContentFromFile, type HarContent } from '~/utils/har';
 import FileUploadError from './file-upload-error';

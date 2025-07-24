@@ -19,7 +19,7 @@ Below are the available components and their usage examples:
 ### HarAnalyzer
 
 ```jsx
-import { HarAnalyzer } from '@har-analyzer/components';
+import HarAnalyzer from '@har-analyzer/components/har-analyzer';
 
 function App() {
   return <HarAnalyzer appName="HAR Analyzer" />;
@@ -38,7 +38,7 @@ function App() {
 ### HAREntriesViewer
 
 ```jsx
-import { HAREntriesViewer } from '@har-analyzer/components';
+import HAREntriesViewer from '@har-analyzer/components/har-entries-viewer';
 
 function App() {
   return (
@@ -64,7 +64,7 @@ function App() {
 ### HAREntryViewer
 
 ```jsx
-import { HAREntryViewer } from '@har-analyzer/components';
+import HAREntryViewer from '@har-analyzer/components/har-entry-viewer';
 
 function App() {
   return <HAREntryViewer harEntry={yourHarEntry} />;
@@ -82,7 +82,7 @@ function App() {
 ### HARFileUploader
 
 ```jsx
-import { HARFileUploader } from '@har-analyzer/components';
+import HARFileUploader from '@har-analyzer/components/har-file-uploader';
 
 function App() {
   return (

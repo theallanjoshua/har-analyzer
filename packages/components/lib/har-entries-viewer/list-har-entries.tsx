@@ -2,7 +2,7 @@ import Link from '@cloudscape-design/components/link';
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
 import prettyBytes from 'pretty-bytes';
 import { useMemo } from 'react';
-import EnhancedTable, { type EnhancedTableColumnsDefinition } from '~/components/shared/enhanced-table';
+import EnhancedTable, { type EnhancedTableColumnsDefinition } from '~/components/enhanced-table';
 import { getFormattedCurrentTimeZone, getFormattedDateTime } from '~/utils/date';
 import { type HAREntry, isErrorResponse } from '~/utils/har';
 

@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "include": [
     "lib",
+    "src",
     "package.json"
   ],
   "compilerOptions": {
@@ -21,7 +22,7 @@
     /* If you are using path alias*/
 		"baseUrl": "./",
 		"paths": {
-			"~/*": ["./lib/*"]
+      "~/*": ["./src/*"]
 		}
   }
 }

@@ -1,4 +1,4 @@
-import CollapsibleSection from '~/components/shared/collapsible-section';
+import CollapsibleSection from '~/components/collapsible-section';
 import type { HAREntry } from '~/utils/har';
 import ContentViewer from './content-viewer';
 

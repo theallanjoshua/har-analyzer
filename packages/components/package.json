@@ -1,6 +1,6 @@
 {
 	"name": "@har-analyzer/components",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "Reusable React components for HAR Analyzer",
 	"author": "Allan Joshua",
 	"license": "MIT",
@@ -26,8 +26,18 @@
 	"files": [
 		"dist"
 	],
-	"main": "dist/components.js",
-	"types": "dist/lib/index.d.ts",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		},
+		"./*": {
+			"import": "./dist/*.js",
+			"types": "./dist/*.d.ts"
+		}
+	},
 	"scripts": {
 		"lint": "biome check",
 		"dev": "concurrently -k \"tsc --emitDeclarationOnly --watch\" \"vite build --watch\"",

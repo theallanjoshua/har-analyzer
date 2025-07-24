@@ -1,7 +1,7 @@
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import { useMemo, useState } from 'react';
-import HorizontalGap from '~/components/shared/horizontal-gap';
+import HorizontalGap from '~/components/horizontal-gap';
 import type { ContentTypeGroup } from '~/utils/content-type';
 import {
 	getEntriesFromHAR,

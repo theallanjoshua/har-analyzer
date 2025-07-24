@@ -2,7 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import '@cloudscape-design/global-styles/index.css';
 import './index.scss';
-import { HarAnalyzer } from '@har-analyzer/components';
+import HarAnalyzer from '@har-analyzer/components/har-analyzer';
 
 const ROOT_ID = 'root';
 const domNode = document.getElementById(ROOT_ID);

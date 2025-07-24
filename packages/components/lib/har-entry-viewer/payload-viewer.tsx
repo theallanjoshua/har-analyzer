@@ -1,5 +1,5 @@
-import CollapsibleSection from '~/components/shared/collapsible-section';
-import VerticalGap from '~/components/shared/vertical-gap';
+import CollapsibleSection from '~/components/collapsible-section';
+import VerticalGap from '~/components/vertical-gap';
 import type { HAREntry } from '~/utils/har';
 import ContentViewer from './content-viewer';
 import ListItems from './list-items';

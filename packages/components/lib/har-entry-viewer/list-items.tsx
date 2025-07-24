@@ -1,6 +1,6 @@
 import Box from '@cloudscape-design/components/box';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
-import CollapsibleSection from '~/components/shared/collapsible-section';
+import CollapsibleSection from '~/components/collapsible-section';
 
 interface ListItemsProps {
 	title: string;

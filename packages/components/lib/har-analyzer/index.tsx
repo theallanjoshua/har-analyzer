@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import HAREntriesViewer from '~/components/har-entries-viewer';
-import HAREntryViewer from '~/components/har-entry-viewer';
-import HARFileUploader from '~/components/har-file-uploader';
-import SimpleAppLayout from '~/components/shared/simple-app-layout';
-import VerticalGap from '~/components/shared/vertical-gap';
+import SimpleAppLayout from '~/components/simple-app-layout';
+import VerticalGap from '~/components/vertical-gap';
 import type { HAREntry, HarContent } from '~/utils/har';
+import HAREntriesViewer from '../har-entries-viewer';
+import HAREntryViewer from '../har-entry-viewer';
+import HARFileUploader from '../har-file-uploader';
 
 export interface HarAnalyzerProps {
 	logo?: React.ReactNode;
