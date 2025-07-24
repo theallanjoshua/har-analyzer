@@ -1,0 +1,19 @@
+{
+	"name": "@har-analyzer/website",
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build"
+	},
+	"dependencies": {
+		"@cloudscape-design/code-view": "^3.0.66",
+		"@cloudscape-design/collection-hooks": "^1.0.73",
+		"@cloudscape-design/components": "^3.0.1022",
+		"@cloudscape-design/design-tokens": "^3.0.59",
+		"@cloudscape-design/global-styles": "^1.0.44",
+		"@har-analyzer/components": "workspace:*",
+		"react": "^19.1.0",
+		"react-dom": "^19.1.0"
+	}
+}

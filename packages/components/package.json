@@ -1,0 +1,30 @@
+{
+	"name": "@har-analyzer/components",
+	"version": "0.0.1",
+	"type": "module",
+	"files": [
+		"dist"
+	],
+	"main": "dist/components.js",
+	"types": "dist/lib/index.d.ts",
+	"scripts": {
+		"build": "tsc && vite build"
+	},
+	"dependencies": {
+		"buffer": "^6.0.3",
+		"date-fns": "^4.1.0",
+		"date-fns-tz": "^3.2.0",
+		"pretty-bytes": "^7.0.0",
+		"react-error-boundary": "^6.0.0",
+		"use-local-storage-state": "^19.5.0"
+	},
+	"peerDependencies": {
+		"@cloudscape-design/code-view": "^3.0.66",
+		"@cloudscape-design/collection-hooks": "^1.0.73",
+		"@cloudscape-design/components": "^3.0.1022",
+		"@cloudscape-design/design-tokens": "^3.0.59",
+		"@cloudscape-design/global-styles": "^1.0.44",
+		"react": "^19.1.0",
+		"react-dom": "^19.1.0"
+	}
+}

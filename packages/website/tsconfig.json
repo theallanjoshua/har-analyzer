@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+	"include": ["index.tsx"],
+	"compilerOptions": {
+		/* If transpiling with TypeScript and Vite: */
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"outDir": "dist",
+		"sourceMap": true,
+
+		/* If you are using path alias*/
+		"baseUrl": "./",
+		"paths": {
+			"~/*": ["./src/*"]
+		}
+	}
+}

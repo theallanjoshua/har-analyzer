@@ -1,28 +1,14 @@
 {
-	"name": "har-file-viewer",
-	"private": true,
-	"version": "0.0.0",
+	"name": "har-analyzer",
+	"version": "0.0.1",
 	"type": "module",
+	"private": true,
 	"scripts": {
-		"dev": "vite",
-		"build": "tsc && vite build",
-		"release": "npm run lint && npm run build",
-		"lint": "biome check ./src",
-		"lint:fix": "biome format --write ./src"
-	},
-	"dependencies": {
-		"@cloudscape-design/code-view": "^3.0.66",
-		"@cloudscape-design/collection-hooks": "^1.0.73",
-		"@cloudscape-design/components": "^3.0.1022",
-		"@cloudscape-design/design-tokens": "^3.0.59",
-		"@cloudscape-design/global-styles": "^1.0.44",
-		"buffer": "^6.0.3",
-		"date-fns-tz": "^3.2.0",
-		"pretty-bytes": "^7.0.0",
-		"react": "^19.1.0",
-		"react-dom": "^19.1.0",
-		"react-error-boundary": "^6.0.0",
-		"use-local-storage-state": "^19.5.0"
+		"lint": "biome check",
+		"lint:fix": "biome format --write",
+		"dev": "pnpm --filter @har-analyzer/website dev",
+		"build": "pnpm -r run build",
+		"release": "pnpm run lint && pnpm run build"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.1.1",
@@ -33,7 +19,9 @@
 		"sass": "^1.89.2",
 		"typescript": "~5.8.3",
 		"vite": "^7.0.4",
+		"vite-plugin-dts": "^4.5.4",
 		"vite-plugin-gh-pages": "^1.0.1",
+		"vite-plugin-lib-inject-css": "^2.2.2",
 		"vite-tsconfig-paths": "^5.1.4"
 	}
 }

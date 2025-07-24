@@ -1,0 +1,27 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": [
+    "lib",
+    "package.json"
+  ],
+  "compilerOptions": {
+    /* If transpiling with TypeScript and Vite: */
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"outDir": "dist",
+		"sourceMap": true,
+
+    /* if you're building for a library: */
+    "declaration": true,
+
+    /* if you're building for a library in a monorepo: */
+    "composite": true,
+    "declarationMap": true,
+
+    /* If you are using path alias*/
+		"baseUrl": "./",
+		"paths": {
+			"~/*": ["./lib/*"]
+		}
+  }
+}
