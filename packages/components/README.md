@@ -16,7 +16,7 @@ pnpm add @har-analyzer/components
 
 Below are the available components and their usage examples:
 
-### HarAnalyzer
+### HarAnalyzer ([Demo](https://theallanjoshua.github.io/har-analyzer/))
 
 ```jsx
 import HarAnalyzer from '@har-analyzer/components/har-analyzer';
@@ -32,6 +32,7 @@ function App() {
 |-----------|-----------------|----------|--------------------------------------|
 | logo      | React.ReactNode | No       | A logo to display in the header.    |
 | appName   | string          | Yes      | The name of the application.        |
+
 
 ---
 

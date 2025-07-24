@@ -1,6 +1,6 @@
 {
 	"name": "@har-analyzer/components",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "Reusable React components for HAR Analyzer",
 	"author": "Allan Joshua",
 	"license": "MIT",

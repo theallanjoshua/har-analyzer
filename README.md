@@ -2,7 +2,7 @@
 
 HAR Analyzer is a modern, interactive web application for analyzing [HTTP Archive (HAR)](https://w3c.github.io/web-performance/specs/HAR/Overview.html) files. It allows you to inspect network requests, view request/response headers, payloads, and visualize content with syntax highlighting.
 
-Try it out [here](https://theallanjoshua.github.io/har-file-viewer/)
+Try it out [here](https://theallanjoshua.github.io/har-analyzer/)
 
 ---
 
