@@ -1,6 +1,6 @@
 {
 	"name": "@har-analyzer/components",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "Reusable React components for HAR Analyzer",
 	"author": "Allan Joshua",
 	"license": "MIT",
@@ -9,7 +9,7 @@
 		"url": "https://github.com/theallanjoshua/har-analyzer.git",
 		"directory": "packages/components"
 	},
-	"homepage": "https://github.com/theallanjoshua/har-analyzer#readme",
+	"homepage": "https://github.com/theallanjoshua/har-analyzer/tree/main/packages/components#readme",
 	"bugs": {
 		"url": "https://github.com/theallanjoshua/har-analyzer/issues"
 	},
