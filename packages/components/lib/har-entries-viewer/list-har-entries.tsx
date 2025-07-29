@@ -3,6 +3,7 @@ import StatusIndicator from '@cloudscape-design/components/status-indicator';
 import prettyBytes from 'pretty-bytes';
 import { useMemo } from 'react';
 import EnhancedTable, { type EnhancedTableColumnsDefinition } from '~/components/enhanced-table';
+import withCustomErrorBoundary from '~/components/error-boundary';
 import { getFormattedCurrentTimeZone, getFormattedDateTime } from '~/utils/date';
 import { type HAREntry, isErrorResponse } from '~/utils/har';
 
@@ -139,7 +140,7 @@ interface ListHAREntriesProps {
 	onChange: (selectedHAREntry: HAREntry) => void;
 }
 
-export default function ListHAREntries({ harEntries, requestHeaders, responseHeaders, onChange }: ListHAREntriesProps) {
+function ListHAREntries({ harEntries, requestHeaders, responseHeaders, onChange }: ListHAREntriesProps) {
 	const columnsDefinition = useMemo(() => {
 		const requestHeaderColumnsDefinition = getHeaderColumnsDefinition(requestHeaders, 'request');
 		const responseHeaderColumnsDefinition = getHeaderColumnsDefinition(responseHeaders, 'response');
@@ -166,3 +167,5 @@ export default function ListHAREntries({ harEntries, requestHeaders, responseHea
 		/>
 	);
 }
+
+export default withCustomErrorBoundary(ListHAREntries);

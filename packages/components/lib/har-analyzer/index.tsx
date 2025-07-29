@@ -1,25 +1,29 @@
 import { useState } from 'react';
+import withCustomErrorBoundary from '~/components/error-boundary';
 import SimpleAppLayout from '~/components/simple-app-layout';
 import VerticalGap from '~/components/vertical-gap';
-import type { HAREntry, HarContent } from '~/utils/har';
+import { getEntriesFromHAR, type HAREntry } from '~/utils/har';
 import HAREntriesViewer from '../har-entries-viewer';
 import HAREntryViewer from '../har-entry-viewer';
-import HARFileUploader from '../har-file-uploader';
+import HARFileUploader, { type HARFileUploaderProps } from '../har-file-uploader';
+
+const DEFAULT_HAR_FILE_NAME = 'unknown.har';
 
 export interface HarAnalyzerProps {
 	logo?: React.ReactNode;
 	appName: string;
 }
 
-export default function HarAnalyzer({ logo, appName }: HarAnalyzerProps) {
-	const [harFileName, setHarFileName] = useState<string>();
-	const [harContent, setHarContent] = useState<HarContent>();
+function HarAnalyzer({ logo, appName }: HarAnalyzerProps) {
+	const [harFileName, setHARFileName] = useState<string>(DEFAULT_HAR_FILE_NAME);
+	const [harEntries, setHAREntries] = useState<HAREntry[]>([]);
 	const [selectedHAREntry, setSelectedHAREntry] = useState<HAREntry>();
 	const [isSplitPanelOpen, setIsSplitPanelOpen] = useState(false);
 
-	const onHarContentChange = (newHarContent: HarContent, newHarFileName?: string) => {
-		setHarContent(newHarContent);
-		setHarFileName(newHarFileName || 'unknown.har');
+	const onHARUpload: HARFileUploaderProps['onChange'] = ({ harContent, harFileName }) => {
+		const harEntries = getEntriesFromHAR(harContent);
+		setHAREntries(harEntries);
+		setHARFileName(harFileName || DEFAULT_HAR_FILE_NAME);
 		setSelectedHAREntry(undefined);
 	};
 
@@ -34,8 +38,8 @@ export default function HarAnalyzer({ logo, appName }: HarAnalyzerProps) {
 			appName={appName}
 			content={
 				<VerticalGap>
-					<HARFileUploader onChange={onHarContentChange} />
-					<HAREntriesViewer harFileName={harFileName} harContent={harContent} onChange={onSelectedHAREntryChange} />
+					<HARFileUploader onChange={onHARUpload} />
+					<HAREntriesViewer harFileName={harFileName} harEntries={harEntries} onChange={onSelectedHAREntryChange} />
 				</VerticalGap>
 			}
 			isSplitPanelOpen={isSplitPanelOpen}
@@ -44,3 +48,5 @@ export default function HarAnalyzer({ logo, appName }: HarAnalyzerProps) {
 		/>
 	);
 }
+
+export default withCustomErrorBoundary(HarAnalyzer);

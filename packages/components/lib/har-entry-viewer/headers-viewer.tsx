@@ -1,15 +1,16 @@
+import CollapsibleKeyValueList from '~/components/collapsible-key-value-list';
+import withCustomErrorBoundary from '~/components/error-boundary';
 import VerticalGap from '~/components/vertical-gap';
 import type { HAREntry } from '~/utils/har';
-import ListItems from './list-items';
 
 interface HeadersViewerProps {
 	harEntry: HAREntry;
 }
 
-export default function HeadersViewer({ harEntry }: HeadersViewerProps) {
+function HeadersViewer({ harEntry }: HeadersViewerProps) {
 	return (
 		<VerticalGap>
-			<ListItems
+			<CollapsibleKeyValueList
 				title="General"
 				items={[
 					{
@@ -26,8 +27,10 @@ export default function HeadersViewer({ harEntry }: HeadersViewerProps) {
 					},
 				]}
 			/>
-			<ListItems title="Request Headers" items={harEntry.request.headers} />
-			<ListItems title="Response Headers" items={harEntry.response.headers} />
+			<CollapsibleKeyValueList title="Request Headers" items={harEntry.request.headers} />
+			<CollapsibleKeyValueList title="Response Headers" items={harEntry.response.headers} />
 		</VerticalGap>
 	);
 }
+
+export default withCustomErrorBoundary(HeadersViewer);

@@ -5,7 +5,7 @@
 	"scripts": {
 		"lint": "biome check",
 		"lint:fix": "biome format --write",
-		"dev": "pnpm -r run dev",
+		"dev": "concurrently -k \"pnpm --filter @har-analyzer/components run dev\" \"pnpm --filter @har-analyzer/website run dev\"",
 		"build": "pnpm -r run build",
 		"release": "pnpm run lint && pnpm run build"
 	},

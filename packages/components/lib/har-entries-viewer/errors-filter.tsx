@@ -1,4 +1,5 @@
 import SegmentedControl from '@cloudscape-design/components/segmented-control';
+import withCustomErrorBoundary from '~/components/error-boundary';
 
 const ERRORS_ID = 'ERRORS';
 const ALL_ID = 'ALL';
@@ -8,7 +9,7 @@ interface ErrorsFilterProps {
 	onChange: (shouldFilterErrors: boolean) => void;
 }
 
-export default function ErrorsFilter({ shouldFilterErrors, onChange }: ErrorsFilterProps) {
+function ErrorsFilter({ shouldFilterErrors, onChange }: ErrorsFilterProps) {
 	return (
 		<SegmentedControl
 			options={[
@@ -23,3 +24,5 @@ export default function ErrorsFilter({ shouldFilterErrors, onChange }: ErrorsFil
 		/>
 	);
 }
+
+export default withCustomErrorBoundary(ErrorsFilter);

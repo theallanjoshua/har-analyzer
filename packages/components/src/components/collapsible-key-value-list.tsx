@@ -2,11 +2,11 @@ import Box from '@cloudscape-design/components/box';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
 import CollapsibleSection from '~/components/collapsible-section';
 
-interface ListItemsProps {
+interface CollapsibleKeyValueListProps {
 	title: string;
 	items: { name: string; value: string }[];
 }
-export default function ListItems({ title, items = [] }: ListItemsProps) {
+export default function CollapsibleKeyValueList({ title, items = [] }: CollapsibleKeyValueListProps) {
 	return (
 		<CollapsibleSection title={title}>
 			<ColumnLayout borders="horizontal" columns={2}>

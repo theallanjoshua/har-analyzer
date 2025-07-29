@@ -1,6 +1,7 @@
 import CodeView from '@cloudscape-design/code-view/code-view';
 import CopyToClipboard from '@cloudscape-design/components/copy-to-clipboard';
 import { Buffer } from 'buffer';
+import withCustomErrorBoundary from '~/components/error-boundary';
 import { getContentTypeGroup, getSyntaxHighlight } from '~/utils/content-type';
 
 interface ContentViewerProps {
@@ -9,7 +10,7 @@ interface ContentViewerProps {
 	mimeType?: string;
 }
 
-export default function ContentViewer({ content, encoding, mimeType }: ContentViewerProps) {
+function ContentViewer({ content, encoding, mimeType }: ContentViewerProps) {
 	const contentTypeGroup = getContentTypeGroup(mimeType);
 
 	if (contentTypeGroup === 'Img') {
@@ -48,3 +49,5 @@ export default function ContentViewer({ content, encoding, mimeType }: ContentVi
 		/>
 	);
 }
+
+export default withCustomErrorBoundary(ContentViewer);

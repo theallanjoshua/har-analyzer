@@ -1,31 +1,28 @@
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import { useMemo, useState } from 'react';
+import withCustomErrorBoundary from '~/components/error-boundary';
 import HorizontalGap from '~/components/horizontal-gap';
 import type { ContentTypeGroup } from '~/utils/content-type';
 import {
-	getEntriesFromHAR,
 	getHAREntriesFilteredByContentType,
 	getHAREntriesWithErrorResponse,
 	getUniqueHeaderNames,
 	type HAREntry,
-	type HarContent,
 } from '~/utils/har';
 import ContentTypeFilter from './content-type-filter';
 import ErrorsFilter from './errors-filter';
 import ListHAREntries from './list-har-entries';
 
 export interface HAREntriesViewerProps {
-	harFileName?: string;
-	harContent?: HarContent;
+	harFileName: string;
+	harEntries: HAREntry[];
 	onChange: (selectedHAREntry: HAREntry) => void;
 }
 
-export default function HAREntriesViewer({ harFileName, harContent, onChange }: HAREntriesViewerProps) {
+function HAREntriesViewer({ harFileName, harEntries, onChange }: HAREntriesViewerProps) {
 	const [contentTypeFilters, setContentTypeFilters] = useState<ContentTypeGroup[]>([]);
 	const [shouldFilterErrors, setShouldFilterErrors] = useState(false);
-
-	const harEntries = useMemo(() => getEntriesFromHAR(harContent), [harContent]);
 
 	const requestHeaders = useMemo(() => getUniqueHeaderNames(harEntries, 'request'), [harEntries]);
 	const responseHeaders = useMemo(() => getUniqueHeaderNames(harEntries, 'response'), [harEntries]);
@@ -66,3 +63,5 @@ export default function HAREntriesViewer({ harFileName, harContent, onChange }: 
 		</Container>
 	);
 }
+
+export default withCustomErrorBoundary(HAREntriesViewer);

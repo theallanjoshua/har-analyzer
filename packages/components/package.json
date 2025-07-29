@@ -40,8 +40,8 @@
 	},
 	"scripts": {
 		"lint": "biome check",
-		"dev": "concurrently -k \"tsc --emitDeclarationOnly --watch\" \"vite build --watch\"",
-		"build": "tsc && vite build",
+		"dev": "vite build --watch",
+		"build": "vite build",
 		"prepublishOnly": "pnpm run lint && pnpm run build"
 	},
 	"dependencies": {

@@ -1,4 +1,5 @@
 import Multiselect from '@cloudscape-design/components/multiselect';
+import withCustomErrorBoundary from '~/components/error-boundary';
 import { CONTENT_TYPE_GROUPS, type ContentTypeGroup } from '~/utils/content-type';
 
 const CONTENT_TYPE_FILTER_OPTIONS = CONTENT_TYPE_GROUPS.map((group) => ({
@@ -13,7 +14,7 @@ interface ContentTypeFilterProps {
 	onChange: (contentTypeFilters: ContentTypeGroup[]) => void;
 }
 
-export default function ContentTypeFilter({ contentTypeFilters, onChange }: ContentTypeFilterProps) {
+function ContentTypeFilter({ contentTypeFilters, onChange }: ContentTypeFilterProps) {
 	const selectedContentTypeFilterOptions = CONTENT_TYPE_FILTER_OPTIONS.filter(({ value }) =>
 		contentTypeFilters.includes(value),
 	);
@@ -32,3 +33,5 @@ export default function ContentTypeFilter({ contentTypeFilters, onChange }: Cont
 		/>
 	);
 }
+
+export default withCustomErrorBoundary(ContentTypeFilter);
