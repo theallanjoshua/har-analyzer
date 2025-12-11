@@ -15,7 +15,7 @@ const COMPONENT_FOLDERS = [
 	'har-file-uploader'
 ];
 
-const componentSpecificEntries = COMPONENT_FOLDERS.reduce((acc, folder) => {
+const componentSpecificEntries = COMPONENT_FOLDERS.reduce<Record<string, string>>((acc, folder) => {
 	acc[folder] = `${relativeEntryRoot}/${folder}/index.tsx`;
 	return acc;
 }, {});

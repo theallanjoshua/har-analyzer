@@ -11,10 +11,10 @@ const DEFAULT_HAR_FILE_NAME = 'unknown.har';
 
 export interface HarAnalyzerProps {
 	logo?: React.ReactNode;
-	appName: string;
+	appName?: string;
 }
 
-function HarAnalyzer({ logo, appName }: HarAnalyzerProps) {
+function HarAnalyzer({ logo, appName = 'HAR Analyzer' }: HarAnalyzerProps) {
 	const [harFileName, setHARFileName] = useState<string>(DEFAULT_HAR_FILE_NAME);
 	const [harEntries, setHAREntries] = useState<HAREntry[]>([]);
 	const [selectedHAREntry, setSelectedHAREntry] = useState<HAREntry>();

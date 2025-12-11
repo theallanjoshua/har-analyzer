@@ -31,7 +31,7 @@ function App() {
 | Name      | Type            | Required | Description                          |
 |-----------|-----------------|----------|--------------------------------------|
 | logo      | React.ReactNode | No       | A logo to display in the header.    |
-| appName   | string          | Yes      | The name of the application.        |
+| appName   | string          | No       | The name of the application.        |
 
 
 ---
