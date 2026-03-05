@@ -2,17 +2,21 @@ import Box from '@cloudscape-design/components/box';
 import FileDropzone from '@cloudscape-design/components/file-dropzone';
 import FileInput from '@cloudscape-design/components/file-input';
 import { useState } from 'react';
-import withCustomErrorBoundary from '~/components/error-boundary';
+import type { HARContent } from '~/utils/har';
 import VerticalGap from '~/components/vertical-gap';
-import { getFilesErrors, readFileContents, SUPPORT_FILE_EXT } from '~/utils/file-upload';
-import { getHARContentFromFile, type HarContent } from '~/utils/har';
+import {
+	getFilesErrors,
+	readFileContents,
+	SUPPORT_FILE_EXT,
+} from '~/utils/file-upload';
+import { getHARContentFromFile } from '~/utils/har';
 import FileUploadError from './file-upload-error';
 
 export interface HARFileUploaderProps {
-	onChange: (args: { harContent: HarContent; harFileName?: string }) => void;
+	onChange: (args: { harContent: HARContent; harFileName?: string }) => void;
 }
 
-function HARFileUploader({ onChange }: HARFileUploaderProps) {
+export default function HARFileUploader({ onChange }: HARFileUploaderProps) {
 	const [filesErrors, setFilesErrors] = useState<string[]>([]);
 
 	const onUpload = async (files: File[]) => {
@@ -29,7 +33,8 @@ function HARFileUploader({ onChange }: HARFileUploaderProps) {
 			const fileContents = await readFileContents(file);
 			const harContent = getHARContentFromFile(fileContents);
 			onChange({ harContent, harFileName });
-		} catch (error) {
+		}
+		catch (error) {
 			console.error('Error reading HAR file:', error);
 			const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
 			setFilesErrors([errorMessage]);
@@ -51,5 +56,3 @@ function HARFileUploader({ onChange }: HARFileUploaderProps) {
 		</VerticalGap>
 	);
 }
-
-export default withCustomErrorBoundary(HARFileUploader);

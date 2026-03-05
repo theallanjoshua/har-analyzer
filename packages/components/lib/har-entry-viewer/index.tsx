@@ -1,15 +1,15 @@
 import Tabs from '@cloudscape-design/components/tabs';
-import withCustomErrorBoundary from '~/components/error-boundary';
 import type { HAREntry } from '~/utils/har';
-import ContentViewer from './content-viewer';
-import HeadersViewer from './headers-viewer';
-import PayloadViewer from './payload-viewer';
-import ResponseViewer from './response-viewer';
+import ContentViewer from './components/content-viewer';
+import HeadersViewer from './components/headers-viewer';
+import PayloadViewer from './components/payload-viewer';
+import ResponseViewer from './components/response-viewer';
 
 export interface HAREntryViewerProps {
 	harEntry: HAREntry;
 }
-function HAREntryViewer({ harEntry }: HAREntryViewerProps) {
+
+export default function HAREntryViewer({ harEntry }: HAREntryViewerProps) {
 	return (
 		<Tabs
 			tabs={[
@@ -37,5 +37,3 @@ function HAREntryViewer({ harEntry }: HAREntryViewerProps) {
 		/>
 	);
 }
-
-export default withCustomErrorBoundary(HAREntryViewer);

@@ -1,133 +1,84 @@
-# HAR Analyzer Monorepo
+# HAR Analyzer 
 
-HAR Analyzer is a modern, interactive web application for analyzing [HTTP Archive (HAR)](https://w3c.github.io/web-performance/specs/HAR/Overview.html) files. It allows you to inspect network requests, view request/response headers, payloads, and visualize content with syntax highlighting.
+A modern, interactive web application for inspecting and analyzing HTTP Archive (.har) files. Built with React and the Cloudscape Design System, this monorepo provides both a standalone reusable component library and a fully-featured client-side web application.
 
 Try it out [here](https://theallanjoshua.github.io/har-analyzer/)
 
 ---
 
-## Features
+## 🚀 Features
 
-- Upload and view `.har` files
-- Filter and search network entries
-- Inspect request and response headers
-- View request payloads and response bodies with syntax highlighting
-- Supports JSON, XML, HTML, CSS, JavaScript, and image content types
-- Responsive UI with split panel for detailed entry inspection
-- User preferences for theme and content width
-- Built with React, Vite, and Cloudscape Design System
-- Modular component library for reuse in other projects
+- **Local Processing:** Upload and view `.har` files entirely in the browser (no data is sent to a server).
+- **Advanced Filtering:** Filter and search network entries by content type, errors, and text.
+- **Deep Inspection:** Inspect request/response headers, cookies, and timings.
+- **Syntax Highlighting:** View request payloads and response bodies with formatting for JSON, XML, HTML, CSS, and JavaScript.
+- **Customizable UI:** Responsive split-panel layout with user preferences for dark/light themes and content width.
+- **Modular:** Core functionality is packaged as a reusable React component library.
 
 ---
 
-## Monorepo Structure
+## 🛠️ Tech Stack
 
-```
+- **Framework:** [React 19](https://react.dev/)
+- **UI Components:** [Cloudscape Design System](https://cloudscape.design/)
+- **Build Tool:** [Vite](https://vitejs.dev/)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Monorepo Management:** [Turborepo](https://turbo.build/) & [pnpm workspaces](https://pnpm.io/)
+- **Linting:** [ESLint](https://eslint.org/) (via [@antfu/eslint-config](https://github.com/antfu/eslint-config))
+
+---
+
+## 📦 Monorepo Structure
+
+This project is a monorepo managed with [pnpm](https://pnpm.io/) workspaces and [Turborepo](https://turbo.build/).
+
+```text
 .
-├── biome.json
-├── package.json                # Root config and scripts
-├── pnpm-lock.yaml
-├── pnpm-workspace.yaml
-├── README.md
-├── tsconfig.base.json
-└── packages/
-    ├── components/             # Reusable React component library
-    │   ├── package.json
-    │   ├── tsconfig.json
-    │   ├── vite.config.ts
-    │   └── lib/
-    │       ├── index.ts
-    │       ├── components/
-    │       │   ├── har-analyzer/
-    │       │   ├── har-entries-viewer/
-    │       │   ├── har-entry-viewer/
-    │       │   ├── har-file-uploader/
-    │       │   └── shared/
-    │       ├── hooks/
-    │       └── utils/
-    └── website/                # Main web application
-        ├── index.html
-        ├── index.scss
-        ├── index.tsx
-        ├── package.json
-        ├── tsconfig.json
-        └── vite.config.ts
+├── packages/
+│   ├── components/      # Reusable UI component library (@har-analyzer/components) - See [README](./packages/components/README.md)
+│   └── website/         # Main web application using the components (@har-analyzer/website)
+├── tsconfigs/           # Shared TypeScript base configurations
+├── eslint.config.ts     # Shared ESLint Flat Config
+└── turbo.json           # Turborepo pipeline configuration
 ```
 
----
-
-## Getting Started
+## 🛠️ Getting Started
 
 ### Prerequisites
 
-- Node.js (v18+ recommended)
-- pnpm (or use npm/yarn)
+- [Node.js](https://nodejs.org/) (v18 or higher recommended)
+- [pnpm](https://pnpm.io/)
 
 ### Installation
 
-```sh
-pnpm install
-```
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/theallanjoshua/har-analyzer.git
+   cd har-analyzer
+   ```
 
----
+2. Install dependencies:
+   ```sh
+   pnpm install
+   ```
 
-## Development
+### Development
 
-### Run the Website App
-
-```sh
-pnpm dev
-```
-Open [http://localhost:5173](http://localhost:5173) in your browser.
-
-### Build All Packages
+Start the development servers for the packages in parallel:
 
 ```sh
-pnpm build
+pnpm run dev
 ```
 
-### Build Only the Component Library
+The web application will typically be available at `http://localhost:5173` (check your terminal output for the exact URL).
 
-```sh
-pnpm --filter @har-analyzer/components build
-```
+## 📜 Available Scripts
 
-### Build Only the Website
+From the root directory, you can run the following commands:
 
-```sh
-pnpm --filter @har-analyzer/website build
-```
-
----
-
-## Linting & Formatting
-
-This project uses [Biome](https://biomejs.dev/) for linting and formatting:
-
-```sh
-pnpm biome check
-pnpm biome format
-```
-
----
-
-## Usage
-
-1. Upload a `.har` file using the file uploader.
-2. Browse and filter network requests in the main table.
-3. Click on a row to inspect details in the split panel.
-
----
-
-## Technologies
-
-- React
-- Vite
-- Cloudscape Design System
-- Biome (linting/formatting)
-- TypeScript
-- pnpm (monorepo management)
-
----
-
-## License
+- `pnpm run dev`: Starts development mode for all packages.
+- `pnpm run build`: Builds all packages (components and website).
+- `pnpm run lint`: Runs ESLint check across the codebase.
+- `pnpm run lint:fix`: Automatically fixes ESLint errors.
+- `pnpm run check-types`: Runs TypeScript type checking.
+- `pnpm run clean`: Removes all build artifacts (`dist` folders).

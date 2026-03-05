@@ -1,0 +1,7 @@
+{
+	"extends": "./tsconfigs/base.json",
+	"references": [
+		{ "path": "./packages/components" },
+		{ "path": "./packages/website" }
+	]
+}

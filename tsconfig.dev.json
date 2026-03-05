@@ -1,0 +1,4 @@
+{
+	"extends": "./tsconfigs/base.json",
+	"include": ["eslint.config.ts", "packages/*/vite.config.ts"]
+}

@@ -1,17 +1,9 @@
 {
-  "extends": "../../tsconfig.root.json",
-	"include": ["index.tsx"],
+	"extends": "../../tsconfigs/web.json",
 	"compilerOptions": {
-		/* If transpiling with TypeScript and Vite: */
-		"module": "esnext",
-		"moduleResolution": "bundler",
-		"outDir": "dist",
-		"sourceMap": true,
-
-		/* If you are using path alias*/
-		"baseUrl": "./",
 		"paths": {
 			"~/*": ["./src/*"]
 		}
-	}
+	},
+	"include": ["src"]
 }

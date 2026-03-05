@@ -1,67 +1,175 @@
-import Container from '@cloudscape-design/components/container';
-import Header from '@cloudscape-design/components/header';
-import { useMemo, useState } from 'react';
-import withCustomErrorBoundary from '~/components/error-boundary';
-import HorizontalGap from '~/components/horizontal-gap';
-import type { ContentTypeGroup } from '~/utils/content-type';
-import {
-	getHAREntriesFilteredByContentType,
-	getHAREntriesWithErrorResponse,
-	getUniqueHeaderNames,
-	type HAREntry,
-} from '~/utils/har';
-import ContentTypeFilter from './content-type-filter';
-import ErrorsFilter from './errors-filter';
-import ListHAREntries from './list-har-entries';
+import Link from '@cloudscape-design/components/link';
+import StatusIndicator from '@cloudscape-design/components/status-indicator';
+import prettyBytes from 'pretty-bytes';
+import { useMemo } from 'react';
+import type { EnhancedTableColumnsDefinition } from '~/components/enhanced-table';
+import type { HAREntry } from '~/utils/har';
+import EnhancedTable from '~/components/enhanced-table';
+import { getFormattedCurrentTimeZone, getFormattedDateTime } from '~/utils/date';
+import { getUniqueHeaderNames, isErrorResponse } from '~/utils/har';
 
-export interface HAREntriesViewerProps {
-	harFileName: string;
+// This ID is used to store user's table preferences in local storage.
+// It should be unique across the application.
+// Changing this ID will reset user's table preferences.
+const DEFAULT_TABLE_ID = 'list-har-entries';
+
+const DEFAULT_COLUMNS_DEFINITION: EnhancedTableColumnsDefinition<HAREntry> = {
+	url: {
+		header: 'URL',
+		cell: (item) => {
+			const value = item.request.url;
+			const content = (
+				<Link external href={value}>
+					{value}
+				</Link>
+			);
+			return { value, content };
+		},
+	},
+	method: {
+		header: 'Method',
+		width: 140,
+		cell: (item) => {
+			const value = item.request.method;
+			return { value };
+		},
+	},
+	status: {
+		header: 'Status',
+		type: 'number',
+		width: 120,
+		cell: (item) => {
+			const value = item.response.status;
+			const error = item.response._error;
+			const errorStatusContent = (
+				<StatusIndicator type="error">
+					{value} {error && `(${error})`}
+				</StatusIndicator>
+			);
+			if (isErrorResponse(item)) {
+				return {
+					value,
+					content: errorStatusContent,
+				};
+			}
+			if (value >= 300) {
+				return {
+					value,
+					content: <StatusIndicator type="warning">{value}</StatusIndicator>,
+				};
+			}
+			if (value >= 200) {
+				return {
+					value,
+					content: <StatusIndicator type="success">{value}</StatusIndicator>,
+				};
+			}
+			return { value, content: errorStatusContent };
+		},
+	},
+	mimeType: {
+		header: 'Mime type',
+		width: 240,
+		cell: (item) => {
+			const value = item.response.content.mimeType;
+			return { value };
+		},
+	},
+	timeTaken: {
+		header: 'Time taken',
+		type: 'number',
+		width: 160,
+		cell: (item) => {
+			const value = item.time;
+			const content = `${Math.ceil(value)} ms`;
+			return { value, content };
+		},
+	},
+	size: {
+		header: 'Size',
+		type: 'number',
+		width: 120,
+		cell: (item) => {
+			const value = item.response.content.size;
+			const content = prettyBytes(value);
+			return { value, content };
+		},
+	},
+	localStartTime: {
+		header: `Started on (${getFormattedCurrentTimeZone()})`,
+		type: 'date',
+		width: 280,
+		cell: ({ startedDateTime }) => {
+			const value = new Date(startedDateTime);
+			const content = getFormattedDateTime(startedDateTime);
+			return { value, content };
+		},
+	},
+	UTCstartTime: {
+		header: 'Started on (UTC)',
+		type: 'date',
+		width: 280,
+		isVisibleByDefault: false,
+		cell: ({ startedDateTime }) => {
+			const value = new Date(startedDateTime);
+			const content = getFormattedDateTime(startedDateTime, 'UTC');
+			return { value, content };
+		},
+	},
+};
+
+function getHeaderColumnsDefinition(headerNames: string[], type: 'request' | 'response') {
+	return headerNames.reduce<EnhancedTableColumnsDefinition<HAREntry>>((acc, headerName) => {
+		acc[`${type}_${headerName}`] = {
+			header: `${type}.${headerName}`,
+			width: 200,
+			isVisibleByDefault: false,
+			type: 'list',
+			cell: (item) => {
+				const value = item[type].headers.filter(({ name }) => name === headerName).map(({ value }) => value);
+				return { value };
+			},
+		};
+		return acc;
+	}, {});
+}
+
+interface HAREntriesViewerProps {
+	id?: string;
 	harEntries: HAREntry[];
 	onChange: (selectedHAREntry: HAREntry) => void;
 }
 
-function HAREntriesViewer({ harFileName, harEntries, onChange }: HAREntriesViewerProps) {
-	const [contentTypeFilters, setContentTypeFilters] = useState<ContentTypeGroup[]>([]);
-	const [shouldFilterErrors, setShouldFilterErrors] = useState(false);
-
-	const requestHeaders = useMemo(() => getUniqueHeaderNames(harEntries, 'request'), [harEntries]);
-	const responseHeaders = useMemo(() => getUniqueHeaderNames(harEntries, 'response'), [harEntries]);
-
-	const harEntriesWithErrorResponse = useMemo(() => getHAREntriesWithErrorResponse(harEntries), [harEntries]);
-
-	const harEntriesFilteredByContentType = useMemo(() => {
-		const contentTypeFilterReadyHAREntries = shouldFilterErrors ? harEntriesWithErrorResponse : harEntries;
-		return getHAREntriesFilteredByContentType(contentTypeFilterReadyHAREntries, contentTypeFilters);
-	}, [shouldFilterErrors, harEntriesWithErrorResponse, harEntries, contentTypeFilters]);
-
-	if (!harEntries.length) {
-		return;
-	}
+export default function HAREntriesViewer({
+	id,
+	harEntries,
+	onChange,
+}: HAREntriesViewerProps) {
+	const columnsDefinition = useMemo(() => {
+		const requestHeaders = getUniqueHeaderNames(harEntries, 'request');
+		const responseHeaders = getUniqueHeaderNames(harEntries, 'response');
+		const requestHeaderColumnsDefinition = getHeaderColumnsDefinition(requestHeaders, 'request');
+		const responseHeaderColumnsDefinition = getHeaderColumnsDefinition(responseHeaders, 'response');
+		return {
+			...DEFAULT_COLUMNS_DEFINITION,
+			...requestHeaderColumnsDefinition,
+			...responseHeaderColumnsDefinition,
+		};
+	}, [harEntries]);
 
 	return (
-		<Container
-			header={
-				<Header
-					counter={`(${harEntriesFilteredByContentType.length}/${harEntries.length})`}
-					actions={
-						<HorizontalGap>
-							<ContentTypeFilter contentTypeFilters={contentTypeFilters} onChange={setContentTypeFilters} />
-							<ErrorsFilter shouldFilterErrors={shouldFilterErrors} onChange={setShouldFilterErrors} />
-						</HorizontalGap>
-					}
-				>
-					{harFileName}
-				</Header>
-			}
-		>
-			<ListHAREntries
-				harEntries={harEntriesFilteredByContentType}
-				requestHeaders={requestHeaders}
-				responseHeaders={responseHeaders}
-				onChange={onChange}
-			/>
-		</Container>
+		<EnhancedTable
+			id={id ?? DEFAULT_TABLE_ID}
+			columnsDefinition={columnsDefinition}
+			items={harEntries}
+			empty="No HAR entries found"
+			selectionType="single"
+			onSelectionChange={(selectedHAREntries) => {
+				const selectedHAREntry = selectedHAREntries[0];
+				if (selectedHAREntry) {
+					onChange(selectedHAREntry);
+				}
+			}}
+		/>
 	);
 }
-
-export default withCustomErrorBoundary(HAREntriesViewer);

@@ -1,11 +1,11 @@
-import Flashbar, { type FlashbarProps } from '@cloudscape-design/components/flashbar';
-import withCustomErrorBoundary from '~/components/error-boundary';
+import type { FlashbarProps } from '@cloudscape-design/components/flashbar';
+import Flashbar from '@cloudscape-design/components/flashbar';
 
 interface FileUploadErrorProps {
 	errors: string[];
 }
 
-function FileUploadError({ errors }: FileUploadErrorProps) {
+export default function FileUploadError({ errors }: FileUploadErrorProps) {
 	const items: FlashbarProps.MessageDefinition[] = errors.map((error) => ({
 		type: 'error',
 		content: error,
@@ -14,5 +14,3 @@ function FileUploadError({ errors }: FileUploadErrorProps) {
 
 	return <Flashbar items={items} />;
 }
-
-export default withCustomErrorBoundary(FileUploadError);

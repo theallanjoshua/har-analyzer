@@ -12,17 +12,17 @@ yarn add @har-analyzer/components
 pnpm add @har-analyzer/components
 ```
 
-## Components
+## Components & Hooks
 
-Below are the available components and their usage examples:
+Below are the available exports and their usage examples:
 
-### HarAnalyzer ([Demo](https://theallanjoshua.github.io/har-analyzer/))
+### HARAnalyzer ([Demo](https://theallanjoshua.github.io/har-analyzer/))
 
 ```jsx
-import HarAnalyzer from '@har-analyzer/components/har-analyzer';
+import HARAnalyzer from '@har-analyzer/components/har-analyzer';
 
 function App() {
-  return <HarAnalyzer appName="HAR Analyzer" />;
+  return <HARAnalyzer appName="HAR Analyzer" />;
 }
 ```
 
@@ -33,20 +33,18 @@ function App() {
 | logo      | React.ReactNode | No       | A logo to display in the header.    |
 | appName   | string          | No       | The name of the application.        |
 
-
 ---
 
-### HAREntriesViewer
+### HARContentViewer
 
 ```jsx
-import HAREntriesViewer from '@har-analyzer/components/har-entries-viewer';
+import HARContentViewer from '@har-analyzer/components/har-content-viewer';
 
 function App() {
   return (
-    <HAREntriesViewer
+    <HARContentViewer
       harFileName="example.har"
       harContent={yourHarContent}
-      onChange={(selectedEntry) => console.log(selectedEntry)}
     />
   );
 }
@@ -58,7 +56,6 @@ function App() {
 |---------------|-------------------------------|----------|--------------------------------------------------|
 | harFileName   | string                        | No       | The name of the HAR file being viewed.          |
 | harContent    | HarContent                    | No       | The HAR file content object.                    |
-| onChange      | (entry: HAREntry) => void     | Yes      | Callback when a HAR entry is selected.          |
 
 ---
 
@@ -88,7 +85,7 @@ import HARFileUploader from '@har-analyzer/components/har-file-uploader';
 function App() {
   return (
     <HARFileUploader
-      onChange={(harContent, fileName) => console.log(harContent, fileName)}
+      onChange={({ harContent, harFileName }) => console.log(harContent, harFileName)}
     />
   );
 }
@@ -96,9 +93,38 @@ function App() {
 
 **Props:**
 
-| Name      | Type                                      | Required | Description                                      |
-|-----------|-------------------------------------------|----------|--------------------------------------------------|
-| onChange  | (harContent: HarContent, fileName?: string) => void | Yes      | Callback when a HAR file is uploaded.           |
+| Name      | Type                                                               | Required | Description                                      |
+|-----------|--------------------------------------------------------------------|----------|--------------------------------------------------|
+| onChange  | `(args: { harContent: HARContent; harFileName?: string }) => void` | Yes      | Callback when a HAR file is uploaded.           |
+
+---
+
+### useHAREntriesFilters
+
+A custom React hook for filtering and searching HAR network entries.
+
+```jsx
+import { useHAREntriesFilters } from '@har-analyzer/components';
+
+function App() {
+  const { filteredEntries, HAREntriesFilters } = useHAREntriesFilters(entries);
+  // ...
+}
+```
+
+---
+
+### HAR Utilities
+
+Various types and utilities for working with HTTP Archive (.har) files are directly exported.
+
+```typescript
+import {
+  getHARContentFromFile,
+  type HARContent,
+  type HAREntry
+} from '@har-analyzer/components';
+```
 
 ---
 
@@ -113,4 +139,4 @@ Contributions are welcome! Please open issues or pull requests on [GitHub](https
 
 ## License
 
-MIT
+[MIT](https://github.com/theallanjoshua/har-analyzer/blob/main/LICENSE)
