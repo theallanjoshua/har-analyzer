@@ -13,14 +13,18 @@ permissions:
   contents: write  # Grant write permissions to push version increment changes
 
 jobs:
-  publish:
+  publish-har-analyzer-components:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # Ensure you check out the actual branch instead of detached HEAD for git push
+          ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0 # Fetches all history for all tags and branches
 
-      - name: Set up Node.js
+      - name: Set up Node.js runtime
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*' # Use the latest stable LTS version of Node.js
