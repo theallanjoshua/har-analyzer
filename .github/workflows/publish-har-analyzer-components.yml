@@ -12,6 +12,12 @@ permissions:
   id-token: write  # Required for OIDC
   contents: write  # Grant write permissions to push version increment changes
 
+# Allow only one concurrent action under a group
+concurrency:
+  group: "har-analyzer"
+  # Waits until the previous action in the same group finishes before starting a new one
+  cancel-in-progress: false
+
 jobs:
   publish-har-analyzer-components:
     runs-on: ubuntu-latest
