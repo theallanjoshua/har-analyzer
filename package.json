@@ -10,7 +10,7 @@
 		"lint:fix": "turbo lint:fix",
 		"check-types": "turbo check-types",
 		"build": "turbo build",
-		"release": "pnpm run lint && pnpm run build"
+		"validate": "turbo validate"
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^7.4.3",

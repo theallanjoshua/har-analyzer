@@ -8,7 +8,9 @@
 		"lint:fix": "eslint --fix",
 		"check-types": "tsc --noEmit",
 		"dev": "vite",
-		"build": "vite build"
+		"build": "vite build",
+		"validate": "pnpm clean && pnpm lint && pnpm check-types && pnpm build",
+		"prepublishOnly": "pnpm validate"
 	},
 	"dependencies": {
 		"@cloudscape-design/board-components": "^3.0.150",

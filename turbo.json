@@ -11,18 +11,23 @@
 			"cache": false
 		},
 		"check-types": {
-			"dependsOn": ["^check-types"],
-			"cache": true
+			"cache": true,
+			"dependsOn": ["^check-types"]
 		},
 		"dev": {
-			"persistent": true,
 			"cache": false,
-			"dependsOn": ["^build"]
+			"dependsOn": ["^build"],
+			"persistent": true
 		},
 		"build": {
-			"outputs": ["dist/**"],
-			"dependsOn": ["^build", "check-types"],
-			"cache": true
+			"cache": true,
+			"dependsOn": ["^build"],
+			"outputs": ["dist/**"]
+		},
+		"validate": {
+			"cache": true,
+			"dependsOn": ["^validate"],
+			"outputs": ["dist/**"]
 		}
 	}
 }

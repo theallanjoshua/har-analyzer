@@ -44,7 +44,9 @@
 		"lint:fix": "eslint --fix",
 		"check-types": "tsc --noEmit",
 		"dev": "vite build --watch",
-		"build": "vite build"
+		"build": "vite build",
+		"validate": "pnpm clean && pnpm lint && pnpm check-types && pnpm build",
+		"prepublishOnly": "pnpm validate"
 	},
 	"peerDependencies": {
 		"@cloudscape-design/board-components": "^3.0.150",

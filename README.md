@@ -1,4 +1,4 @@
-# HAR Analyzer 
+# HAR Analyzer
 
 A modern, interactive web application for inspecting and analyzing HTTP Archive (.har) files. Built with React and the Cloudscape Design System, this monorepo provides both a standalone reusable component library and a fully-featured client-side web application.
 
@@ -71,6 +71,23 @@ pnpm run dev
 ```
 
 The web application will typically be available at `http://localhost:5173` (check your terminal output for the exact URL).
+
+#### Testing GitHub Actions Locally
+
+You can test the GitHub Actions workflows locally using [act](https://github.com/nektos/act).
+
+1. Install a Docker runtime like [OrbStack](https://orbstack.dev/) (recommended for macOS) or Docker Desktop. Wait for it to be fully running.
+   ```sh
+   brew install --cask orbstack
+   ```
+2. Install `act`:
+   ```sh
+   brew install act
+   ```
+3. Run a workflow locally (e.g., using dry-run `-n` to prevent actual git pushes and npm publishes):
+   ```sh
+   act workflow_dispatch -W .github/workflows/publish-har-analyzer-components.yml -n
+   ```
 
 ## 📜 Available Scripts
 
