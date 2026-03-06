@@ -1,6 +1,6 @@
 import dbStorage from 'local-db-storage';
 
-export const localStorage = {
+export const browserStorage = {
 	get: async (key: string): Promise<string | undefined> => {
 		return await dbStorage.getItem(key);
 	},

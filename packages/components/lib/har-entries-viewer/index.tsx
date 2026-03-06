@@ -8,7 +8,7 @@ import EnhancedTable from '~/components/enhanced-table';
 import { getFormattedCurrentTimeZone, getFormattedDateTime } from '~/utils/date';
 import { getUniqueHeaderNames, isErrorResponse } from '~/utils/har';
 
-// This ID is used to store user's table preferences in local storage.
+// This ID is used to store user's table preferences
 // It should be unique across the application.
 // Changing this ID will reset user's table preferences.
 const DEFAULT_TABLE_ID = 'list-har-entries';
