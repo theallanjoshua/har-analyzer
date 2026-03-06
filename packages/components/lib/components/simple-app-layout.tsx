@@ -1,7 +1,7 @@
 import AppLayout from '@cloudscape-design/components/app-layout';
 import { I18nProvider } from '@cloudscape-design/components/i18n';
 import enMessages from '@cloudscape-design/components/i18n/messages/all.en';
-import useAppContentWidth from '~/hooks/app-content-width';
+import { useAppContentWidthPreference } from '~/hooks/app-preferences';
 import EnhancedTopNavigation, { ENHANCED_TOP_NAVIGATION_ID } from './enhanced-top-navigation';
 import SimpleAppPreferences from './simple-app-preferences';
 
@@ -16,7 +16,7 @@ export default function SimpleAppLayout({
 	appName,
 	content,
 }: SimpleAppLayoutProps) {
-	const [isFullContentWidth] = useAppContentWidth();
+	const [isFullContentWidth] = useAppContentWidthPreference();
 
 	return (
 		<I18nProvider locale="en" messages={[enMessages]}>

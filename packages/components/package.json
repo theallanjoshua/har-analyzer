@@ -62,8 +62,8 @@
 		"buffer": "^6.0.3",
 		"date-fns": "^4.1.0",
 		"date-fns-tz": "^3.2.0",
+		"local-db-storage": "^2.0.0",
 		"pretty-bytes": "^7.0.0",
-		"react-error-boundary": "^6.0.0",
-		"use-local-storage-state": "^19.5.0"
+		"react-error-boundary": "^6.0.0"
 	}
 }

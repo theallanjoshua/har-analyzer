@@ -98,6 +98,9 @@ importers:
       date-fns-tz:
         specifier: ^3.2.0
         version: 3.2.0(date-fns@4.1.0)
+      local-db-storage:
+        specifier: ^2.0.0
+        version: 2.0.0
       pretty-bytes:
         specifier: ^7.0.0
         version: 7.0.0
@@ -2144,6 +2147,10 @@ packages:
   levn@0.4.1:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
+
+  local-db-storage@2.0.0:
+    resolution: {integrity: sha512-twNHf1Wo+Xyrv7eN2FvQlIpUpttl+Gbf7mVAZxz0i+nzW9fL4nhyWvv4XMQI6rEnlgCj//liz77l2J/gL2A3RA==}
+    engines: {node: '>=16'}
 
   local-pkg@1.1.1:
     resolution: {integrity: sha512-WunYko2W1NcdfAFpuLUoucsgULmgDBRkdxHxWQ7mK0cQqwPiy8E1enjuRBrhLtZkB5iScJ1XIPdhVEFK8aOLSg==}
@@ -5018,6 +5025,8 @@ snapshots:
     dependencies:
       prelude-ls: 1.2.1
       type-check: 0.4.0
+
+  local-db-storage@2.0.0: {}
 
   local-pkg@1.1.1:
     dependencies:

@@ -9,6 +9,7 @@ const entryRoot = 'lib';
 
 const COMPONENT_FOLDERS = [
 	'har-analyzer',
+	'har-analyzer-preferences',
 	'har-content-viewer',
 	'har-entries-filters',
 	'har-entries-viewer',

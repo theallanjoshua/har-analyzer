@@ -114,6 +114,31 @@ function App() {
 
 ---
 
+### HARAnalyzerPreferencesProvider
+
+Provides a persistent context for managing user preferences (like theme, content width, table preferences and board layouts). By default, preferences rely on browser storage. However, you can provide a custom async store (e.g., to save preferences to a backend database or external extension API) by wrapping your application in `HARAnalyzerPreferencesProvider`.
+
+```jsx
+import HARAnalyzerPreferencesProvider from '@har-analyzer/components/har-analyzer-preferences';
+
+// Optional: Custom external store
+const customStore = {
+  getPreference: async (key) => fetch(`/api/prefs/${key}`).then(res => res.text()),
+  setPreference: async (key, value) => { await fetch(`/api/prefs/${key}`, { method: 'POST', body: value }) }
+};
+
+function App() {
+  return (
+    <HARAnalyzerPreferencesProvider store={customStore}>
+      <HARAnalyzer appName="HAR Analyzer" />;
+    </HARAnalyzerPreferencesProvider>
+  );
+}
+
+```
+
+---
+
 ### HAR Utilities
 
 Various types and utilities for working with HTTP Archive (.har) files are directly exported.

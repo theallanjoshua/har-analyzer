@@ -1,8 +1,8 @@
 import Toggle from '@cloudscape-design/components/toggle';
-import useAppContentWidth from '~/hooks/app-content-width';
+import { useAppContentWidthPreference } from '~/hooks/app-preferences';
 
 export default function ContentWidthSwitcher() {
-	const [isFullContentWidth, setFullContentWidth] = useAppContentWidth();
+	const [isFullContentWidth, setFullContentWidth] = useAppContentWidthPreference();
 
 	return (
 		<Toggle onChange={({ detail }) => { setFullContentWidth(detail.checked); }} checked={isFullContentWidth}>

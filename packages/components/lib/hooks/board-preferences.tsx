@@ -1,6 +1,6 @@
 import type { EnhancedBoardProps } from '~/components/enhanced-board';
-import useLocalStorage from './local-storage';
+import { useHARAnalyzerPreferences } from '~/har-analyzer-preferences';
 
 export default function useBoardDefinitionsPreference(boardId: string, defaultDefinitionsPreference: EnhancedBoardProps['definitions']) {
-	return useLocalStorage(`boardDefinitionsPreference_${boardId}`, defaultDefinitionsPreference);
+	return useHARAnalyzerPreferences(`boardDefinitionsPreference_${boardId}`, defaultDefinitionsPreference);
 }
