@@ -6,6 +6,7 @@ on:
     branches:
       - main
     paths:
+      - '.github/workflows/publish-har-analyzer-components.yml' # Trigger this workflow when the definition changes
       - 'packages/components/**' # Trigger whenever files in the components package change
 
 permissions:
