@@ -78,7 +78,7 @@ export default antfu(
 			'perfectionist/sort-imports': [
 				'error',
 				{
-					internalPattern: ['^!/.+', '^~/.+'],
+					internalPattern: ['^@har-analyzer/.+', '^!/.+', '^~/.+'],
 					newlinesBetween: 0,
 				},
 			],

@@ -1,8 +1,12 @@
-import HarAnalyzer from '@har-analyzer/components/har-analyzer';
+import { I18nProvider } from '@cloudscape-design/components/i18n';
+import enMessages from '@cloudscape-design/components/i18n/messages/all.en';
 import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import useLocalStorageState from 'use-local-storage-state';
+import HARAnalyzer from '@har-analyzer/components/har-analyzer';
+import HARAnalyzerPreferencesProvider from '@har-analyzer/components/har-analyzer-preferences';
 import '@cloudscape-design/global-styles/index.css';
 import './index.scss';
-import { createRoot } from 'react-dom/client';
 
 const ROOT_ID = 'root';
 const domNode = document.getElementById(ROOT_ID);
@@ -13,9 +17,18 @@ if (!domNode) {
 	throw new Error(errorMessage);
 }
 
+function usePreferenceStore(key: string) {
+	const [value, setValue] = useLocalStorageState<string>(key);
+	return [value, setValue] as const;
+}
+
 const root = createRoot(domNode);
 root.render(
 	<StrictMode>
-		<HarAnalyzer appName='HAR Analyzer' />
+		<I18nProvider locale="en" messages={[enMessages]}>
+			<HARAnalyzerPreferencesProvider usePreferenceStore={usePreferenceStore}>
+				<HARAnalyzer appName='Haroscope' />
+			</HARAnalyzerPreferencesProvider>
+		</I18nProvider>
 	</StrictMode>,
 );

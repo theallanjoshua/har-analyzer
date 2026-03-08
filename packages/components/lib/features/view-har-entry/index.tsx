@@ -5,11 +5,11 @@ import HeadersViewer from './components/headers-viewer';
 import PayloadViewer from './components/payload-viewer';
 import ResponseViewer from './components/response-viewer';
 
-export interface HAREntryViewerProps {
+export interface ViewHAREntryProps {
 	harEntry: HAREntry;
 }
 
-export default function HAREntryViewer({ harEntry }: HAREntryViewerProps) {
+export default function ViewHAREntry({ harEntry }: ViewHAREntryProps) {
 	return (
 		<Tabs
 			tabs={[

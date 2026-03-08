@@ -2,7 +2,7 @@ import Box from '@cloudscape-design/components/box';
 import FileDropzone from '@cloudscape-design/components/file-dropzone';
 import FileInput from '@cloudscape-design/components/file-input';
 import { useState } from 'react';
-import type { HARContent } from '~/utils/har';
+import type { HAREntry } from '~/utils/har';
 import VerticalGap from '~/components/vertical-gap';
 import {
 	getFilesErrors,
@@ -13,7 +13,7 @@ import { getHARContentFromFile } from '~/utils/har';
 import FileUploadError from './file-upload-error';
 
 export interface HARFileUploaderProps {
-	onChange: (args: { harContent: HARContent; harFileName?: string }) => void;
+	onChange: (args: { harEntries: HAREntry[]; harFileName?: string }) => void;
 }
 
 export default function HARFileUploader({ onChange }: HARFileUploaderProps) {
@@ -32,10 +32,10 @@ export default function HARFileUploader({ onChange }: HARFileUploaderProps) {
 			const harFileName = file?.name;
 			const fileContents = await readFileContents(file);
 			const harContent = getHARContentFromFile(fileContents);
-			onChange({ harContent, harFileName });
+			const harEntries = harContent.log.entries;
+			onChange({ harEntries, harFileName });
 		}
 		catch (error) {
-			console.error('Error reading HAR file:', error);
 			const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
 			setFilesErrors([errorMessage]);
 		}

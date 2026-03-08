@@ -14,6 +14,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^2.13.0
         version: 2.13.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.8.3)
+      '@types/chrome':
+        specifier: ^0.1.37
+        version: 0.1.37
       '@types/har-format':
         specifier: ^1.2.16
         version: 1.2.16
@@ -69,6 +72,36 @@ importers:
         specifier: ^5.1.4
         version: 5.1.4(typescript@5.8.3)(vite@7.0.6(@types/node@25.3.3)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.2))
 
+  packages/chromium-extension:
+    dependencies:
+      '@cloudscape-design/board-components':
+        specifier: ^3.0.150
+        version: 3.0.150(@cloudscape-design/components@3.0.1031(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
+      '@cloudscape-design/code-view':
+        specifier: ^3.0.66
+        version: 3.0.68(@cloudscape-design/components@3.0.1031(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
+      '@cloudscape-design/collection-hooks':
+        specifier: ^1.0.73
+        version: 1.0.73(react@19.1.0)
+      '@cloudscape-design/components':
+        specifier: ^3.0.1022
+        version: 3.0.1031(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@cloudscape-design/design-tokens':
+        specifier: ^3.0.59
+        version: 3.0.59
+      '@cloudscape-design/global-styles':
+        specifier: ^1.0.44
+        version: 1.0.45
+      '@har-analyzer/components':
+        specifier: workspace:*
+        version: link:../components
+      react:
+        specifier: ^19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^19.1.0
+        version: 19.1.0(react@19.1.0)
+
   packages/components:
     dependencies:
       '@cloudscape-design/board-components':
@@ -89,6 +122,9 @@ importers:
       '@cloudscape-design/global-styles':
         specifier: ^1.0.44
         version: 1.0.45
+      '@uiw/react-json-view':
+        specifier: 2.0.0-alpha.41
+        version: 2.0.0-alpha.41(@babel/runtime@7.28.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
@@ -98,9 +134,6 @@ importers:
       date-fns-tz:
         specifier: ^3.2.0
         version: 3.2.0(date-fns@4.1.0)
-      local-db-storage:
-        specifier: ^2.0.0
-        version: 2.0.0
       pretty-bytes:
         specifier: ^7.0.0
         version: 7.0.0
@@ -143,6 +176,9 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
+      use-local-storage-state:
+        specifier: ^19.5.0
+        version: 19.5.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
 
 packages:
 
@@ -1039,6 +1075,9 @@ packages:
   '@types/babel__traverse@7.20.7':
     resolution: {integrity: sha512-dkO5fhS7+/oos4ciWxyEyjWe48zmG6wbCheo/G2ZnHx4fs3EU6YC6UM8rk56gAjNJ9P3MTH2jo5jb92/K6wbng==}
 
+  '@types/chrome@0.1.37':
+    resolution: {integrity: sha512-IJE4ceuDO7lrEuua7Pow47zwNcI8E6qqkowRP7aFPaZ0lrjxh6y836OPqqkIZeTX64FTogbw+4RNH0+QrweCTQ==}
+
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
 
@@ -1047,6 +1086,12 @@ packages:
 
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
+
+  '@types/filesystem@0.0.36':
+    resolution: {integrity: sha512-vPDXOZuannb9FZdxgHnqSwAG/jvdGM8Wq+6N4D/d80z+D4HWH+bItqsZaVRQykAn6WEVeEkLm2oQigyHtgb0RA==}
+
+  '@types/filewriter@0.0.33':
+    resolution: {integrity: sha512-xFU8ZXTw4gd358lb2jw25nxY9QAgqn2+bKKjKOYfNCzN4DKCFetK7sPtrlpg66Ywe3vWY9FNxprZawAh9wfJ3g==}
 
   '@types/har-format@1.2.16':
     resolution: {integrity: sha512-fluxdy7ryD3MV6h8pTfTYpy/xQzCFC7m89nOH9y94cNqJ1mDIDPut7MnRHI3F6qRmh/cT2fUjG1MLdCNb4hE9A==}
@@ -1138,6 +1183,13 @@ packages:
   '@typescript-eslint/visitor-keys@8.56.1':
     resolution: {integrity: sha512-KiROIzYdEV85YygXw6BI/Dx4fnBlFQu6Mq4QE4MOH9fFnhohw6wX/OAvDY2/C+ut0I3RSPKenvZJIVYqJNkhEw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@uiw/react-json-view@2.0.0-alpha.41':
+    resolution: {integrity: sha512-botRpQ5AgymYEsqXSdT2/1LefAJEYfMntvdnx1SqhTQCTW9HygeFZXx9inkYqUmiQZ3+0QlZnodjBvwnUfZhVA==}
+    peerDependencies:
+      '@babel/runtime': '>=7.10.0'
+      react: '>=18.0.0'
+      react-dom: '>=18.0.0'
 
   '@unrs/resolver-binding-android-arm-eabi@1.11.1':
     resolution: {integrity: sha512-ppLRUgHVaGRWUx0R0Ut06Mjo9gBaBkg3v/8AxusGLhsIotbBLuRk51rAzqLC8gq6NyyAojEXglNjzf6R948DNw==}
@@ -2145,10 +2197,6 @@ packages:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
 
-  local-db-storage@2.0.0:
-    resolution: {integrity: sha512-twNHf1Wo+Xyrv7eN2FvQlIpUpttl+Gbf7mVAZxz0i+nzW9fL4nhyWvv4XMQI6rEnlgCj//liz77l2J/gL2A3RA==}
-    engines: {node: '>=16'}
-
   local-pkg@1.1.1:
     resolution: {integrity: sha512-WunYko2W1NcdfAFpuLUoucsgULmgDBRkdxHxWQ7mK0cQqwPiy8E1enjuRBrhLtZkB5iScJ1XIPdhVEFK8aOLSg==}
     engines: {node: '>=14'}
@@ -2787,6 +2835,13 @@ packages:
 
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
+
+  use-local-storage-state@19.5.0:
+    resolution: {integrity: sha512-sUJAyFvsmqMpBhdwaRr7GTKkkoxb6PWeNVvpBDrLuwQF1PpbJRKIbOYeLLeqJI7B3wdfFlLLCBbmOdopiSTBOw==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      react: '>=18'
+      react-dom: '>=18'
 
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
@@ -3804,6 +3859,11 @@ snapshots:
     dependencies:
       '@babel/types': 7.28.2
 
+  '@types/chrome@0.1.37':
+    dependencies:
+      '@types/filesystem': 0.0.36
+      '@types/har-format': 1.2.16
+
   '@types/debug@4.1.12':
     dependencies:
       '@types/ms': 2.1.0
@@ -3811,6 +3871,12 @@ snapshots:
   '@types/esrecurse@4.3.1': {}
 
   '@types/estree@1.0.8': {}
+
+  '@types/filesystem@0.0.36':
+    dependencies:
+      '@types/filewriter': 0.0.33
+
+  '@types/filewriter@0.0.33': {}
 
   '@types/har-format@1.2.16': {}
 
@@ -3940,6 +4006,12 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.56.1
       eslint-visitor-keys: 5.0.1
+
+  '@uiw/react-json-view@2.0.0-alpha.41(@babel/runtime@7.28.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@babel/runtime': 7.28.2
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   '@unrs/resolver-binding-android-arm-eabi@1.11.1':
     optional: true
@@ -5016,8 +5088,6 @@ snapshots:
       prelude-ls: 1.2.1
       type-check: 0.4.0
 
-  local-db-storage@2.0.0: {}
-
   local-pkg@1.1.1:
     dependencies:
       mlly: 1.7.4
@@ -5828,6 +5898,11 @@ snapshots:
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
+
+  use-local-storage-state@19.5.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   util-deprecate@1.0.2: {}
 

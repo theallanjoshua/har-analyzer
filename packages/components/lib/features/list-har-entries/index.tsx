@@ -6,7 +6,11 @@ import type { EnhancedTableColumnsDefinition } from '~/components/enhanced-table
 import type { HAREntry } from '~/utils/har';
 import EnhancedTable from '~/components/enhanced-table';
 import { getFormattedCurrentTimeZone, getFormattedDateTime } from '~/utils/date';
-import { getUniqueHeaderNames, isErrorResponse } from '~/utils/har';
+import {
+	getHAREntryId,
+	getUniqueHeaderNames,
+	isErrorResponse,
+} from '~/utils/har';
 
 // This ID is used to store user's table preferences
 // It should be unique across the application.
@@ -14,8 +18,23 @@ import { getUniqueHeaderNames, isErrorResponse } from '~/utils/har';
 const DEFAULT_TABLE_ID = 'list-har-entries';
 
 const DEFAULT_COLUMNS_DEFINITION: EnhancedTableColumnsDefinition<HAREntry> = {
+	shortUrl: {
+		header: 'Short URL',
+		cell: (item) => {
+			const { url } = item.request;
+			// eslint-disable-next-line ts/prefer-nullish-coalescing
+			const value = url.split('/').at(-1) || url;
+			const content = (
+				<Link external href={url}>
+					{value}
+				</Link>
+			);
+			return { value, content };
+		},
+	},
 	url: {
 		header: 'URL',
+		isVisibleByDefault: false,
 		cell: (item) => {
 			const value = item.request.url;
 			const content = (
@@ -134,17 +153,17 @@ function getHeaderColumnsDefinition(headerNames: string[], type: 'request' | 're
 	}, {});
 }
 
-interface HAREntriesViewerProps {
+interface ListHAREntriesProps {
 	id?: string;
 	harEntries: HAREntry[];
 	onChange: (selectedHAREntry: HAREntry) => void;
 }
 
-export default function HAREntriesViewer({
+export default function ListHAREntries({
 	id,
 	harEntries,
 	onChange,
-}: HAREntriesViewerProps) {
+}: ListHAREntriesProps) {
 	const columnsDefinition = useMemo(() => {
 		const requestHeaders = getUniqueHeaderNames(harEntries, 'request');
 		const responseHeaders = getUniqueHeaderNames(harEntries, 'response');
@@ -162,6 +181,7 @@ export default function HAREntriesViewer({
 			id={id ?? DEFAULT_TABLE_ID}
 			columnsDefinition={columnsDefinition}
 			items={harEntries}
+			getRowId={getHAREntryId}
 			empty="No HAR entries found"
 			selectionType="single"
 			onSelectionChange={(selectedHAREntries) => {

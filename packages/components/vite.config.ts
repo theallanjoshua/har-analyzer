@@ -1,4 +1,6 @@
 import react from '@vitejs/plugin-react';
+import { readdirSync, statSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import { libInjectCss } from 'vite-plugin-lib-inject-css';
@@ -6,38 +8,38 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json' with { type: 'json' };
 
 const entryRoot = 'lib';
+// If you change the below root, ensure the exports field in package.json is updated accordingly
+const featuresRoot = 'features';
+const featuresDir = resolve(__dirname, entryRoot, featuresRoot);
 
-const COMPONENT_FOLDERS = [
-	'har-analyzer',
-	'har-analyzer-preferences',
-	'har-content-viewer',
-	'har-entries-filters',
-	'har-entries-viewer',
-	'har-entry-viewer',
-	'har-file-uploader',
-];
+const featureFolders = readdirSync(featuresDir).filter((file) => {
+	const filePath = resolve(featuresDir, file);
+	return statSync(filePath).isDirectory();
+});
 
-const componentSpecificEntries = COMPONENT_FOLDERS.reduce<
+const featureEntries = featureFolders.reduce<
 	Record<string, string>
 >((acc, folder) => {
-	acc[folder] = `./${entryRoot}/${folder}/index.tsx`;
+	acc[folder] = `./${entryRoot}/${featuresRoot}/${folder}/index.tsx`;
 	return acc;
 }, {});
 
 // https://vite.dev/config/
 export default defineConfig({
 	plugins: [
-		react(),
+		react({
+			jsxRuntime: 'automatic', // explicitly tell Vite to use the modern runtime instead of injecting import { jsx as _jsx } from "react/jsx-runtime"
+		}),
 		tsconfigPaths(),
 		libInjectCss(),
-		dts({ rollupTypes: true, entryRoot }),
+		dts({ entryRoot }),
 	],
 	build: {
 		minify: true,
 		lib: {
 			entry: {
 				index: `./${entryRoot}/index.ts`,
-				...componentSpecificEntries,
+				...featureEntries,
 			},
 			formats: ['es'],
 		},

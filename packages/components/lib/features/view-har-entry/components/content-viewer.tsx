@@ -2,7 +2,9 @@ import CodeView from '@cloudscape-design/code-view/code-view';
 import CopyToClipboard from '@cloudscape-design/components/copy-to-clipboard';
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import { Buffer } from 'buffer';
+import JSONViewer from '~/components/json-viewer';
 import { getContentTypeGroup, getSyntaxHighlight } from '~/utils/content-type';
+import { safeDeserialize } from '~/utils/json';
 
 interface ContentViewerProps {
 	content: string;
@@ -28,29 +30,29 @@ export default function ContentViewer({
 		);
 	}
 
+	let highlight = getSyntaxHighlight(mimeType);
+
 	let decodedContent = content;
+
 	if (encoding === 'base64') {
 		decodedContent = Buffer.from(content, encoding).toString('utf8');
 	}
 
-	let prettifiedContent = decodedContent;
 	if (contentTypeGroup === 'JSON') {
-		try {
-			prettifiedContent = JSON.stringify(JSON.parse(decodedContent), null, 2);
+		const [deserializedContent, deserializationError] = safeDeserialize<object>(decodedContent);
+		if (!deserializationError) {
+			return <JSONViewer data={deserializedContent} />;
 		}
-		catch (error) {
-			console.error('Failed to parse JSON content', error);
-		}
+		highlight = undefined;
 	}
-
-	const highlight = getSyntaxHighlight(mimeType);
 
 	return (
 		<CodeView
 			lineNumbers
-			content={prettifiedContent}
+			wrapLines
+			content={decodedContent}
 			highlight={highlight}
-			actions={<CopyToClipboard copyErrorText="Copy failed" copySuccessText="Copied" textToCopy={prettifiedContent} />}
+			actions={<CopyToClipboard copyErrorText="Copy failed" copySuccessText="Copied" textToCopy={decodedContent} />}
 		/>
 	);
 }

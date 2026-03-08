@@ -40,8 +40,7 @@ export function readFileContents(file: File | undefined) {
 			}
 			catch (e) {
 				const errorMessage = 'Failed to JSON parse file content';
-				console.error(`${errorMessage}:`, e);
-				reject(new Error('errorMessage'));
+				reject(new Error(errorMessage, { cause: e }));
 			}
 		};
 

@@ -21,16 +21,11 @@ export function getHARContentFromFile(fileContent: unknown): HARContent {
 	}
 	catch (error) {
 		const errorMessage = 'Failed to JSON parse file content';
-		console.error(errorMessage, error);
-		throw new Error(errorMessage);
+		throw new Error(errorMessage, { cause: error });
 	}
 }
 
-export function getEntriesFromHAR(harContent?: Har) {
-	return harContent?.log.entries ?? [];
-}
-
-type HAREntryWithoutError = ReturnType<typeof getEntriesFromHAR>[number];
+type HAREntryWithoutError = HARContent['log']['entries'][number];
 type HARResponseWithError = HAREntryWithoutError['response'] & { _error?: string };
 export type HAREntry = Omit<HAREntryWithoutError, 'response'> & {
 	response: HARResponseWithError;
@@ -68,4 +63,8 @@ export function getUniqueHeaderNames(harEntries: HAREntry[], type: 'request' | '
 		});
 	});
 	return Array.from(headerNames);
+}
+
+export function getHAREntryId(harEntry: HAREntry) {
+	return `${harEntry.startedDateTime}_${harEntry.time}_${harEntry.request.url}`;
 }

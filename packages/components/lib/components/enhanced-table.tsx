@@ -195,6 +195,7 @@ function getTablePreferencesWithoutStaleColumns<TItem>(
 interface EnhancedTableProps<TItem> {
 	id: string;
 	items: TItem[];
+	getRowId: (item: TItem) => string;
 	columnsDefinition: EnhancedTableColumnsDefinition<TItem>;
 	empty?: React.ReactNode;
 	selectionType?: 'single' | 'multi';
@@ -204,19 +205,22 @@ interface EnhancedTableProps<TItem> {
 export default function EnhancedTable<TItem>({
 	id,
 	items: originalItems,
+	getRowId,
 	columnsDefinition: enhancedColumnDefinitions,
 	empty,
 	selectionType,
 	onSelectionChange,
 }: EnhancedTableProps<TItem>) {
-	const filteringProperties = useMemo(
-		() => getFilteringProperties(enhancedColumnDefinitions),
-		[enhancedColumnDefinitions],
-	);
-
 	const enhancedTableItems = useMemo(
 		() => getEnhancedTableItems(originalItems, enhancedColumnDefinitions),
 		[originalItems, enhancedColumnDefinitions],
+	);
+
+	const trackBy = (item: EnhancedTableItem<TItem>) => getRowId(item.__originalItem__);
+
+	const filteringProperties = useMemo(
+		() => getFilteringProperties(enhancedColumnDefinitions),
+		[enhancedColumnDefinitions],
 	);
 
 	const {
@@ -229,7 +233,7 @@ export default function EnhancedTable<TItem>({
 			filteringProperties,
 		},
 		sorting: {},
-		selection: { keepSelection: true },
+		selection: { keepSelection: true, trackBy },
 	});
 
 	const columnDisplayPreferenceOptions = useMemo(
@@ -237,10 +241,12 @@ export default function EnhancedTable<TItem>({
 		[enhancedColumnDefinitions],
 	);
 
-	const [tablePreferences, setTablePreferences] = useTablePreferences(id, {
+	const initialTablePreferences = useMemo(() => ({
 		contentDisplay: columnDisplayPreferenceOptions,
 		wrapLines: false,
-	});
+	}), [columnDisplayPreferenceOptions]);
+
+	const [tablePreferences, setTablePreferences] = useTablePreferences(id, initialTablePreferences);
 
 	const columnDefinitions = useMemo(() => getColumnDefinitions(enhancedColumnDefinitions), [enhancedColumnDefinitions]);
 
@@ -274,6 +280,7 @@ export default function EnhancedTable<TItem>({
 				setPreferredColumnWidths(newPreferredColumnWidths);
 			}}
 			items={items}
+			trackBy={trackBy}
 			empty={empty}
 			selectionType={selectionType}
 			onSelectionChange={(event) => {

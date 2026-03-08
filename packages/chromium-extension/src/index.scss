@@ -1,0 +1,5 @@
+@use '@cloudscape-design/design-tokens/index.scss' as awsui;
+
+body {
+  background-color: awsui.$color-background-container-content
+}

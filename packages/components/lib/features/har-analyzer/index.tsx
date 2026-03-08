@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import type { HARFileUploaderProps } from '~/har-file-uploader';
-import type { HARContent } from '~/utils/har';
+import type { HARFileUploaderProps } from '~/features/har-file-uploader';
+import type { HAREntry } from '~/utils/har';
 import SimpleAppLayout from '~/components/simple-app-layout';
 import VerticalGap from '~/components/vertical-gap';
-import HARFileUploader from '~/har-file-uploader';
-import HarContentViewer from '../har-content-viewer/index.js';
+import HARContentViewer from '~/features/har-entries-viewer';
+import HARFileUploader from '~/features/har-file-uploader';
 
 const DEFAULT_HAR_FILE_NAME = 'unknown.har';
 
@@ -15,10 +15,10 @@ export interface HARAnalyzerProps {
 
 export default function HARAnalyzer({ logo, appName = 'HAR Analyzer' }: HARAnalyzerProps) {
 	const [harFileName, setHARFileName] = useState<string>(DEFAULT_HAR_FILE_NAME);
-	const [harContent, setHARContent] = useState<HARContent>();
+	const [harEntries, setHAREntries] = useState<HAREntry[]>([]);
 
-	const onHARUpload: HARFileUploaderProps['onChange'] = ({ harContent, harFileName }) => {
-		setHARContent(harContent);
+	const onHARUpload: HARFileUploaderProps['onChange'] = ({ harEntries, harFileName }) => {
+		setHAREntries(harEntries);
 		setHARFileName(harFileName ?? DEFAULT_HAR_FILE_NAME);
 	};
 
@@ -29,7 +29,7 @@ export default function HARAnalyzer({ logo, appName = 'HAR Analyzer' }: HARAnaly
 			content={
 				<VerticalGap>
 					<HARFileUploader onChange={onHARUpload} />
-					{harContent && <HarContentViewer harFileName={harFileName} harContent={harContent} />}
+					<HARContentViewer title={harFileName} harEntries={harEntries} />
 				</VerticalGap>
 			}
 		/>

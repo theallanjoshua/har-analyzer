@@ -24,4 +24,8 @@ const repositoryName = getRepositoryName();
 export default defineConfig({
 	base: `/${repositoryName}/`,
 	plugins: [react(), tsconfigPaths()],
+	server: {
+		port: 3000,
+		strictPort: true, // Fail if port if unavailable
+	},
 });

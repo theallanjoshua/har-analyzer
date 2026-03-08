@@ -1,0 +1,9 @@
+{
+	"manifest_version": 3,
+	"name": "Haroscope",
+	"version": "1.0.0",
+	"description": "DevTools extension to capture and analyze HTTP requests",
+	"devtools_page": "devtools.html",
+	"permissions": ["storage"],
+	"host_permissions": ["<all_urls>"]
+}

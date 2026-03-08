@@ -20,7 +20,7 @@ export function getFormattedDateTime(dateString: string, timeZone?: string) {
 		return formatInTimeZone(new Date(dateString), currentTimeZone, DEFAULT_DATE_TIME_FORMAT);
 	}
 	catch (error) {
-		console.error('Error formatting date:', error);
+		console.warn('Error formatting date:', error);
 		return dateString; // Fallback to original string if formatting fails
 	}
 }
