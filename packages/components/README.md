@@ -1,5 +1,10 @@
 # @har-analyzer/components
 
+[![npm version](https://img.shields.io/npm/v/@har-analyzer/components.svg?style=flat)](https://www.npmjs.com/package/@har-analyzer/components)
+[![npm bundle size (minified + gzip)](https://img.shields.io/bundlephobia/minzip/@har-analyzer/components.svg?style=flat)](https://bundlephobia.com/package/@har-analyzer/components)
+[![build status](https://img.shields.io/github/actions/workflow/status/theallanjoshua/har-analyzer/publish-har-analyzer-components.yml?branch=main&style=flat)](https://github.com/theallanjoshua/har-analyzer/actions)
+
+
 Reusable React components for HAR Analyzer.
 
 ## ✨ Features
