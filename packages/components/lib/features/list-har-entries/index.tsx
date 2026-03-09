@@ -156,7 +156,7 @@ function getHeaderColumnsDefinition(headerNames: string[], type: 'request' | 're
 interface ListHAREntriesProps {
 	id?: string;
 	harEntries: HAREntry[];
-	onChange: (selectedHAREntry: HAREntry) => void;
+	onChange: (selectedHAREntries: HAREntry[]) => void;
 }
 
 export default function ListHAREntries({
@@ -183,13 +183,8 @@ export default function ListHAREntries({
 			items={harEntries}
 			getRowId={getHAREntryId}
 			empty="No HAR entries found"
-			selectionType="single"
-			onSelectionChange={(selectedHAREntries) => {
-				const selectedHAREntry = selectedHAREntries[0];
-				if (selectedHAREntry) {
-					onChange(selectedHAREntry);
-				}
-			}}
+			selectionType="multi"
+			onSelectionChange={onChange}
 		/>
 	);
 }

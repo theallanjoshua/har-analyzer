@@ -3,7 +3,7 @@ import type { HARFileUploaderProps } from '~/features/har-file-uploader';
 import type { HAREntry } from '~/utils/har';
 import SimpleAppLayout from '~/components/simple-app-layout';
 import VerticalGap from '~/components/vertical-gap';
-import HARContentViewer from '~/features/har-entries-viewer';
+import HAREntriesViewer from '~/features/har-entries-viewer';
 import HARFileUploader from '~/features/har-file-uploader';
 
 const DEFAULT_HAR_FILE_NAME = 'unknown.har';
@@ -29,7 +29,7 @@ export default function HARAnalyzer({ logo, appName = 'HAR Analyzer' }: HARAnaly
 			content={
 				<VerticalGap>
 					<HARFileUploader onChange={onHARUpload} />
-					<HARContentViewer title={harFileName} harEntries={harEntries} />
+					<HAREntriesViewer title={harFileName} harEntries={harEntries} />
 				</VerticalGap>
 			}
 		/>

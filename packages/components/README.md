@@ -4,11 +4,12 @@ Reusable React components for HAR Analyzer.
 
 ## ✨ Features
 
-- 📦 **Drop-in Dashboard**: Use the full `<HARAnalyzer />` component for a complete, ready-to-run HTTP Archive visualization tool, or compose individual panels.
+- 📦 **Drop-in Dashboard**: Use the full `<HAREntriesViewer />` component for a complete, ready-to-run HTTP Archive visualization tool, or compose individual panels.
+- ⚖️ **Entry Comparison**: Compare multiple HAR entries side-by-side to easily spot differences in headers, payloads, and responses by simply selecting multiple rows in the network table.
 - 🔍 **Advanced Filtering**: Filter network entries quickly by content types (JSON, HTML, JS, CSS, etc.) or error statuses via `<HAREntriesFilters />`.
 - 🕵️ **Deep Inspection**: Inspect detailed request/response headers, decoded payloads, and syntax-highlighted response bodies with `<ViewHAREntry />`.
-- 🛠️ **Persistent Preferences**: Context providers remember user preferences like themes (dark/light mode), table column layouts, and dashboard layouts effortlessly via the `<HARAnalyzerPreferencesProvider />`.
-- 🎨 **Modern UI**: Built on top of the [Cloudscape Design System](https://cloudscape.design/).
+- 🛠️ **Persistent Preferences**: Context providers remember user preferences like themes (dark/light mode) and table column layouts effortlessly via the `<HARAnalyzerPreferencesProvider />`.
+- 🎨 **Cloudscape UI**: Built on top of the [Cloudscape Design System](https://cloudscape.design/).
 - ⌨️ **Type Safe**: Fully written in TypeScript with exported utility types (`HARContent`, `HAREntry`) for standard HTTP Archive structures.
 
 ## Installation
@@ -144,7 +145,7 @@ function App() {
   return (
     <ListHAREntries
       harEntries={yourHarEntriesArray}
-      onChange={(entry) => console.log('Selected:', entry)}
+      onChange={(entries) => console.log('Selected:', entries)}
     />
   );
 }
@@ -152,10 +153,10 @@ function App() {
 
 **Props:**
 
-| Name      | Type      | Required | Description                          |
-|-----------|-----------|----------|--------------------------------------|
-| harEntries| HAREntry[]| Yes      | The entries to display in the table. |
-| onChange  | function  | Yes      | Callback when an entry is selected.  |
+| Name      | Type                                      | Required | Description                          |
+|-----------|-------------------------------------------|----------|--------------------------------------|
+| harEntries| HAREntry[]                                | Yes      | The entries to display in the table. |
+| onChange  | (selectedHAREntries: HAREntry[]) => void  | Yes      | Callback when entries are selected.  |
 
 ---
 
