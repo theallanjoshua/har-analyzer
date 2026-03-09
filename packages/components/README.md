@@ -78,9 +78,8 @@ import {
   HARAnalyzerPreferencesProvider,
   HAREntriesViewer,
   HARFileUploader,
-  ViewHAREntry,
   ListHAREntries,
-  useHAREntriesFilters
+  ViewHAREntry,
 } from '@har-analyzer/components';
 ```
 
@@ -90,9 +89,8 @@ import HARAnalyzer from '@har-analyzer/components/har-analyzer';
 import HARAnalyzerPreferencesProvider from '@har-analyzer/components/har-analyzer-preferences';
 import HAREntriesViewer from '@har-analyzer/components/har-entries-viewer';
 import HARFileUploader from '@har-analyzer/components/har-file-uploader';
-import ViewHAREntry from '@har-analyzer/components/view-har-entry';
 import ListHAREntries from '@har-analyzer/components/list-har-entries';
-import useHAREntriesFilters from '@har-analyzer/components/har-entries-filters';
+import ViewHAREntry from '@har-analyzer/components/view-har-entry';
 ```
 
 ## Components
