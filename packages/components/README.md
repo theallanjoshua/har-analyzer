@@ -7,7 +7,7 @@
 
 Reusable React components for HAR Analyzer.
 
-## ✨ Features
+## 🚀 Features
 
 - 📦 **Drop-in Dashboard**: Use the full `<HAREntriesViewer />` component for a complete, ready-to-run HTTP Archive visualization tool, or compose individual panels.
 - ⚖️ **Entry Comparison**: Compare multiple HAR entries side-by-side to easily spot differences in headers, payloads, and responses by simply selecting multiple rows in the network table.

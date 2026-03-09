@@ -9,10 +9,12 @@ Try it out [here](https://theallanjoshua.github.io/har-analyzer/)
 ## 🚀 Features
 
 - **Local Processing:** Upload and view `.har` files entirely in the browser (no data is sent to a server).
+- **Entry Comparison:** Compare multiple HAR entries side-by-side to easily spot differences in headers, payloads, and responses by simply selecting multiple rows in the network table.
 - **Advanced Filtering:** Filter and search network entries by content type, errors, and text.
 - **Deep Inspection:** Inspect request/response headers, cookies, and timings.
 - **Syntax Highlighting:** View request payloads and response bodies with formatting for JSON, XML, HTML, CSS, and JavaScript.
 - **Customizable UI:** Responsive split-panel layout with user preferences for dark/light themes and content width.
+- **Browser Extension:** Inspect HTTP traffic directly within Chromium-based browsers using the dedicated developer tools extension.
 - **Modular:** Core functionality is packaged as a reusable React component library.
 
 ---
@@ -35,11 +37,12 @@ This project is a monorepo managed with [pnpm](https://pnpm.io/) workspaces and 
 ```text
 .
 ├── packages/
-│   ├── components/      # Reusable UI component library (@har-analyzer/components) - See [README](./packages/components/README.md)
-│   └── website/         # Main web application using the components (@har-analyzer/website)
-├── tsconfigs/           # Shared TypeScript base configurations
-├── eslint.config.ts     # Shared ESLint Flat Config
-└── turbo.json           # Turborepo pipeline configuration
+│   ├── chromium-extension/ # Developer tools browser extension for Chromium (@har-analyzer/chromium-extension)
+│   ├── components/         # Reusable UI component library (@har-analyzer/components) - See [README](./packages/components/README.md)
+│   └── website/            # Main web application using the components (@har-analyzer/website)
+├── tsconfigs/              # Shared TypeScript base configurations
+├── eslint.config.ts        # Shared ESLint Flat Config
+└── turbo.json              # Turborepo pipeline configuration
 ```
 
 ## 🛠️ Getting Started
@@ -70,7 +73,7 @@ Start the development servers for the packages in parallel:
 pnpm run dev
 ```
 
-The web application will typically be available at `http://localhost:5173` (check your terminal output for the exact URL).
+The web application will be available at `http://localhost:3000`
 
 #### Testing GitHub Actions Locally
 
@@ -94,8 +97,9 @@ You can test the GitHub Actions workflows locally using [act](https://github.com
 From the root directory, you can run the following commands:
 
 - `pnpm run dev`: Starts development mode for all packages.
-- `pnpm run build`: Builds all packages (components and website).
+- `pnpm run build`: Builds all packages (components, extension, and website).
 - `pnpm run lint`: Runs ESLint check across the codebase.
 - `pnpm run lint:fix`: Automatically fixes ESLint errors.
 - `pnpm run check-types`: Runs TypeScript type checking.
 - `pnpm run clean`: Removes all build artifacts (`dist` folders).
+- `pnpm run validate`: Runs linting, type-checking, and other validation pipelines through Turbo.
