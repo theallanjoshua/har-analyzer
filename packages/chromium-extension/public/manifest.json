@@ -5,5 +5,17 @@
 	"description": "DevTools extension to capture and analyze HTTP requests",
 	"devtools_page": "devtools.html",
 	"permissions": ["storage"],
-	"host_permissions": ["<all_urls>"]
+	"icons": {
+		"16": "icons/haroscope-16.png",
+		"48": "icons/haroscope-48.png",
+		"128": "icons/haroscope-128.png"
+	},
+	"action": {
+		"default_popup": "popup.html",
+		"default_icon": {
+			"16": "icons/haroscope-16.png",
+			"48": "icons/haroscope-48.png",
+			"128": "icons/haroscope-128.png"
+		}
+	}
 }

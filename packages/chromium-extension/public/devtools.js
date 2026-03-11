@@ -1,7 +1,7 @@
 /* global chrome */
 
 chrome.devtools.panels.create(
-	'Haroscope',
-	'',
+	'🔭 Haroscope',
+	'icons/haroscope-128.png',
 	'index.html',
 );
