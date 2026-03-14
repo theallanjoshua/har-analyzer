@@ -1,27 +1,18 @@
-import type { BoardProps } from '@cloudscape-design/board-components/board';
-import type { HeaderProps } from '@cloudscape-design/components/header';
 import Board from '@cloudscape-design/board-components/board';
 import BoardItem from '@cloudscape-design/board-components/board-item';
 import Button from '@cloudscape-design/components/button';
-import Header from '@cloudscape-design/components/header';
-import type { EnhancedBoardDefinitions } from './constants/i18n';
+import type { EnhancedBoardDefinition, EnhancedBoardDefinitions } from './constants/i18n';
 import {
 	boardI18nStrings,
 	boardItemI18nStrings,
-
 } from './constants/i18n';
 
+interface ComponentDefinition {
+	content: React.ReactNode;
+	onRemove?: () => void;
+}
 export interface EnhancedBoardProps {
-	components: Record<
-		string,
-		{
-			title: string;
-			content: React.ReactNode;
-			counter?: string;
-			actions?: HeaderProps['actions'];
-			canRemove?: boolean;
-		}
-	>;
+	components: Record<string, ComponentDefinition | ((instanceId: EnhancedBoardDefinition['data']['instanceId']) => ComponentDefinition)>;
 	definitions: EnhancedBoardDefinitions;
 	onDefinitionsChange: (definitions: EnhancedBoardDefinitions) => void;
 	empty?: React.ReactNode;
@@ -38,24 +29,29 @@ export default function EnhancedBoard(props: EnhancedBoardProps) {
 	return (
 		<Board
 			i18nStrings={boardI18nStrings}
-			items={definitions as BoardProps.Item<undefined>[]}
-			renderItem={({ id }, { removeItem }) => {
-				const {
-					title,
-					content,
-					actions,
-					counter,
-					canRemove,
-				} = components[id] ?? {};
+			items={definitions}
+			renderItem={({ data }) => {
+				const { componentKey, instanceId } = data;
+
+				let content: React.ReactNode;
+				let onRemove: (() => void) | undefined;
+
+				const component = components[componentKey];
+
+				if (typeof component === 'function') {
+					const componentDefinition = component(instanceId);
+					content = componentDefinition.content;
+					onRemove = componentDefinition.onRemove;
+				} else {
+					content = component?.content;
+					onRemove = component?.onRemove;
+				}
+
 				return (
 					<BoardItem
-						header={
-							<Header counter={counter} actions={actions}>
-								{title}
-							</Header>
-						}
+						disableContentPaddings
 						i18nStrings={boardItemI18nStrings}
-						settings={canRemove && <Button variant="icon" iconName="close" onClick={removeItem} />}
+						settings={onRemove && <Button variant="icon" iconName="close" onClick={onRemove} />}
 					>
 						{content}
 					</BoardItem>

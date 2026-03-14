@@ -199,7 +199,11 @@ interface EnhancedTableProps<TItem> {
 	columnsDefinition: EnhancedTableColumnsDefinition<TItem>;
 	empty?: React.ReactNode;
 	selectionType?: 'single' | 'multi';
+	isEntireRowSelectable?: boolean;
+	selectedItems?: TItem[];
 	onSelectionChange?: (selectedItems: TItem[]) => void;
+	contentDensity?: 'compact' | 'comfortable';
+	header?: React.ReactNode;
 }
 
 export default function EnhancedTable<TItem>({
@@ -209,11 +213,26 @@ export default function EnhancedTable<TItem>({
 	columnsDefinition: enhancedColumnDefinitions,
 	empty,
 	selectionType,
+	isEntireRowSelectable = false,
+	selectedItems = [],
 	onSelectionChange,
+	contentDensity = 'comfortable',
+	header,
 }: EnhancedTableProps<TItem>) {
 	const enhancedTableItems = useMemo(
 		() => getEnhancedTableItems(originalItems, enhancedColumnDefinitions),
 		[originalItems, enhancedColumnDefinitions],
+	);
+
+	const enhancedSelectedTableItems = useMemo(
+		() => {
+			const selectedItemIds = new Set(selectedItems.map((item) => getRowId(item)));
+
+			return enhancedTableItems.filter((enhancedItem) =>
+				selectedItemIds.has(getRowId(enhancedItem.__originalItem__)),
+			);
+		},
+		[selectedItems, enhancedTableItems, getRowId],
 	);
 
 	const trackBy = (item: EnhancedTableItem<TItem>) => getRowId(item.__originalItem__);
@@ -262,10 +281,32 @@ export default function EnhancedTable<TItem>({
 		[columnDefinitions, preferredColumnWidths],
 	);
 
+	const onRowClick: TableProps['onRowClick'] = ({ detail: { item } }) => {
+		if (!onSelectionChange || !selectionType)
+			return;
+
+		const originalItem = item.__originalItem__;
+
+		if (selectionType === 'single') {
+			onSelectionChange([originalItem]);
+			return;
+		}
+
+		const itemId = getRowId(originalItem);
+		const isAlreadySelected = selectedItems.some((selected) => getRowId(selected) === itemId);
+		if (isAlreadySelected) {
+			onSelectionChange(selectedItems.filter((selected) => getRowId(selected) !== itemId));
+		} else {
+			onSelectionChange([...selectedItems, originalItem]);
+		}
+	};
+
 	return (
 		<Table
 			{...collectionProps}
-			variant="borderless"
+			header={header}
+			variant="full-page"
+			contentDensity={contentDensity}
 			resizableColumns
 			stripedRows
 			stickyHeader
@@ -283,10 +324,9 @@ export default function EnhancedTable<TItem>({
 			trackBy={trackBy}
 			empty={empty}
 			selectionType={selectionType}
+			onRowClick={isEntireRowSelectable ? onRowClick : undefined}
+			selectedItems={enhancedSelectedTableItems}
 			onSelectionChange={(event) => {
-				if (collectionProps.onSelectionChange) {
-					collectionProps.onSelectionChange(event);
-				}
 				if (onSelectionChange) {
 					onSelectionChange(event.detail.selectedItems.map((item) => item.__originalItem__));
 				}

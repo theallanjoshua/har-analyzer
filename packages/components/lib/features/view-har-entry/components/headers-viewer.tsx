@@ -8,7 +8,7 @@ interface HeadersViewerProps {
 
 export default function HeadersViewer({ harEntry }: HeadersViewerProps) {
 	return (
-		<VerticalGap>
+		<VerticalGap size='xxxs'>
 			<CollapsibleKeyValueList
 				title="General"
 				items={[

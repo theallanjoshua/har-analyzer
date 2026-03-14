@@ -5,7 +5,7 @@ type VerticalGapProps = Omit<SpaceBetweenProps, 'size' | 'direction'> & { size?:
 
 export default function VerticalGap({ children, ...props }: VerticalGapProps) {
 	return (
-		<SpaceBetween size="xxl" {...props}>
+		<SpaceBetween size="l" {...props}>
 			{children}
 		</SpaceBetween>
 	);

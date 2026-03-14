@@ -34,8 +34,7 @@ export default function HARFileUploader({ onChange }: HARFileUploaderProps) {
 			const harContent = getHARContentFromFile(fileContents);
 			const harEntries = harContent.log.entries;
 			onChange({ harEntries, harFileName });
-		}
-		catch (error) {
+		} catch (error) {
 			const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
 			setFilesErrors([errorMessage]);
 		}

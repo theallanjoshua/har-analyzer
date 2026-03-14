@@ -18,8 +18,7 @@ export function getHARContentFromFile(fileContent: unknown): HARContent {
 		// 	throw new Error(`${errorMessagePrefix} ${validationErrors}`);
 		// }
 		return parsedContent as unknown as HARContent;
-	}
-	catch (error) {
+	} catch (error) {
 		const errorMessage = 'Failed to JSON parse file content';
 		throw new Error(errorMessage, { cause: error });
 	}

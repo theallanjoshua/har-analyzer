@@ -37,8 +37,7 @@ export function readFileContents(file: File | undefined) {
 			try {
 				const fileContent = event.target?.result;
 				resolve(fileContent);
-			}
-			catch (e) {
+			} catch (e) {
 				const errorMessage = 'Failed to JSON parse file content';
 				reject(new Error(errorMessage, { cause: e }));
 			}

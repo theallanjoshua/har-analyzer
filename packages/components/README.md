@@ -60,7 +60,7 @@ function App() {
   return (
     <I18nProvider locale="en" messages={[enMessages]}>
       <HARAnalyzerPreferencesProvider usePreferenceStore={useWebStorage}>
-        <HAREntriesViewer harEntries={yourHarEntriesArray} />
+        <HAREntriesViewer tableId="my-report-table" harEntries={yourHarEntriesArray} />
       </HARAnalyzerPreferencesProvider>
     </I18nProvider>
   );
@@ -123,7 +123,7 @@ import HAREntriesViewer from '@har-analyzer/components/har-entries-viewer';
 
 function App() {
   return (
-    <HAREntriesViewer harEntries={yourHarEntriesArray} />
+    <HAREntriesViewer tableId="har-viewer-table" harEntries={yourHarEntriesArray} />
   );
 }
 ```
@@ -132,8 +132,9 @@ function App() {
 
 | Name          | Type                          | Required | Description                                      |
 |---------------|-------------------------------|----------|--------------------------------------------------|
-| title         | string                        | no       | Title of the table displaying the HAR entries    |
 | harEntries    | HAREntry[]                    | Yes      | An array of HAR entries.                         |
+| tableId       | string                        | Yes      | Unique identifier for the table component.        |
+| tableTitle    | string                        | No       | Title of the table displaying the HAR entries.   |
 
 ---
 
@@ -147,8 +148,10 @@ import ListHAREntries from '@har-analyzer/components/list-har-entries';
 function App() {
   return (
     <ListHAREntries
+      id="my-table"
       harEntries={yourHarEntriesArray}
-      onChange={(entries) => console.log('Selected:', entries)}
+      selectedHAREntries={[]}
+      onSelectionChange={(entries) => console.log('Selected:', entries)}
     />
   );
 }
@@ -156,10 +159,13 @@ function App() {
 
 **Props:**
 
-| Name      | Type                                      | Required | Description                          |
-|-----------|-------------------------------------------|----------|--------------------------------------|
-| harEntries| HAREntry[]                                | Yes      | The entries to display in the table. |
-| onChange  | (selectedHAREntries: HAREntry[]) => void  | Yes      | Callback when entries are selected.  |
+| Name                | Type                                      | Required | Description                              |
+|---------------------|-------------------------------------------|----------|------------------------------------------|
+| id                  | string                                    | Yes      | Unique identifier for the list.           |
+| title               | string                                    | No       | Optional title for the list.             |
+| harEntries          | HAREntry[]                                | Yes      | The entries to display in the table.     |
+| selectedHAREntries  | HAREntry[]                                | Yes      | Entries to remain selected in the table. |
+| onSelectionChange   | (selectedHAREntries: HAREntry[]) => void  | Yes      | Callback when entries are selected.      |
 
 ---
 

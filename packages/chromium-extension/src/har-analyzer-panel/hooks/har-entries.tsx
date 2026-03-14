@@ -11,9 +11,6 @@ function getHAREntry(networkRequest: ChromeNetworkRequest): Promise<HAREntry> {
 		networkRequest.getContent((content, encoding) => {
 			const enrichedEntry = {
 				...networkRequest,
-				request: {
-					...networkRequest.request,
-				},
 				response: {
 					...networkRequest.response,
 					content: {

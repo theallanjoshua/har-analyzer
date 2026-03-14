@@ -1,21 +1,24 @@
-import Link from '@cloudscape-design/components/link';
+import Header from '@cloudscape-design/components/header';
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
 import prettyBytes from 'pretty-bytes';
 import { useMemo } from 'react';
 import type { EnhancedTableColumnsDefinition } from '~/components/enhanced-table';
 import type { HAREntry } from '~/utils/har';
 import EnhancedTable from '~/components/enhanced-table';
+import HorizontalGap from '~/components/horizontal-gap';
+import { useCompareModePreference } from '~/hooks/compare-mode-preference';
 import { getFormattedCurrentTimeZone, getFormattedDateTime } from '~/utils/date';
 import {
+	getHAREntriesFilteredByContentType,
+	getHAREntriesWithErrorResponse,
 	getHAREntryId,
 	getUniqueHeaderNames,
 	isErrorResponse,
 } from '~/utils/har';
-
-// This ID is used to store user's table preferences
-// It should be unique across the application.
-// Changing this ID will reset user's table preferences.
-const DEFAULT_TABLE_ID = 'list-har-entries';
+import CompareModeSwitcher from './components/compare-mode-switcher';
+import ContentTypeFilter from './components/content-type-filter';
+import ErrorsFilter from './components/errors-filter';
+import { useContentTypeFiltersPreference, useErrorsFilterPreference } from './hooks/preferences';
 
 const DEFAULT_COLUMNS_DEFINITION: EnhancedTableColumnsDefinition<HAREntry> = {
 	shortUrl: {
@@ -24,12 +27,7 @@ const DEFAULT_COLUMNS_DEFINITION: EnhancedTableColumnsDefinition<HAREntry> = {
 			const { url } = item.request;
 			// eslint-disable-next-line ts/prefer-nullish-coalescing
 			const value = url.split('/').at(-1) || url;
-			const content = (
-				<Link external href={url}>
-					{value}
-				</Link>
-			);
-			return { value, content };
+			return { value };
 		},
 	},
 	url: {
@@ -37,12 +35,7 @@ const DEFAULT_COLUMNS_DEFINITION: EnhancedTableColumnsDefinition<HAREntry> = {
 		isVisibleByDefault: false,
 		cell: (item) => {
 			const value = item.request.url;
-			const content = (
-				<Link external href={value}>
-					{value}
-				</Link>
-			);
-			return { value, content };
+			return { value };
 		},
 	},
 	method: {
@@ -154,15 +147,19 @@ function getHeaderColumnsDefinition(headerNames: string[], type: 'request' | 're
 }
 
 interface ListHAREntriesProps {
-	id?: string;
+	id: string;
+	title?: string;
 	harEntries: HAREntry[];
-	onChange: (selectedHAREntries: HAREntry[]) => void;
+	selectedHAREntries: HAREntry[];
+	onSelectionChange: (selectedHAREntries: HAREntry[]) => void;
 }
 
 export default function ListHAREntries({
 	id,
+	title = 'HAR Entries',
 	harEntries,
-	onChange,
+	selectedHAREntries,
+	onSelectionChange,
 }: ListHAREntriesProps) {
 	const columnsDefinition = useMemo(() => {
 		const requestHeaders = getUniqueHeaderNames(harEntries, 'request');
@@ -176,15 +173,49 @@ export default function ListHAREntries({
 		};
 	}, [harEntries]);
 
+	const harEntriesWithErrorResponse = useMemo(() => getHAREntriesWithErrorResponse(harEntries), [harEntries]);
+
+	const [contentTypeFilters, setContentTypeFilters] = useContentTypeFiltersPreference();
+	const [shouldFilterErrors, setShouldFilterErrors] = useErrorsFilterPreference();
+
+	const filteredHAREntries = useMemo(() => {
+		const contentTypeFilterReadyHAREntries = shouldFilterErrors ? harEntriesWithErrorResponse : harEntries;
+		return getHAREntriesFilteredByContentType(contentTypeFilterReadyHAREntries, contentTypeFilters);
+	}, [shouldFilterErrors, harEntriesWithErrorResponse, harEntries, contentTypeFilters]);
+
+	const [isCompareMode, setIsCompareMode] = useCompareModePreference();
+
+	const onCompareModeChange = (isCompareMode: boolean) => {
+		setIsCompareMode(isCompareMode);
+		if (!isCompareMode) {
+			onSelectionChange([]);
+		}
+	};
+
 	return (
 		<EnhancedTable
-			id={id ?? DEFAULT_TABLE_ID}
+			contentDensity="compact"
+			id={id}
 			columnsDefinition={columnsDefinition}
-			items={harEntries}
+			items={filteredHAREntries}
 			getRowId={getHAREntryId}
 			empty="No HAR entries found"
-			selectionType="multi"
-			onSelectionChange={onChange}
+			selectionType={isCompareMode ? 'multi' : 'single'}
+			isEntireRowSelectable
+			selectedItems={selectedHAREntries}
+			onSelectionChange={onSelectionChange}
+			header={<Header
+				description={
+					<CompareModeSwitcher isCompareMode={isCompareMode} onChange={onCompareModeChange} />
+				}
+				counter={`(${filteredHAREntries.length}/${harEntries.length})`}
+				actions={<HorizontalGap>
+					<ContentTypeFilter contentTypeFilters={contentTypeFilters} onChange={setContentTypeFilters} />
+					<ErrorsFilter shouldFilterErrors={shouldFilterErrors} onChange={setShouldFilterErrors} />
+				</HorizontalGap>}
+			>
+				{title}
+			</Header>}
 		/>
 	);
 }

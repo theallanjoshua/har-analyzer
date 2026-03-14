@@ -1,117 +1,143 @@
-import { useMemo, useState } from 'react';
+import {
+	useCallback,
+	useEffect,
+	useState,
+} from 'react';
 import type { EnhancedBoardProps } from '~/components/enhanced-board';
 import type { HAREntry } from '~/utils/har';
 import EnhancedBoard from '~/components/enhanced-board';
+import { HorizontalPadding } from '~/components/horizontal-padding';
 import ListHAREntries from '~/features/list-har-entries';
 import ViewHAREntry from '~/features/view-har-entry';
-import {
-	getHAREntriesFilteredByContentType,
-	getHAREntriesWithErrorResponse,
-	getHAREntryId,
-} from '~/utils/har';
-import HAREntriesFilters from './components/har-entries-filters/index.js';
-import { useContentTypeFiltersPreference, useErrorsFilterPreference } from './hooks/preferences.js';
+import { getHAREntryId } from '~/utils/har';
 
 const DEFAULT_BOARD_ITEM_DEFINITION = {
 	rowSpan: 4,
 	columnSpan: 12,
 };
 
-const TABLE_ID = 'har-entries-viewer';
+const COMPONENT_TYPE_LIST_HAR_ENTRIES = 'har-entries-viewer';
+const COMPONENT_TYPE_VIEW_HAR_ENTRY = 'view-har-entry';
 
 const DEFAULT_BOARD_DEFINITIONS: EnhancedBoardProps['definitions'] = [
 	{
 		...DEFAULT_BOARD_ITEM_DEFINITION,
-		id: TABLE_ID,
+		id: COMPONENT_TYPE_LIST_HAR_ENTRIES,
+		data: {
+			componentKey: COMPONENT_TYPE_LIST_HAR_ENTRIES,
+			instanceId: COMPONENT_TYPE_LIST_HAR_ENTRIES,
+		},
 	},
 ];
 
 interface HAREntriesViewerProps {
-	title?: string;
 	harEntries: HAREntry[];
+	tableId: string;
+	tableTitle?: string;
 }
 
 export default function HAREntriesViewer(props: HAREntriesViewerProps) {
-	const { title = 'HAR Entries', harEntries: incomingHAREntries } = props;
+	const {
+		harEntries,
+		tableId,
+		tableTitle,
+	} = props;
 
-	const [harEntries, setHAREntries] = useState<HAREntry[]>(incomingHAREntries);
 	const [selectedHAREntries, setSelectedHAREntries] = useState<HAREntry[]>([]);
 	const [definitions, setDefinitions] = useState<EnhancedBoardProps['definitions']>(DEFAULT_BOARD_DEFINITIONS);
 
-	if (incomingHAREntries !== harEntries) {
-		setHAREntries(incomingHAREntries);
+	useEffect(() => {
+		const harEntryIds = new Set(harEntries.map(getHAREntryId));
+		// eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
+		setSelectedHAREntries((prevSelectedHAREntries) => {
+			if (!prevSelectedHAREntries.length) {
+				return prevSelectedHAREntries;
+			}
 
-		const incomingHAREntryIds = incomingHAREntries.map(getHAREntryId);
-		const validSelectedHAREntries = selectedHAREntries.filter((entry) => incomingHAREntryIds.includes(getHAREntryId(entry)));
+			const validSelectedHAREntries = prevSelectedHAREntries.filter((entry) =>
+				harEntryIds.has(getHAREntryId(entry)),
+			);
 
-		if (validSelectedHAREntries.length !== selectedHAREntries.length) {
-			setSelectedHAREntries(validSelectedHAREntries);
-		}
-	}
+			if (validSelectedHAREntries.length !== prevSelectedHAREntries.length) {
+				return validSelectedHAREntries;
+			}
 
-	const onDefinitionsChange = (newDefinitions: EnhancedBoardProps['definitions']) => {
-		setDefinitions(newDefinitions);
-	};
+			return prevSelectedHAREntries;
+		});
+	}, [harEntries]);
 
-	const onSelectedHAREntryChange = (newSelectedHAREntries: HAREntry[]) => {
+	const onSelectedHAREntryChange = useCallback((newSelectedHAREntries: HAREntry[]) => {
 		setSelectedHAREntries(newSelectedHAREntries);
+
 		const selectedHAREntryIds = newSelectedHAREntries.map(getHAREntryId);
+		const selectedHAREntryIdsSet = new Set(selectedHAREntryIds);
+
 		setDefinitions((prevDefinitions) => {
-			const validDefinitionsFromPrev = prevDefinitions.filter(({ id }) => selectedHAREntryIds.includes(id) || id === TABLE_ID);
-			const validDefinitionIdsFromPrev = validDefinitionsFromPrev.map(({ id }) => id);
-			const newDefinitionIds = selectedHAREntryIds.filter((id) => !validDefinitionIdsFromPrev.includes(id));
-			const { rowSpan, columnSpan } = validDefinitionsFromPrev.at(1) ?? DEFAULT_BOARD_ITEM_DEFINITION;
-			const newDefinitions = newDefinitionIds.map((id) => ({
+			const prevValidDefinitions = prevDefinitions.filter(({ data: { instanceId } }) => selectedHAREntryIdsSet.has(instanceId) || instanceId === COMPONENT_TYPE_LIST_HAR_ENTRIES);
+			const prevSelectedHAREntryIds = new Set(prevValidDefinitions.map(({ data: { instanceId } }) => instanceId));
+
+			const newSelectedHAREntryIds = selectedHAREntryIds.filter((id) => !prevSelectedHAREntryIds.has(id));
+
+			if (!newSelectedHAREntryIds.length) {
+				return prevValidDefinitions;
+			}
+
+			const prevDefinition = prevDefinitions.at(-1);
+			const rowSpan = prevDefinition?.rowSpan ?? DEFAULT_BOARD_ITEM_DEFINITION.rowSpan;
+			const columnSpan = prevDefinition?.columnSpan ?? DEFAULT_BOARD_ITEM_DEFINITION.columnSpan;
+
+			const newDefinitions = newSelectedHAREntryIds.map((harEntryId) => ({
 				rowSpan,
 				columnSpan,
-				id,
+				data: {
+					componentKey: COMPONENT_TYPE_VIEW_HAR_ENTRY,
+					instanceId: harEntryId,
+				},
 			}));
-			const definitionsToSet = [...validDefinitionsFromPrev, ...newDefinitions];
-			return definitionsToSet;
+
+			//  Using index as id to ensure we don't lose active selected tab in ViewHAREntry
+			const definitions = [...prevValidDefinitions, ...newDefinitions].map((definitions, index) => {
+				return {
+					...definitions,
+					id: String(index),
+				};
+			});
+
+			return definitions;
 		});
-	};
-
-	const harEntriesWithErrorResponse = useMemo(() => getHAREntriesWithErrorResponse(harEntries), [harEntries]);
-
-	const [contentTypeFilters] = useContentTypeFiltersPreference();
-	const [shouldFilterErrors] = useErrorsFilterPreference();
-
-	const filteredHAREntries = useMemo(() => {
-		const contentTypeFilterReadyHAREntries = shouldFilterErrors ? harEntriesWithErrorResponse : harEntries;
-		return getHAREntriesFilteredByContentType(contentTypeFilterReadyHAREntries, contentTypeFilters);
-	}, [shouldFilterErrors, harEntriesWithErrorResponse, harEntries, contentTypeFilters]);
-
-	const selectedComponents = selectedHAREntries.reduce((acc, harEntry) => {
-		const id = getHAREntryId(harEntry);
-		return {
-			...acc,
-			[id]: {
-				title: 'Details',
-				content: <ViewHAREntry harEntry={harEntry} />,
-			},
-		};
-	}, {});
+	}, []);
 
 	const components = {
-		[TABLE_ID]: {
-			title,
-			counter: `(${filteredHAREntries.length}/${harEntries.length})`,
-			actions: <HAREntriesFilters />,
-			content: (
+		[COMPONENT_TYPE_LIST_HAR_ENTRIES]: {
+			content: <HorizontalPadding>
 				<ListHAREntries
-					harEntries={filteredHAREntries}
-					onChange={onSelectedHAREntryChange}
+					id={tableId}
+					title={tableTitle}
+					harEntries={harEntries}
+					selectedHAREntries={selectedHAREntries}
+					onSelectionChange={onSelectedHAREntryChange}
 				/>
-			),
+			</HorizontalPadding>,
 		},
-		...selectedComponents,
+		[COMPONENT_TYPE_VIEW_HAR_ENTRY]: (harEntryId: string) => {
+			const harEntry = selectedHAREntries.find((entry) => getHAREntryId(entry) === harEntryId);
+			return {
+				content: harEntry ? <ViewHAREntry harEntry={harEntry} /> : undefined,
+				onRemove: () => {
+					setDefinitions((prevDefinitions) => prevDefinitions.filter((definition) => definition.data.instanceId !== harEntryId));
+					setSelectedHAREntries((prevSelectedHAREntries) =>
+						prevSelectedHAREntries.filter((entry) => getHAREntryId(entry) !== harEntryId),
+					);
+				},
+			};
+		},
 	};
 
 	return (
 		<EnhancedBoard
 			components={components}
 			definitions={definitions}
-			onDefinitionsChange={onDefinitionsChange}
+			onDefinitionsChange={setDefinitions}
 		/>
 	);
 }

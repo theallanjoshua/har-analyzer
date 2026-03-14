@@ -113,6 +113,7 @@ export default antfu(
 			'unicorn/no-array-reduce': 'off',
 			'unicorn/no-array-callback-reference': 'off',
 			'style/arrow-parens': ['error', 'always'],
+			'style/brace-style': ['error', '1tbs', { allowSingleLine: true }],
 		},
 	},
 	{

@@ -1,6 +1,10 @@
 import type { BoardItemProps, BoardProps } from '@cloudscape-design/board-components';
 
-export type EnhancedBoardDefinition = Omit<BoardProps.Item, 'data'>;
+interface EnhancedBoardItemData {
+	componentKey: string;
+	instanceId: string;
+}
+export type EnhancedBoardDefinition = BoardProps.Item<EnhancedBoardItemData>;
 export type EnhancedBoardDefinitions = ReadonlyArray<EnhancedBoardDefinition>;
 
 export const boardItemI18nStrings = {
@@ -53,4 +57,4 @@ export const boardI18nStrings = {
 	navigationAriaLabel: 'Board navigation',
 	navigationAriaDescription: 'Click on non-empty item to move focus over',
 	navigationItemAriaLabel: (item) => (item ? item.id : 'Empty'),
-} satisfies BoardProps.I18nStrings<undefined>;
+} satisfies BoardProps.I18nStrings<EnhancedBoardItemData>;

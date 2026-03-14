@@ -1,37 +1,52 @@
+import type { PropsWithChildren } from 'react';
 import Tabs from '@cloudscape-design/components/tabs';
+import { lazy, useMemo } from 'react';
 import type { HAREntry } from '~/utils/har';
-import ContentViewer from './components/content-viewer';
-import HeadersViewer from './components/headers-viewer';
-import PayloadViewer from './components/payload-viewer';
-import ResponseViewer from './components/response-viewer';
+import { HorizontalPadding } from '~/components/horizontal-padding';
+import LazyLoad from '~/components/lazy-load';
+
+const HeadersViewer = lazy(() => import('./components/headers-viewer'));
+const PayloadViewer = lazy(() => import('./components/payload-viewer'));
+const ResponseViewer = lazy(() => import('./components/response-viewer'));
+const ContentViewer = lazy(() => import('./components/content-viewer'));
+
+function TabContent({ children }: PropsWithChildren) {
+	return <LazyLoad>
+		<HorizontalPadding>
+			{children}
+		</HorizontalPadding>
+	</LazyLoad>;
+};
 
 export interface ViewHAREntryProps {
 	harEntry: HAREntry;
 }
 
 export default function ViewHAREntry({ harEntry }: ViewHAREntryProps) {
+	const stringifiedHAREntry = useMemo(() => JSON.stringify(harEntry), [harEntry]);
+
 	return (
 		<Tabs
 			tabs={[
 				{
 					label: 'Headers',
 					id: 'headers',
-					content: <HeadersViewer harEntry={harEntry} />,
+					content: <TabContent><HeadersViewer harEntry={harEntry} /></TabContent>,
 				},
 				{
 					label: 'Payload',
 					id: 'payload',
-					content: <PayloadViewer harEntry={harEntry} />,
+					content: <TabContent><PayloadViewer harEntry={harEntry} /></TabContent>,
 				},
 				{
 					label: 'Response',
 					id: 'response',
-					content: <ResponseViewer harEntry={harEntry} />,
+					content: <TabContent><ResponseViewer harEntry={harEntry} /></TabContent>,
 				},
 				{
 					label: 'HAR Entry',
 					id: 'har-entry',
-					content: <ContentViewer content={JSON.stringify(harEntry)} mimeType="json" />,
+					content: <TabContent><ContentViewer content={stringifiedHAREntry} mimeType="json" /></TabContent>,
 				},
 			]}
 		/>

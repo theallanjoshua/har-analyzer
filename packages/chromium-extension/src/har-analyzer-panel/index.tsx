@@ -30,7 +30,7 @@ export default function HARAnalyzerPanel() {
 			<Box padding={'s'}>
 				<VerticalGap>
 					<HARAnalyzerActions onClear={() => { setHAREntries([]); }} />
-					<HAREntriesViewer title="Requests" harEntries={harEntries} />
+					<HAREntriesViewer tableId="haroscope" tableTitle="Requests" harEntries={harEntries} />
 				</VerticalGap>
 			</Box>
 		</HARAnalyzerPreferencesProvider>
