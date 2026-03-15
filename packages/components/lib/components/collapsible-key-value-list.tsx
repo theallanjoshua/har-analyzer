@@ -9,7 +9,7 @@ interface CollapsibleKeyValueListProps {
 }
 export default function CollapsibleKeyValueList({ title, items = [] }: CollapsibleKeyValueListProps) {
 	return (
-		<CollapsibleSection title={title}>
+		<CollapsibleSection variant="inline" title={title}>
 			<ColumnLayout borders='horizontal' columns={2} disableGutters>
 				{items.reduce<React.ReactElement[]>((acc, { name, value }) => {
 					acc.push(<Box variant='awsui-key-label'>{name}</Box>);

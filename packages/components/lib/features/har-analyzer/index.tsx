@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import type { HARFileUploaderProps } from '~/features/har-file-uploader';
 import type { HAREntry } from '~/utils/har';
-import SimpleAppLayout from '~/components/simple-app-layout';
 import VerticalGap from '~/components/vertical-gap';
 import HAREntriesViewer from '~/features/har-entries-viewer';
 import HARFileUploader from '~/features/har-file-uploader';
+import AppLayout from './components/app-layout';
+import { AppContentWidthProvider } from './context/preferences';
 
 export interface HARAnalyzerProps {
 	logo?: React.ReactNode;
@@ -20,20 +21,19 @@ export default function HARAnalyzer({ logo, appName = 'HAR Analyzer' }: HARAnaly
 		setHARFileName(harFileName);
 	};
 
-	return (
-		<SimpleAppLayout
+	return <AppContentWidthProvider>
+		<AppLayout
 			logo={logo}
 			appName={appName}
 			content={
 				<VerticalGap>
 					<HARFileUploader onChange={onHARUpload} />
 					<HAREntriesViewer
-						tableId="har-entries-table"
 						tableTitle={harFileName}
 						harEntries={harEntries}
 					/>
 				</VerticalGap>
 			}
 		/>
-	);
+	</AppContentWidthProvider>;
 }

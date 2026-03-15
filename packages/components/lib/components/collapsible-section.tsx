@@ -3,7 +3,7 @@ import { HorizontalPadding } from './horizontal-padding';
 
 type CollapsibleSectionProps = React.PropsWithChildren<{
 	title: string;
-	variant?: 'default' | 'container' | 'footer';
+	variant?: 'default' | 'container' | 'inline';
 }>;
 
 export default function CollapsibleSection({

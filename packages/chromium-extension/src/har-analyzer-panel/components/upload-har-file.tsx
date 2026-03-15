@@ -5,10 +5,7 @@ export default function UploadHARFile() {
 		<Button
 			href="https://theallanjoshua.github.io/har-analyzer/"
 			iconName="upload"
-			variant="link"
 			external
-		>
-			Upload HAR File
-		</Button>
+		/>
 	);
 };

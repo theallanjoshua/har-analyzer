@@ -1,15 +1,11 @@
 import Toggle from '@cloudscape-design/components/toggle';
+import { useCompareModePreference } from '../context/preferences';
 
-interface CompareModeSwitcherProps {
-	isCompareMode: boolean;
-	onChange: (isCompareMode: boolean) => void;
-}
-
-export default function CompareModeSwitcher(props: CompareModeSwitcherProps) {
-	const { isCompareMode, onChange } = props;
+export default function CompareModeSwitcher() {
+	const [isCompareMode, setIsCompareMode] = useCompareModePreference();
 
 	return (
-		<Toggle onChange={({ detail }) => { onChange(detail.checked); }} checked={isCompareMode}>
+		<Toggle onChange={({ detail }) => { setIsCompareMode(detail.checked); }} checked={isCompareMode}>
 			Enable comparison mode?
 		</Toggle>
 	);

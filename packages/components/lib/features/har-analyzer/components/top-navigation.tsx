@@ -1,25 +1,25 @@
 import Header from '@cloudscape-design/components/header';
 import { borderWidthAlert, colorBorderDividerDefault } from '@cloudscape-design/design-tokens';
-import HorizontalGap from './horizontal-gap';
+import HorizontalGap from '~/components/horizontal-gap';
 
-export const ENHANCED_TOP_NAVIGATION_ID = 'top-navigation';
+export const TOP_NAVIGATION_ID = 'top-navigation';
 
 const BLUR_CSS = 'blur(16px)';
 
-export interface EnhancedTopNavigationProps {
+interface TopNavigationProps {
 	logo?: React.ReactNode;
 	appName: string;
 	utilities?: React.ReactNode;
 }
 
-export default function EnhancedTopNavigation({
+export default function TopNavigation({
 	logo,
 	appName,
 	utilities,
-}: EnhancedTopNavigationProps) {
+}: TopNavigationProps) {
 	return (
 		<nav
-			id={ENHANCED_TOP_NAVIGATION_ID}
+			id={TOP_NAVIGATION_ID}
 			style={{
 				position: 'sticky',
 				top: 0,

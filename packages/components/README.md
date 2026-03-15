@@ -13,7 +13,7 @@ Reusable React components for HAR Analyzer.
 - ⚖️ **Entry Comparison**: Compare multiple HAR entries side-by-side to easily spot differences in headers, payloads, and responses by simply selecting multiple rows in the network table.
 - 🔍 **Advanced Filtering**: Filter network entries quickly by content types (JSON, HTML, JS, CSS, etc.) or error statuses via `<HAREntriesFilters />`.
 - 🕵️ **Deep Inspection**: Inspect detailed request/response headers, decoded payloads, and syntax-highlighted response bodies with `<ViewHAREntry />`.
-- 🛠️ **Persistent Preferences**: Context providers remember user preferences like themes (dark/light mode) and table column layouts effortlessly via the `<HARAnalyzerPreferencesProvider />`.
+- 🛠️ **Persistent Preferences**: Context providers remember user preferences like themes (dark/light mode) and table column layouts effortlessly via the `<HARAnalyzerPreferencesStore />`.
 - 🎨 **Cloudscape UI**: Built on top of the [Cloudscape Design System](https://cloudscape.design/).
 - ⌨️ **Type Safe**: Fully written in TypeScript with exported utility types (`HARContent`, `HAREntry`) for standard HTTP Archive structures.
 
@@ -43,25 +43,28 @@ npm install react react-dom \
 
 ## Usage & Setup
 
-Clients **must** wrap the components with `HARAnalyzerPreferencesProvider` (to handle user preferences like themes and table settings) and Cloudscape's `<I18nProvider>` (for localization).
+Clients **must** wrap the components with `HARAnalyzerPreferencesStore` (to handle user preferences like themes and table settings) and Cloudscape's `<I18nProvider>` (for localization).
 
-```jsx
+```tsx
 import enMessages from '@cloudscape-design/components/i18n/messages/all.en.js';
 import { I18nProvider } from '@cloudscape-design/components/i18n';
-import useLocalStorageState from 'use-local-storage-state';
 import HAREntriesViewer from '@har-analyzer/components/har-entries-viewer';
-import HARAnalyzerPreferencesProvider from '@har-analyzer/components/har-analyzer-preferences';
+import HARAnalyzerPreferencesStore, { type UserPreferencesStore } from '@har-analyzer/components/har-analyzer-preferences-store';
 
-// Provide a custom usePreference hook conforming to:
-// (key: string) => readonly [string | undefined, (preference: string) => void]
-const useWebStorage = (key) => useLocalStorageState(key);
+// Provide a store conforming to the UserPreferencesStore interface:
+// getPreference: (key: string) => Promise<string | undefined>
+// setPreference: (key: string, value: string) => Promise<void>
+const myStorage: UserPreferencesStore = {
+  getPreference: async (key) => localStorage.getItem(key) || undefined,
+  setPreference: async (key, value) => localStorage.setItem(key, value),
+};
 
 function App() {
   return (
     <I18nProvider locale="en" messages={[enMessages]}>
-      <HARAnalyzerPreferencesProvider usePreferenceStore={useWebStorage}>
-        <HAREntriesViewer tableId="my-report-table" harEntries={yourHarEntriesArray} />
-      </HARAnalyzerPreferencesProvider>
+      <HARAnalyzerPreferencesStore userPreferencesStore={myStorage}>
+        <HAREntriesViewer tableTitle="My HAR Entries" harEntries={yourHarEntriesArray} />
+      </HARAnalyzerPreferencesStore>
     </I18nProvider>
   );
 }
@@ -75,7 +78,7 @@ The library supports both **top-level** imports and **component-level** imports.
 ```javascript
 import {
   HARAnalyzer,
-  HARAnalyzerPreferencesProvider,
+  HARAnalyzerPreferencesStore,
   HAREntriesViewer,
   HARFileUploader,
   ListHAREntries,
@@ -86,7 +89,7 @@ import {
 **Component-level:**
 ```javascript
 import HARAnalyzer from '@har-analyzer/components/har-analyzer';
-import HARAnalyzerPreferencesProvider from '@har-analyzer/components/har-analyzer-preferences';
+import HARAnalyzerPreferencesStore from '@har-analyzer/components/har-analyzer-preferences-store';
 import HAREntriesViewer from '@har-analyzer/components/har-entries-viewer';
 import HARFileUploader from '@har-analyzer/components/har-file-uploader';
 import ListHAREntries from '@har-analyzer/components/list-har-entries';
@@ -123,7 +126,7 @@ import HAREntriesViewer from '@har-analyzer/components/har-entries-viewer';
 
 function App() {
   return (
-    <HAREntriesViewer tableId="har-viewer-table" harEntries={yourHarEntriesArray} />
+    <HAREntriesViewer tableTitle="Requests" harEntries={yourHarEntriesArray} />
   );
 }
 ```
@@ -133,7 +136,6 @@ function App() {
 | Name          | Type                          | Required | Description                                      |
 |---------------|-------------------------------|----------|--------------------------------------------------|
 | harEntries    | HAREntry[]                    | Yes      | An array of HAR entries.                         |
-| tableId       | string                        | Yes      | Unique identifier for the table component.        |
 | tableTitle    | string                        | No       | Title of the table displaying the HAR entries.   |
 
 ---
@@ -148,7 +150,7 @@ import ListHAREntries from '@har-analyzer/components/list-har-entries';
 function App() {
   return (
     <ListHAREntries
-      id="my-table"
+      title="Requests"
       harEntries={yourHarEntriesArray}
       selectedHAREntries={[]}
       onSelectionChange={(entries) => console.log('Selected:', entries)}
@@ -161,7 +163,6 @@ function App() {
 
 | Name                | Type                                      | Required | Description                              |
 |---------------------|-------------------------------------------|----------|------------------------------------------|
-| id                  | string                                    | Yes      | Unique identifier for the list.           |
 | title               | string                                    | No       | Optional title for the list.             |
 | harEntries          | HAREntry[]                                | Yes      | The entries to display in the table.     |
 | selectedHAREntries  | HAREntry[]                                | Yes      | Entries to remain selected in the table. |
@@ -212,19 +213,23 @@ function App() {
 
 ---
 
-### HARAnalyzerPreferencesProvider
+### HARAnalyzerPreferencesStore
 
-Provides a persistent context for managing user preferences (like theme, content width, table preferences and board layouts). You must wrap your application in `HARAnalyzerPreferencesProvider` and provide a `usePreferenceStore` hook that bridges external storage (like browser storage or Chrome Extensions API) into the library.
-```jsx
-import HARAnalyzerPreferencesProvider from '@har-analyzer/components/har-analyzer-preferences';
+Provides a persistent context for managing user preferences (like theme, content width, table preferences, and board layouts). You must wrap your application in `HARAnalyzerPreferencesStore` and provide a `userPreferencesStore` object that bridges external async storage (like browser storage APIs or Chrome Extensions API) into the library.
 
-const useWebStorage = (key) => useLocalStorageState(key);
+```tsx
+import HARAnalyzerPreferencesStore, { type UserPreferencesStore } from '@har-analyzer/components/har-analyzer-preferences-store';
+
+const myStorage: UserPreferencesStore = {
+  getPreference: async (key) => localStorage.getItem(key) || undefined,
+  setPreference: async (key, value) => { localStorage.setItem(key, value); }
+};
 
 function App() {
   return (
-      <HARAnalyzerPreferencesProvider usePreferenceStore={useWebStorage}>
+      <HARAnalyzerPreferencesStore userPreferencesStore={myStorage}>
         ...your HAR Analyzer components
-      </HARAnalyzerPreferencesProvider>
+      </HARAnalyzerPreferencesStore>
   );
 }
 ```
@@ -238,10 +243,30 @@ Various types and utilities for working with HTTP Archive (.har) files are direc
 ```typescript
 import {
   getHARContentFromFile,
+  getHAREntriesFilteredByContentType,
+  getHAREntriesWithErrorResponse,
+  getHAREntryId,
+  isErrorResponse,
   type HARContent,
-  type HAREntry
+  type HAREntry,
+  type ContentTypeGroup
 } from '@har-analyzer/components';
 ```
+
+### `getHARContentFromFile(fileContent: unknown): HARContent`
+Parses a JSON string into a structured `HARContent` object. Throws an error if the content is not a valid JSON string.
+
+### `getHAREntriesFilteredByContentType(harEntries: HAREntry[], contentTypeFilters: ContentTypeGroup[]): HAREntry[]`
+Filters an array of HAR entries by their response MIME types mapped to high-level content type groups (e.g., `'JSON'`, `'XML'`, `'JS'`, `'CSS'`, `'HTML'`, `'Doc'`, `'Img'`, `'Font'`, `'Media'`, `'Other'`).
+
+### `isErrorResponse(harEntry: HAREntry): boolean`
+Returns `true` if the HAR entry's response has a status code less than 200 or greater than or equal to 400.
+
+### `getHAREntriesWithErrorResponse(harEntries: HAREntry[]): HAREntry[]`
+Returns a filtered array of HAR entries containing only those that resulted in an error (based on `isErrorResponse`).
+
+### `getHAREntryId(harEntry: HAREntry): string`
+Generates a unique deterministic ID for a given HAR entry using a combination of `startedDateTime`, `time`, and `request.url`.
 
 ---
 

@@ -1,5 +1,5 @@
 import Toggle from '@cloudscape-design/components/toggle';
-import { useAppContentWidthPreference } from '~/hooks/app-preferences';
+import { useAppContentWidthPreference } from '~/features/har-analyzer/context/preferences';
 
 export default function ContentWidthSwitcher() {
 	const [isFullContentWidth, setFullContentWidth] = useAppContentWidthPreference();

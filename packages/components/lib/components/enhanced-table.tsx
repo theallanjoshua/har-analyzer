@@ -6,7 +6,6 @@ import CollectionPreferences from '@cloudscape-design/components/collection-pref
 import PropertyFilter from '@cloudscape-design/components/property-filter';
 import Table from '@cloudscape-design/components/table';
 import { useMemo } from 'react';
-import { useTablePreferences, useTablePreferredColumnWidths } from '~/hooks/table-preferences';
 import { objectEntries } from '~/utils/common';
 
 interface BaseColumnDefinition {
@@ -177,26 +176,31 @@ function getColumnDefinitionsWithPreferredWidths<TItem>(
 	});
 }
 
-function getTablePreferencesWithoutStaleColumns<TItem>(
-	tablePreferences: CollectionPreferencesProps.Preferences,
+function getTableCollectionPreferencesWithoutStaleColumns<TItem>(
+	tableCollectionPreferences: CollectionPreferencesProps.Preferences,
 	columnDefinitions: TableProps.ColumnDefinition<TItem>[],
 ) {
-	if (!tablePreferences.contentDisplay) {
-		return tablePreferences;
+	if (!tableCollectionPreferences.contentDisplay) {
+		return tableCollectionPreferences;
 	}
 	const currentAvailableColumns = columnDefinitions.map(({ id }) => id);
-	const contentDisplay = tablePreferences.contentDisplay.filter(({ id }) => currentAvailableColumns.includes(id));
+	const contentDisplay = tableCollectionPreferences.contentDisplay.filter(({ id }) => currentAvailableColumns.includes(id));
 	return {
-		...tablePreferences,
+		...tableCollectionPreferences,
 		contentDisplay,
 	};
 }
 
+export interface EnhancedTablePreferences {
+	collectionPreferences: CollectionPreferencesProps.Preferences | undefined;
+	preferredColumnWidths: { id: string; width?: number }[];
+}
+
 interface EnhancedTableProps<TItem> {
-	id: string;
 	items: TItem[];
 	getRowId: (item: TItem) => string;
 	columnsDefinition: EnhancedTableColumnsDefinition<TItem>;
+	useTablePreferences: () => [EnhancedTablePreferences, (preferences: EnhancedTablePreferences) => void];
 	empty?: React.ReactNode;
 	selectionType?: 'single' | 'multi';
 	isEntireRowSelectable?: boolean;
@@ -207,10 +211,10 @@ interface EnhancedTableProps<TItem> {
 }
 
 export default function EnhancedTable<TItem>({
-	id,
 	items: originalItems,
 	getRowId,
 	columnsDefinition: enhancedColumnDefinitions,
+	useTablePreferences,
 	empty,
 	selectionType,
 	isEntireRowSelectable = false,
@@ -224,6 +228,8 @@ export default function EnhancedTable<TItem>({
 		[originalItems, enhancedColumnDefinitions],
 	);
 
+	const columnDefinitions = useMemo(() => getColumnDefinitions(enhancedColumnDefinitions), [enhancedColumnDefinitions]);
+
 	const enhancedSelectedTableItems = useMemo(
 		() => {
 			const selectedItemIds = new Set(selectedItems.map((item) => getRowId(item)));
@@ -235,51 +241,41 @@ export default function EnhancedTable<TItem>({
 		[selectedItems, enhancedTableItems, getRowId],
 	);
 
-	const trackBy = (item: EnhancedTableItem<TItem>) => getRowId(item.__originalItem__);
-
-	const filteringProperties = useMemo(
-		() => getFilteringProperties(enhancedColumnDefinitions),
-		[enhancedColumnDefinitions],
-	);
-
-	const {
-		items,
-		collectionProps,
-		propertyFilterProps,
-		filteredItemsCount,
-	} = useCollection(enhancedTableItems, {
-		propertyFiltering: {
-			filteringProperties,
-		},
-		sorting: {},
-		selection: { keepSelection: true, trackBy },
-	});
-
 	const columnDisplayPreferenceOptions = useMemo(
 		() => getColumnDisplayPreferenceOptions(enhancedColumnDefinitions),
 		[enhancedColumnDefinitions],
 	);
 
-	const initialTablePreferences = useMemo(() => ({
+	const initialCollectionPreferences = useMemo(() => ({
 		contentDisplay: columnDisplayPreferenceOptions,
 		wrapLines: false,
 	}), [columnDisplayPreferenceOptions]);
 
-	const [tablePreferences, setTablePreferences] = useTablePreferences(id, initialTablePreferences);
+	const [{ collectionPreferences = initialCollectionPreferences, preferredColumnWidths }, setTablePreferences] = useTablePreferences();
 
-	const columnDefinitions = useMemo(() => getColumnDefinitions(enhancedColumnDefinitions), [enhancedColumnDefinitions]);
-
-	const tablePreferencesWithoutStaleColumns = useMemo(
-		() => getTablePreferencesWithoutStaleColumns(tablePreferences, columnDefinitions),
-		[tablePreferences, columnDefinitions],
+	const tableCollectionPreferencesWithoutStaleColumns = useMemo(
+		() => getTableCollectionPreferencesWithoutStaleColumns(collectionPreferences, columnDefinitions),
+		[collectionPreferences, columnDefinitions],
 	);
-
-	const [preferredColumnWidths, setPreferredColumnWidths] = useTablePreferredColumnWidths(id);
 
 	const columnDefinitionsWithPreferredWidths = useMemo(
 		() => getColumnDefinitionsWithPreferredWidths(columnDefinitions, preferredColumnWidths),
 		[columnDefinitions, preferredColumnWidths],
 	);
+
+	const onCollectionPreferencesChange = (collectionPreferences: EnhancedTablePreferences['collectionPreferences']) => {
+		setTablePreferences({
+			collectionPreferences,
+			preferredColumnWidths,
+		});
+	};
+
+	const onPreferredColumnWidthsChange = (preferredColumnWidths: EnhancedTablePreferences['preferredColumnWidths']) => {
+		setTablePreferences({
+			collectionPreferences,
+			preferredColumnWidths,
+		});
+	};
 
 	const onRowClick: TableProps['onRowClick'] = ({ detail: { item } }) => {
 		if (!onSelectionChange || !selectionType)
@@ -301,6 +297,26 @@ export default function EnhancedTable<TItem>({
 		}
 	};
 
+	const trackBy = (item: EnhancedTableItem<TItem>) => getRowId(item.__originalItem__);
+
+	const filteringProperties = useMemo(
+		() => getFilteringProperties(enhancedColumnDefinitions),
+		[enhancedColumnDefinitions],
+	);
+
+	const {
+		items,
+		collectionProps,
+		propertyFilterProps,
+		filteredItemsCount,
+	} = useCollection(enhancedTableItems, {
+		propertyFiltering: {
+			filteringProperties,
+		},
+		sorting: {},
+		selection: { keepSelection: true, trackBy },
+	});
+
 	return (
 		<Table
 			{...collectionProps}
@@ -310,15 +326,15 @@ export default function EnhancedTable<TItem>({
 			resizableColumns
 			stripedRows
 			stickyHeader
-			wrapLines={tablePreferencesWithoutStaleColumns.wrapLines}
+			wrapLines={tableCollectionPreferencesWithoutStaleColumns.wrapLines}
 			columnDefinitions={columnDefinitionsWithPreferredWidths}
-			columnDisplay={tablePreferencesWithoutStaleColumns.contentDisplay}
+			columnDisplay={tableCollectionPreferencesWithoutStaleColumns.contentDisplay}
 			onColumnWidthsChange={({ detail }) => {
 				const newPreferredColumnWidths = columnDefinitions.map(({ id }, index) => ({
 					id,
 					width: detail.widths[index],
 				}));
-				setPreferredColumnWidths(newPreferredColumnWidths);
+				onPreferredColumnWidthsChange(newPreferredColumnWidths);
 			}}
 			items={items}
 			trackBy={trackBy}
@@ -341,8 +357,8 @@ export default function EnhancedTable<TItem>({
 				<CollectionPreferences
 					wrapLinesPreference={{}}
 					contentDisplayPreference={{ options: columnDisplayPreferenceOptions, enableColumnFiltering: true }}
-					preferences={tablePreferencesWithoutStaleColumns}
-					onConfirm={({ detail }) => { setTablePreferences(detail); }}
+					preferences={tableCollectionPreferencesWithoutStaleColumns}
+					onConfirm={({ detail }) => { onCollectionPreferencesChange(detail); }}
 				/>
 			}
 		/>

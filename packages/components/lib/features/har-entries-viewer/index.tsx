@@ -32,14 +32,12 @@ const DEFAULT_BOARD_DEFINITIONS: EnhancedBoardProps['definitions'] = [
 
 interface HAREntriesViewerProps {
 	harEntries: HAREntry[];
-	tableId: string;
 	tableTitle?: string;
 }
 
 export default function HAREntriesViewer(props: HAREntriesViewerProps) {
 	const {
 		harEntries,
-		tableId,
 		tableTitle,
 	} = props;
 
@@ -96,10 +94,11 @@ export default function HAREntriesViewer(props: HAREntriesViewerProps) {
 			}));
 
 			//  Using index as id to ensure we don't lose active selected tab in ViewHAREntry
-			const definitions = [...prevValidDefinitions, ...newDefinitions].map((definitions, index) => {
+			const definitions = [...prevValidDefinitions, ...newDefinitions].map((definition, index) => {
+				const { data: { instanceId } } = definition;
 				return {
-					...definitions,
-					id: String(index),
+					...definition,
+					id: instanceId === COMPONENT_TYPE_LIST_HAR_ENTRIES ? COMPONENT_TYPE_LIST_HAR_ENTRIES : String(index),
 				};
 			});
 
@@ -111,7 +110,6 @@ export default function HAREntriesViewer(props: HAREntriesViewerProps) {
 		[COMPONENT_TYPE_LIST_HAR_ENTRIES]: {
 			content: <HorizontalPadding>
 				<ListHAREntries
-					id={tableId}
 					title={tableTitle}
 					harEntries={harEntries}
 					selectedHAREntries={selectedHAREntries}

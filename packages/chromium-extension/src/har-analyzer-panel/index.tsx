@@ -3,11 +3,16 @@ import { I18nProvider } from '@cloudscape-design/components/i18n';
 import enMessages from '@cloudscape-design/components/i18n/messages/all.en';
 import { applyMode, Mode } from '@cloudscape-design/global-styles';
 import { useEffect } from 'react';
-import { HARAnalyzerPreferencesProvider, HAREntriesViewer } from '@har-analyzer/components';
+import { HARAnalyzerPreferencesStore, HAREntriesViewer } from '@har-analyzer/components';
+import HorizontalGap from '~/components/horizontal-gap';
+import SpaceBetween from '~/components/space-between';
 import VerticalGap from '~/components/vertical-gap';
-import HARAnalyzerActions from './components/har-analyzer-actions';
+import ClearHAREntries from './components/clear-har-entries';
+import DownloadHARFile from './components/download-har-file';
+import ReloadHAREntries from './components/reload-har-entries';
+import UploadHARFile from './components/upload-har-file';
 import useHAREntries from './hooks/har-entries';
-import { usePreference } from './hooks/preferences.js';
+import { userPreferencesStore } from './utils/storage';
 
 export default function HARAnalyzerPanel() {
 	const [harEntries, setHAREntries] = useHAREntries();
@@ -26,13 +31,25 @@ export default function HARAnalyzerPanel() {
 	}, []);
 
 	return <I18nProvider locale="en" messages={[enMessages]}>
-		<HARAnalyzerPreferencesProvider usePreferenceStore={usePreference}>
+		<HARAnalyzerPreferencesStore userPreferencesStore={userPreferencesStore}>
 			<Box padding={'s'}>
 				<VerticalGap>
-					<HARAnalyzerActions onClear={() => { setHAREntries([]); }} />
-					<HAREntriesViewer tableId="haroscope" tableTitle="Requests" harEntries={harEntries} />
+					<SpaceBetween>
+						<HorizontalGap>
+							<ReloadHAREntries />
+							<ClearHAREntries onClear={() => { setHAREntries([]); }} />
+						</HorizontalGap>
+						<HorizontalGap>
+							<UploadHARFile />
+							<DownloadHARFile harEntries={harEntries} />
+						</HorizontalGap>
+					</SpaceBetween>
+					<HAREntriesViewer
+						tableTitle="Requests"
+						harEntries={harEntries}
+					/>
 				</VerticalGap>
 			</Box>
-		</HARAnalyzerPreferencesProvider>
+		</HARAnalyzerPreferencesStore>
 	</I18nProvider>;
 }

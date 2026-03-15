@@ -20,8 +20,8 @@
 		"@cloudscape-design/design-tokens": "^3.0.59",
 		"@cloudscape-design/global-styles": "^1.0.44",
 		"@har-analyzer/components": "workspace:*",
+		"local-db-storage": "^2.0.0",
 		"react": "^19.1.0",
-		"react-dom": "^19.1.0",
-		"use-local-storage-state": "^19.5.0"
+		"react-dom": "^19.1.0"
 	}
 }

@@ -2,6 +2,8 @@ import type { Har } from 'har-format';
 import type { ContentTypeGroup } from './content-type';
 import { getContentTypeGroup } from './content-type';
 
+export type { ContentTypeGroup };
+
 export type HARContent = Har;
 
 export function getHARContentFromFile(fileContent: unknown): HARContent {

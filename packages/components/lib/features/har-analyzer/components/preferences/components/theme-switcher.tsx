@@ -1,7 +1,7 @@
 import Toggle from '@cloudscape-design/components/toggle';
 import { applyMode, Mode } from '@cloudscape-design/global-styles';
 import { useEffect } from 'react';
-import { useThemePreference } from '~/hooks/app-preferences';
+import { useThemePreference } from '~/features/har-analyzer/context/preferences';
 
 export default function ThemeSwitcher() {
 	const [isDarkTheme, setIsDarkTheme] = useThemePreference();
