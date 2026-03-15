@@ -39,7 +39,7 @@ export default function ContentViewer({
 	}
 
 	if (contentTypeGroup === 'JSON') {
-		const [deserializedContent, deserializationError] = safeDeserialize<object>(decodedContent);
+		const [deserializationError, deserializedContent] = safeDeserialize<object>(decodedContent);
 		if (!deserializationError) {
 			return <JSONViewer data={deserializedContent} />;
 		}

@@ -1,9 +1,9 @@
 export function safeDeserialize<T>(jsonString: string) {
 	try {
 		const json = JSON.parse(jsonString) as T;
-		return [json, undefined] as const;
+		return [undefined, json] as const;
 	} catch (error) {
 		console.warn('Failed to parse JSON string:', jsonString, 'Error:', error);
-		return [undefined, error] as const;
+		return [error, undefined] as const;
 	}
 }
