@@ -207,13 +207,11 @@ export default function HAREntriesTable({
 			selectedItems={selectedHAREntries}
 			onSelectionChange={onSelectionChange}
 			header={<Header
-				description={
-					<CompareModeSwitcher />
-				}
 				counter={`(${filteredHAREntries.length}/${harEntries.length})`}
 				actions={<HorizontalGap>
-					<ContentTypeFilter />
+					<CompareModeSwitcher />
 					<ErrorsFilter />
+					<ContentTypeFilter />
 				</HorizontalGap>}
 			>
 				{title}

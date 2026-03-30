@@ -13,7 +13,6 @@
 		"prepublishOnly": "pnpm validate"
 	},
 	"dependencies": {
-		"@cloudscape-design/board-components": "^3.0.150",
 		"@cloudscape-design/code-view": "^3.0.66",
 		"@cloudscape-design/collection-hooks": "^1.0.73",
 		"@cloudscape-design/components": "^3.0.1022",

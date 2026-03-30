@@ -208,6 +208,7 @@ interface EnhancedTableProps<TItem> {
 	onSelectionChange?: (selectedItems: TItem[]) => void;
 	contentDensity?: 'compact' | 'comfortable';
 	header?: React.ReactNode;
+	variant?: TableProps['variant'];
 }
 
 export default function EnhancedTable<TItem>({
@@ -222,6 +223,7 @@ export default function EnhancedTable<TItem>({
 	onSelectionChange,
 	contentDensity = 'comfortable',
 	header,
+	variant = 'borderless',
 }: EnhancedTableProps<TItem>) {
 	const enhancedTableItems = useMemo(
 		() => getEnhancedTableItems(originalItems, enhancedColumnDefinitions),
@@ -321,7 +323,7 @@ export default function EnhancedTable<TItem>({
 		<Table
 			{...collectionProps}
 			header={header}
-			variant="full-page"
+			variant={variant}
 			contentDensity={contentDensity}
 			resizableColumns
 			stripedRows

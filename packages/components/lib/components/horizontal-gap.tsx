@@ -5,7 +5,11 @@ type HorizontalGapProps = Omit<SpaceBetweenProps, 'size' | 'direction'> & { size
 
 export default function HorizontalGap({ children, ...props }: HorizontalGapProps) {
 	return (
-		<SpaceBetween direction="horizontal" size="s" {...props}>
+		<SpaceBetween
+			direction='horizontal'
+			size='s'
+			{...props}
+		>
 			{children}
 		</SpaceBetween>
 	);
