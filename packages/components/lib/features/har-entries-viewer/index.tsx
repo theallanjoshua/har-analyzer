@@ -119,14 +119,13 @@ export default function HAREntriesViewer(props: HAREntriesViewerProps) {
 
 			if (prevLayoutDefinitions.length === 1 && prevValidLayoutDefinitions.length === 1) {
 				const listHAREntriesLayoutDefinition = prevValidLayoutDefinitions[0]!;
-				const listHAREntriesColSpanEnd = listHAREntriesLayoutDefinition.x + listHAREntriesLayoutDefinition.w;
+				let listHAREntriesColSpanEnd = listHAREntriesLayoutDefinition.x + listHAREntriesLayoutDefinition.w;
 
 				let newDefinitionWidth = LAYOUT_TOTAL_COLUMNS - listHAREntriesColSpanEnd;
-				let newXPos = listHAREntriesLayoutDefinition.x + newDefinitionWidth;
 
-				if (!newDefinitionWidth) {
+				if (newDefinitionWidth < 1) {
 					newDefinitionWidth = LAYOUT_TOTAL_COLUMNS / 2;
-					newXPos = newDefinitionWidth;
+					listHAREntriesColSpanEnd = newDefinitionWidth;
 					prevValidLayoutDefinitions = [
 						{
 							...listHAREntriesLayoutDefinition,
@@ -138,7 +137,7 @@ export default function HAREntriesViewer(props: HAREntriesViewerProps) {
 				}
 
 				layoutDimensionForNewDefinitions = {
-					x: newXPos,
+					x: listHAREntriesColSpanEnd,
 					y: 0,
 					w: newDefinitionWidth,
 					h: listHAREntriesLayoutDefinition.h,
