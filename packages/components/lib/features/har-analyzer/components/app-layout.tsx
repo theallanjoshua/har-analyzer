@@ -1,12 +1,13 @@
+import type { ReactNode } from 'react';
 import CSAppLayout from '@cloudscape-design/components/app-layout';
 import { ThemeProvider, useAppContentWidthPreference } from '../context/preferences';
 import AppPreferences from './preferences';
 import TopNavigation, { TOP_NAVIGATION_ID } from './top-navigation';
 
 interface AppLayoutProps {
-	logo?: React.ReactNode;
+	logo?: ReactNode;
 	appName: string;
-	content: React.ReactNode;
+	content: ReactNode;
 }
 
 export default function AppLayout({

@@ -1,38 +1,32 @@
-import {
-	borderRadiusContainer,
-	borderWidthField,
-	colorBorderDividerDefault,
-} from '@cloudscape-design/design-tokens';
-import {
-	useCallback,
-	useEffect,
-	useState,
-} from 'react';
-import type { R2LayoutProps } from '~/components/r2-layout';
+import { useEffect, useState } from 'react';
+import type { EnhancedBoardProps } from '~/components/enhanced-board';
 import type { HAREntry } from '~/utils/har';
-import CloseOverlay from '~/components/close-overlay';
-import { CompletePadding } from '~/components/complete-padding';
-import R2Layout from '~/components/r2-layout';
-import ListHAREntries from '~/features/list-har-entries';
-import ViewHAREntry, { DEFAULT_SELECTED_TAB_ID } from '~/features/view-har-entry';
+import EnhancedBoard from '~/components/enhanced-board';
+import { HorizontalPadding } from '~/components/horizontal-padding';
+import VerticalGap from '~/components/vertical-gap';
+import { ListHAREntriesTable, ListHAREntriesTableHeader } from '~/features/list-har-entries';
+import ViewHAREntry from '~/features/view-har-entry';
+import { removeUndefined } from '~/utils/array';
 import { getHAREntryId } from '~/utils/har';
+import HAREntriesViewerActionStripe from './components/har-entries-viewer-action-stripe';
+import HAREntriesViewerProvider from './components/har-entries-viewer-provider';
+import ViewHAREntryHeader from './components/view-har-entry-header';
+import { useCompareModePreference } from './context/preferences';
 
-const LIST_HAR_ENTRIES_LAYOUT_CELL_ID = 'list-har-entries';
-const LAYOUT_TOTAL_COLUMNS = 12;
+const DEFAULT_BOARD_ITEM_DEFINITION = {
+	rowSpan: 4,
+	columnSpan: 12,
+};
 
-type HAREntriesViewerLayout = R2LayoutProps<{ instanceId: string }>;
+const COMPONENT_TYPE_LIST_HAR_ENTRIES = 'har-entries-viewer';
+const COMPONENT_TYPE_VIEW_HAR_ENTRY = 'view-har-entry';
 
-type HAREntriesViewerLayoutDefinitions = HAREntriesViewerLayout['layoutDefinitions'];
-
-const DEFAULT_BOARD_DEFINITIONS: HAREntriesViewerLayoutDefinitions = [
+const DEFAULT_BOARD_DEFINITIONS: EnhancedBoardProps['definitions'] = [
 	{
-		x: 0,
-		y: 0,
-		w: 12,
-		h: 4,
-		id: '0',
-		props: {
-			instanceId: LIST_HAR_ENTRIES_LAYOUT_CELL_ID,
+		...DEFAULT_BOARD_ITEM_DEFINITION,
+		data: {
+			componentType: COMPONENT_TYPE_LIST_HAR_ENTRIES,
+			instanceId: COMPONENT_TYPE_LIST_HAR_ENTRIES,
 		},
 	},
 ];
@@ -42,20 +36,27 @@ interface HAREntriesViewerProps {
 	tableTitle?: string;
 }
 
-export default function HAREntriesViewer(props: HAREntriesViewerProps) {
+function HAREntriesViewer(props: HAREntriesViewerProps) {
 	const {
 		harEntries,
 		tableTitle,
 	} = props;
 
 	const [selectedHAREntries, setSelectedHAREntries] = useState<HAREntry[]>([]);
-	const [layoutDefinitions, setLayoutDefinitions] = useState<HAREntriesViewerLayoutDefinitions>(DEFAULT_BOARD_DEFINITIONS);
-	const [selectedViewHAREntryTabId, setSelectedViewHAREntryTabId] = useState(DEFAULT_SELECTED_TAB_ID);
+	const [definitions, setDefinitions] = useState<EnhancedBoardProps['definitions']>(DEFAULT_BOARD_DEFINITIONS);
+	const [initialSelectedTabId, setInitialSelectedTabId] = useState<string>();
 
-	// Keeps harEntries & selectedHAREntries in sync, removing any selected entry that is not present in harEntries anymore
+	const [isCompareMode] = useCompareModePreference();
+
+	useEffect(() => {
+		if (!isCompareMode && selectedHAREntries.length > 1) {
+			// eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
+			setSelectedHAREntries([]);
+		}
+	}, [isCompareMode, selectedHAREntries.length]);
+
 	useEffect(() => {
 		const harEntryIds = new Set(harEntries.map(getHAREntryId));
-
 		// eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
 		setSelectedHAREntries((prevSelectedHAREntries) => {
 			if (!prevSelectedHAREntries.length) {
@@ -66,163 +67,124 @@ export default function HAREntriesViewer(props: HAREntriesViewerProps) {
 				harEntryIds.has(getHAREntryId(entry)),
 			);
 
-			if (validSelectedHAREntries.length === prevSelectedHAREntries.length) {
-				return prevSelectedHAREntries;
+			if (validSelectedHAREntries.length !== prevSelectedHAREntries.length) {
+				return validSelectedHAREntries;
 			}
-			return validSelectedHAREntries;
+
+			return prevSelectedHAREntries;
 		});
 	}, [harEntries]);
 
-	// Keeps layoutDefinitions in sync with selectedHAREntries,
-	// adding a new layout item for each newly selected entry, and
-	// removing the layout item for each entry that is no longer selected
 	useEffect(() => {
 		const selectedHAREntryIds = selectedHAREntries.map(getHAREntryId);
-		const selectedHAREntryIdsSet = new Set(selectedHAREntryIds);
+		const validDefinitionInstanceIds = new Set([...selectedHAREntryIds, COMPONENT_TYPE_LIST_HAR_ENTRIES]);
 
-		// TODO: Make this hook more readable
 		// eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
-		setLayoutDefinitions((prevLayoutDefinitions) => {
-			let prevValidLayoutDefinitions = prevLayoutDefinitions.filter(({ props: { instanceId } }) => {
-				return selectedHAREntryIdsSet.has(instanceId) || instanceId === LIST_HAR_ENTRIES_LAYOUT_CELL_ID;
-			});
-			const prevValidLayoutDefinitionInstanceIds = new Set(prevValidLayoutDefinitions.map(({ props: { instanceId } }) => instanceId));
+		setDefinitions((prevDefinitions) => {
+			const prevDefinitionInstanceIds = prevDefinitions.map(({ data: { instanceId } }) => instanceId);
+			const prevValidDefinitionInstanceIds = new Set(prevDefinitionInstanceIds.filter((id) => validDefinitionInstanceIds.has(id)));
+			const newSelectedHAREntryIds = selectedHAREntryIds.filter((id) => !prevValidDefinitionInstanceIds.has(id));
 
-			const newSelectedHAREntryIds = selectedHAREntryIds.filter((id) => !prevValidLayoutDefinitionInstanceIds.has(id));
-
-			if (!newSelectedHAREntryIds.length) {
-				return prevValidLayoutDefinitions;
+			if (!newSelectedHAREntryIds.length && prevDefinitionInstanceIds.length === prevValidDefinitionInstanceIds.size) {
+				return prevDefinitions;
 			}
 
-			let layoutDimensionForNewDefinitions = {
-				x: 0,
-				y: 0,
-				w: 6,
-				h: 4,
-			};
+			const prevValidDefinitions = prevDefinitions.map((prevDefinition) => {
+				const { data: { instanceId } } = prevDefinition;
 
-			const prevLayoutDefinition = prevLayoutDefinitions.at(-1);
-			const prevValidLayoutDefinition = prevValidLayoutDefinitions.at(-1);
-
-			if (prevLayoutDefinition) {
-				layoutDimensionForNewDefinitions = {
-					x: prevLayoutDefinition.x,
-					y: prevLayoutDefinition.y,
-					w: prevLayoutDefinition.w,
-					h: prevLayoutDefinition.h,
-				};
-			}
-
-			if (prevValidLayoutDefinition && prevLayoutDefinition?.props.instanceId === prevValidLayoutDefinition.props.instanceId) {
-				layoutDimensionForNewDefinitions.x = layoutDimensionForNewDefinitions.x + layoutDimensionForNewDefinitions.w;
-			}
-
-			if (prevLayoutDefinitions.length === 1 && prevValidLayoutDefinitions.length === 1) {
-				const listHAREntriesLayoutDefinition = prevValidLayoutDefinitions[0]!;
-				let listHAREntriesColSpanEnd = listHAREntriesLayoutDefinition.x + listHAREntriesLayoutDefinition.w;
-
-				let newDefinitionWidth = LAYOUT_TOTAL_COLUMNS - listHAREntriesColSpanEnd;
-
-				if (newDefinitionWidth < 1) {
-					newDefinitionWidth = LAYOUT_TOTAL_COLUMNS / 2;
-					listHAREntriesColSpanEnd = newDefinitionWidth;
-					prevValidLayoutDefinitions = [
-						{
-							...listHAREntriesLayoutDefinition,
-							x: 0,
-							y: 0,
-							w: newDefinitionWidth,
-						},
-					];
+				if (validDefinitionInstanceIds.has(instanceId)) {
+					return prevDefinition;
 				}
 
-				layoutDimensionForNewDefinitions = {
-					x: listHAREntriesColSpanEnd,
-					y: 0,
-					w: newDefinitionWidth,
-					h: listHAREntriesLayoutDefinition.h,
-				};
-			}
+				const newSelectedHAREntryId = newSelectedHAREntryIds.shift();
 
-			const newLayoutDefinitions = newSelectedHAREntryIds.map((harEntryId) => {
-				if (layoutDimensionForNewDefinitions.x >= LAYOUT_TOTAL_COLUMNS) {
-					layoutDimensionForNewDefinitions.x = 0;
-					layoutDimensionForNewDefinitions.y += layoutDimensionForNewDefinitions.h;
+				if (!newSelectedHAREntryId) {
+					return undefined;
 				}
 
-				const newDefinition = {
-					w: layoutDimensionForNewDefinitions.w,
-					h: layoutDimensionForNewDefinitions.h,
-					x: layoutDimensionForNewDefinitions.x,
-					y: layoutDimensionForNewDefinitions.y,
-					props: {
-						instanceId: harEntryId,
+				return {
+					...prevDefinition,
+					data: {
+						componentType: COMPONENT_TYPE_VIEW_HAR_ENTRY,
+						instanceId: newSelectedHAREntryId,
 					},
 				};
-
-				layoutDimensionForNewDefinitions.x = layoutDimensionForNewDefinitions.x + layoutDimensionForNewDefinitions.w;
-
-				return newDefinition;
 			});
 
-			const layoutDefinitions = [...prevValidLayoutDefinitions, ...newLayoutDefinitions].map((layoutDefinition, index) => {
-				return {
-					...layoutDefinition,
-					id: String(index),
-				};
-			});
-			console.warn({ layoutDefinitions });
-			return layoutDefinitions;
+			const lastValidDefinition = prevValidDefinitions.at(-1);
+			const rowSpan = lastValidDefinition?.rowSpan ?? DEFAULT_BOARD_ITEM_DEFINITION.rowSpan;
+			const columnSpan = lastValidDefinition?.columnSpan ?? DEFAULT_BOARD_ITEM_DEFINITION.columnSpan;
+
+			const newDefinitions = newSelectedHAREntryIds.map((harEntryId) => ({
+				rowSpan,
+				columnSpan,
+				data: {
+					componentType: COMPONENT_TYPE_VIEW_HAR_ENTRY,
+					instanceId: harEntryId,
+				},
+			}));
+
+			return removeUndefined([...prevValidDefinitions, ...newDefinitions]);
 		});
 	}, [selectedHAREntries]);
 
-	const onRender: HAREntriesViewerLayout['onRender'] = useCallback((_, { instanceId }) => {
-		if (instanceId === LIST_HAR_ENTRIES_LAYOUT_CELL_ID) {
-			return <CompletePadding>
-				<ListHAREntries
-					title={tableTitle}
+	const removeSelectedHAREntry = (harEntryId: string) => {
+		setSelectedHAREntries((prevSelectedHAREntries) =>
+			prevSelectedHAREntries.filter((entry) => getHAREntryId(entry) !== harEntryId),
+		);
+	};
+
+	const components = {
+		[COMPONENT_TYPE_LIST_HAR_ENTRIES]: {
+			header: <ListHAREntriesTableHeader
+				harEntries={harEntries}
+				title={tableTitle}
+			/>,
+			content: <HorizontalPadding>
+				<ListHAREntriesTable
 					harEntries={harEntries}
 					selectedHAREntries={selectedHAREntries}
 					onSelectionChange={setSelectedHAREntries}
+					enableMultiSelect={isCompareMode}
 				/>
-			</CompletePadding>;
-		}
-
-		const harEntry = selectedHAREntries.find((entry) => getHAREntryId(entry) === instanceId);
-
-		if (!harEntry) {
-			return;
-		}
-
-		return <>
-			<CloseOverlay
-				onClose={() => {
-					setSelectedHAREntries((prevSelectedHAREntries) => {
-						return prevSelectedHAREntries.filter((entry) => getHAREntryId(entry) !== instanceId);
-					});
-				}}
-			/>
-			<ViewHAREntry
-				harEntry={harEntry}
-				initialSelectedTabId={selectedViewHAREntryTabId}
-				onSelectedTabIdChange={selectedHAREntries.length === 1 ? setSelectedViewHAREntryTabId : undefined}
-			/>
-		</>;
-	}, [selectedHAREntries, tableTitle, harEntries, selectedViewHAREntryTabId]);
+			</HorizontalPadding>,
+		},
+		[COMPONENT_TYPE_VIEW_HAR_ENTRY]: (harEntryId: string) => {
+			const harEntry = selectedHAREntries.find((entry) => getHAREntryId(entry) === harEntryId);
+			return {
+				header: harEntry
+					? <ViewHAREntryHeader
+							harEntries={harEntries}
+							harEntry={harEntry}
+						/>
+					: undefined,
+				content: harEntry
+					? <ViewHAREntry
+							harEntry={harEntry}
+							initialSelectedTabId={initialSelectedTabId}
+							onSelectedTabIdChange={setInitialSelectedTabId}
+						/>
+					: undefined,
+				onRemove: () => { removeSelectedHAREntry(harEntryId); },
+			};
+		},
+	};
 
 	return (
-		<R2Layout
-			totalColumns={LAYOUT_TOTAL_COLUMNS}
-			gap={16}
-			layoutItemStyle={{
-				borderRadius: borderRadiusContainer,
-				borderWidth: borderWidthField,
-				borderColor: colorBorderDividerDefault,
-				borderStyle: 'solid',
-			}}
-			layoutDefinitions={layoutDefinitions}
-			onRender={onRender}
-			onChange={setLayoutDefinitions}
+		<EnhancedBoard
+			components={components}
+			definitions={definitions}
+			onDefinitionsChange={setDefinitions}
 		/>
 	);
+}
+
+export default function HAREntriesViewerWithProvider(props: HAREntriesViewerProps) {
+	const { harEntries, ...remainingProps } = props;
+	return <HAREntriesViewerProvider>
+		<VerticalGap>
+			<HAREntriesViewerActionStripe harEntries={harEntries} />
+			<HAREntriesViewer harEntries={harEntries} {...remainingProps} />
+		</VerticalGap>
+	</HAREntriesViewerProvider>;
 }

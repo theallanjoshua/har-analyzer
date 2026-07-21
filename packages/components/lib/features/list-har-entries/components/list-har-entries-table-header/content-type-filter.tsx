@@ -1,6 +1,6 @@
 import Multiselect from '@cloudscape-design/components/multiselect';
 import { CONTENT_TYPE_GROUPS } from '~/utils/content-type';
-import { useContentTypeFiltersPreference } from '../context/preferences';
+import { useContentTypeFiltersPreference } from '../../context/preferences';
 
 const CONTENT_TYPE_FILTER_OPTIONS = CONTENT_TYPE_GROUPS.map((group) => ({
 	value: group,
@@ -23,6 +23,8 @@ export default function ContentTypeFilter() {
 
 	return (
 		<Multiselect
+			enableSelectAll
+			inlineTokens
 			placeholder={'Filter by content type'}
 			options={CONTENT_TYPE_FILTER_OPTIONS}
 			selectedOptions={selectedContentTypeFilterOptions}

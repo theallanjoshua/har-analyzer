@@ -22,6 +22,7 @@ export default antfu(
 			parserOptions: {
 				project: [resolve(__dirname, 'tsconfig.dev.json'), ...pathToTSConfigs],
 			},
+			erasableOnly: true
 		},
 		test: true,
 		overrides: {

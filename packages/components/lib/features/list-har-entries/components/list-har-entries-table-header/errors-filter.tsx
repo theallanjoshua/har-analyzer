@@ -1,5 +1,5 @@
 import SegmentedControl from '@cloudscape-design/components/segmented-control';
-import { useErrorsFilterPreference } from '../context/preferences';
+import { useErrorsFilterPreference } from '../../context/preferences';
 
 const ALL_ID = 'ALL';
 const ERRORS_ID = 'ERRORS';

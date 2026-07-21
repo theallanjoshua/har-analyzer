@@ -1,22 +1,62 @@
+import type { ReactNode } from 'react';
 import Box from '@cloudscape-design/components/box';
-import ColumnLayout from '@cloudscape-design/components/column-layout';
 import CollapsibleSection from '~/components/collapsible-section';
+import EnhancedTable from './enhanced-table';
 import InlineCopyToClipboard from './inline-copy-to-clipboard';
 
 interface CollapsibleKeyValueListProps {
-	title: string;
-	items: { name: string; value: string }[];
+	items: {
+		id: string;
+		name: string;
+		value: string;
+		content?: ReactNode;
+	}[];
+	sectionTitle: string;
+	keyTitle?: string;
+	valueTitle?: string;
 }
-export default function CollapsibleKeyValueList({ title, items = [] }: CollapsibleKeyValueListProps) {
+
+export default function CollapsibleKeyValueList(props: CollapsibleKeyValueListProps) {
+	const {
+		items,
+		sectionTitle,
+		keyTitle = 'Name',
+		valueTitle = 'Value',
+	} = props;
+
 	return (
-		<CollapsibleSection variant="inline" title={title}>
-			<ColumnLayout borders='horizontal' columns={2} disableGutters>
-				{items.reduce<React.ReactElement[]>((acc, { name, value }) => {
-					acc.push(<Box variant='awsui-key-label'>{name}</Box>);
-					acc.push(value ? <InlineCopyToClipboard textToCopy={value} /> : <Box variant='span'>-</Box>);
-					return acc;
-				}, [])}
-			</ColumnLayout>
+		<CollapsibleSection variant="footer" title={sectionTitle}>
+			<EnhancedTable
+				contentDensity="compact"
+				items={items}
+				getRowId={({ id }) => id}
+				columnsDefinition={{
+					key: {
+						header: keyTitle,
+						cell: ({ name }) => {
+							return {
+								value: name,
+							};
+						},
+					},
+					value: {
+						header: valueTitle,
+						cell: ({ value, content }) => {
+							if (!value) {
+								return {
+									value: '-',
+									content: content ?? <Box variant='span'>-</Box>,
+								};
+							}
+
+							return {
+								value,
+								content: content ?? <InlineCopyToClipboard textToCopy={value} />,
+							};
+						},
+					},
+				}}
+			/>
 		</CollapsibleSection>
 	);
 }

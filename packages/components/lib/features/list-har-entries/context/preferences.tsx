@@ -1,23 +1,13 @@
-import type { EnhancedTablePreferences } from '~/components/enhanced-table';
 import type { ContentTypeGroup } from '~/utils/content-type';
+import { createTablePreferencesContext } from '~/components/enhanced-table/preferences';
 import { createUserPreferencesContext } from '~/context/user-preferences';
-
-const DEFAULT_TABLE_PREFERENCES: EnhancedTablePreferences = {
-	collectionPreferences: undefined,
-	preferredColumnWidths: [],
-};
 
 const PREFERENCES_GROUP_NAME = 'list-har-entries';
 
 export const {
 	useUserPreferences: useTablePreferences,
 	Provider: TablePreferencesProvider,
-} = createUserPreferencesContext(`${PREFERENCES_GROUP_NAME}.harEntriesTablePreferences`, DEFAULT_TABLE_PREFERENCES);
-
-export const {
-	useUserPreferences: useCompareModePreference,
-	Provider: CompareModeProvider,
-} = createUserPreferencesContext(`${PREFERENCES_GROUP_NAME}.isCompareMode`, false);
+} = createTablePreferencesContext(`${PREFERENCES_GROUP_NAME}.harEntriesTablePreferences`);
 
 export const {
 	useUserPreferences: useErrorsFilterPreference,

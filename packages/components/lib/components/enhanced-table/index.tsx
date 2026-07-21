@@ -1,12 +1,15 @@
 import type { PropertyFilterProperty } from '@cloudscape-design/collection-hooks';
 import type { CollectionPreferencesProps } from '@cloudscape-design/components/collection-preferences';
 import type { TableProps } from '@cloudscape-design/components/table';
+import type { ReactNode } from 'react';
 import { useCollection } from '@cloudscape-design/collection-hooks';
 import CollectionPreferences from '@cloudscape-design/components/collection-preferences';
 import PropertyFilter from '@cloudscape-design/components/property-filter';
 import Table from '@cloudscape-design/components/table';
 import { useMemo } from 'react';
 import { objectEntries } from '~/utils/common';
+import type { EnhancedTablePreferences } from './preferences';
+import { DEFAULT_ENHANCED_TABLE_PREFERENCES } from './preferences';
 
 interface BaseColumnDefinition {
 	header: string;
@@ -19,7 +22,7 @@ interface DefaultColumnDefinition<TItem> {
 	type?: 'string';
 	cell: (item: TItem) => {
 		value: string;
-		content?: React.ReactNode;
+		content?: ReactNode;
 	};
 }
 
@@ -27,7 +30,7 @@ interface NumericColumnDefinition<TItem> {
 	type: 'number';
 	cell: (item: TItem) => {
 		value: number;
-		content?: React.ReactNode;
+		content?: ReactNode;
 	};
 }
 
@@ -35,7 +38,7 @@ interface DateColumnDefinition<TItem> {
 	type: 'date';
 	cell: (item: TItem) => {
 		value: Date;
-		content?: React.ReactNode;
+		content?: ReactNode;
 	};
 }
 
@@ -43,7 +46,7 @@ interface ListColumnDefinition<TItem> {
 	type: 'list';
 	cell: (item: TItem) => {
 		value: string[];
-		content?: React.ReactNode;
+		content?: ReactNode;
 	};
 }
 
@@ -53,7 +56,7 @@ type EnhancedColumnDefinition<TItem> = BaseColumnDefinition
 		| NumericColumnDefinition<TItem>
 		| DateColumnDefinition<TItem>
 		| ListColumnDefinition<TItem>
-	);
+  );
 
 export type EnhancedTableColumnsDefinition<TItem> = Record<string, EnhancedColumnDefinition<TItem>>;
 
@@ -191,23 +194,18 @@ function getTableCollectionPreferencesWithoutStaleColumns<TItem>(
 	};
 }
 
-export interface EnhancedTablePreferences {
-	collectionPreferences: CollectionPreferencesProps.Preferences | undefined;
-	preferredColumnWidths: { id: string; width?: number }[];
-}
-
 interface EnhancedTableProps<TItem> {
 	items: TItem[];
 	getRowId: (item: TItem) => string;
 	columnsDefinition: EnhancedTableColumnsDefinition<TItem>;
-	useTablePreferences: () => [EnhancedTablePreferences, (preferences: EnhancedTablePreferences) => void];
-	empty?: React.ReactNode;
+	useTablePreferences?: () => [EnhancedTablePreferences, (preferences: EnhancedTablePreferences) => void];
+	empty?: ReactNode;
 	selectionType?: 'single' | 'multi';
 	isEntireRowSelectable?: boolean;
 	selectedItems?: TItem[];
 	onSelectionChange?: (selectedItems: TItem[]) => void;
 	contentDensity?: 'compact' | 'comfortable';
-	header?: React.ReactNode;
+	header?: ReactNode;
 	variant?: TableProps['variant'];
 }
 
@@ -215,7 +213,8 @@ export default function EnhancedTable<TItem>({
 	items: originalItems,
 	getRowId,
 	columnsDefinition: enhancedColumnDefinitions,
-	useTablePreferences,
+	// eslint-disable-next-line react/no-unnecessary-use-prefix
+	useTablePreferences = () => [DEFAULT_ENHANCED_TABLE_PREFERENCES, () => { }],
 	empty,
 	selectionType,
 	isEntireRowSelectable = false,

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import Header from '@cloudscape-design/components/header';
 import { borderWidthAlert, colorBorderDividerDefault } from '@cloudscape-design/design-tokens';
 import HorizontalGap from '~/components/horizontal-gap';
@@ -7,9 +8,9 @@ export const TOP_NAVIGATION_ID = 'top-navigation';
 const BLUR_CSS = 'blur(16px)';
 
 interface TopNavigationProps {
-	logo?: React.ReactNode;
+	logo?: ReactNode;
 	appName: string;
-	utilities?: React.ReactNode;
+	utilities?: ReactNode;
 }
 
 export default function TopNavigation({

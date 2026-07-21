@@ -44,7 +44,7 @@ export default defineConfig({
 			formats: ['es'],
 		},
 		rollupOptions: {
-			// Need this condition to match peerDependencies key (@cloudscape-design/components) to import path (@cloudscape-design/components/box)
+		// Need this condition to match peerDependencies key (@cloudscape-design/components) to import path (@cloudscape-design/components/box)
 			external: (id) =>
 				Object.keys(packageJson.peerDependencies).some((dep) => id.startsWith(dep)),
 			output: {

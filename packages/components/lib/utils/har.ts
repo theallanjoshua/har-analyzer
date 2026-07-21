@@ -55,7 +55,9 @@ export function getHAREntriesWithErrorResponse(harEntries: HAREntry[]) {
 	return harEntries.filter((harEntry) => isErrorResponse(harEntry));
 }
 
-export function getUniqueHeaderNames(harEntries: HAREntry[], type: 'request' | 'response') {
+export const HAR_HEADER_TYPES = ['request', 'response'] as const;
+
+export function getUniqueHeaderNames(harEntries: HAREntry[], type: (typeof HAR_HEADER_TYPES)[number]) {
 	const headerNames = new Set<string>();
 	harEntries.forEach((entry) => {
 		const headers = entry[type].headers;
@@ -64,6 +66,44 @@ export function getUniqueHeaderNames(harEntries: HAREntry[], type: 'request' | '
 		});
 	});
 	return Array.from(headerNames);
+}
+
+type HAREntryAttributesToValueMap = Record<string, (harEntry: HAREntry) => string | number | string[]>;
+
+export const DEFAULT_HAR_ENTRY_ATTRIBUTES_TO_VALUE_MAP = {
+	'request.shortUrl': (harEntry) => {
+		const { url } = harEntry.request;
+		// eslint-disable-next-line ts/prefer-nullish-coalescing
+		const value = url.split('/').at(-1) || url;
+		return value;
+	},
+	'request.url': (harEntry) => harEntry.request.url,
+	'request.method': (harEntry) => harEntry.request.method,
+	'response.status': (harEntry) => harEntry.response.status,
+} satisfies HAREntryAttributesToValueMap;
+
+type HAREntryHeadersToValueMap = Record<string, (harEntry: HAREntry) => string[]>;
+
+export function getHAREntryHeadersToValuesMap(harEntries: HAREntry[]) {
+	return HAR_HEADER_TYPES.reduce<HAREntryHeadersToValueMap>((acc, type) => {
+		const uniqueHeaderNames = getUniqueHeaderNames(harEntries, type);
+		uniqueHeaderNames.forEach((headerName) => {
+			const key = `${type}.headers.${headerName}`;
+			acc[key] = (harEntry: HAREntry) => {
+				const header = harEntry[type].headers.filter(({ name }) => name === headerName);
+				return header.map(({ value }) => value);
+			};
+		});
+		return acc;
+	}, {});
+}
+
+export function getHAREntryAttributesToValuesMap(harEntries: HAREntry[]): HAREntryAttributesToValueMap {
+	const harEntryHeadersToValuesMap = getHAREntryHeadersToValuesMap(harEntries);
+	return {
+		...DEFAULT_HAR_ENTRY_ATTRIBUTES_TO_VALUE_MAP,
+		...harEntryHeadersToValuesMap,
+	};
 }
 
 export function getHAREntryId(harEntry: HAREntry) {

@@ -1,9 +1,10 @@
+import type { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
 import ExpandableSection from '@cloudscape-design/components/expandable-section';
 import { HorizontalPadding } from './horizontal-padding';
 
 type CollapsibleSectionProps = React.PropsWithChildren<{
 	title: string;
-	variant?: 'default' | 'container' | 'inline';
+	variant?: ExpandableSectionProps['variant'];
 }>;
 
 export default function CollapsibleSection({

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 import type { HARFileUploaderProps } from '~/features/har-file-uploader';
 import type { HAREntry } from '~/utils/har';
@@ -8,7 +9,7 @@ import AppLayout from './components/app-layout';
 import { AppContentWidthProvider } from './context/preferences';
 
 export interface HARAnalyzerProps {
-	logo?: React.ReactNode;
+	logo?: ReactNode;
 	appName?: string;
 }
 
