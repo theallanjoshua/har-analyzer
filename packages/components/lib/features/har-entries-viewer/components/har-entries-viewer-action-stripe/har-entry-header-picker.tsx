@@ -29,11 +29,17 @@ export default function HAREntryHeaderPicker(props: HAREntryHeaderPickerProps) {
 		setHarEntryHeadersPreference(newHAREntryHeadersPreference);
 	};
 
+	let placeholder = 'Pick HAR entry headers';
+
+	if (selectedOptions.length) {
+		placeholder = `(${selectedOptions.length}) HAR entry headers selected`;
+	}
+
 	return (
 		<Multiselect
-			inlineTokens
+			hideTokens
 			filteringType='auto'
-			placeholder={'Pick HAR entry headers'}
+			placeholder={placeholder}
 			options={options}
 			selectedOptions={selectedOptions}
 			onChange={({ detail }) => { onHAREntryHeadersChange(detail.selectedOptions as typeof options); }}

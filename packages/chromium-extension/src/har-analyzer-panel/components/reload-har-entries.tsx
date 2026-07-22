@@ -7,11 +7,17 @@ export default function ReloadHAREntries() {
 	const [ignoreCache, setIgnoreCache] = useState(false);
 
 	return <HorizontalGap>
-		<Toggle onChange={({ detail }) => { setIgnoreCache(detail.checked); }} checked={ignoreCache}>
+		<Toggle
+			onChange={({ detail }) => { setIgnoreCache(detail.checked); }}
+			checked={ignoreCache}
+		>
 			Disable cache
 		</Toggle>
-		<Button iconName="refresh" onClick={() => {
-			chrome.devtools.inspectedWindow.reload({ ignoreCache });
-		}}>Reload</Button>
+		<Button
+			iconName="refresh"
+			onClick={() => {
+				chrome.devtools.inspectedWindow.reload({ ignoreCache });
+			}}
+		/>
 	</HorizontalGap>;
 }

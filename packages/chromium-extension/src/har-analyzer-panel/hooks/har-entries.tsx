@@ -30,6 +30,7 @@ export default function useHAREntries() {
 	const [harEntries, setHarEntries] = useState<HAREntry[]>([]);
 
 	const loadHAREntries = () => {
+		// eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
 		setHarEntries(() => []);
 		chrome.devtools.network.getHAR(async (harLog) => {
 			const { entries } = harLog;

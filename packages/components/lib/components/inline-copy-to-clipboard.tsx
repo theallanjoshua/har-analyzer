@@ -9,10 +9,10 @@ export default function InlineCopyToClipboard(props: InlineCopyToClipboardProps)
 	const { textToCopy, textToDisplay } = props;
 
 	return <CopyToClipboard
-		variant="inline"
+		variant='inline'
 		textToCopy={textToCopy}
 		textToDisplay={textToDisplay}
-		copyErrorText="Failed to copy"
-		copySuccessText="Copied!"
+		copyErrorText='Failed to copy'
+		copySuccessText='Copied!'
 	/>;
 }

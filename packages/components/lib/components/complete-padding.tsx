@@ -3,7 +3,7 @@ import Box from '@cloudscape-design/components/box';
 
 export function CompletePadding({ children }: PropsWithChildren) {
 	return (
-		<Box padding="m">
+		<Box padding='m'>
 			{children}
 		</Box>
 	);

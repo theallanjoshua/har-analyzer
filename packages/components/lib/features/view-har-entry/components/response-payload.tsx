@@ -12,7 +12,7 @@ export default function ResponsePayload({ harEntry }: ResponsePayloadProps) {
 	const mimeType = harEntry.response.content.mimeType;
 
 	return (
-		<CollapsibleSection title="Payload">
+		<CollapsibleSection title='Response Payload'>
 			<ContentViewer content={content} encoding={encoding} mimeType={mimeType} />
 		</CollapsibleSection>
 	);

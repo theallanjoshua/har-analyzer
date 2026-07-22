@@ -76,7 +76,7 @@ export function UserPreferencesProvider<T>(props: PropsWithChildren<UserPreferen
 	}, [preference, onPreferenceChange]);
 
 	if (isLoading) {
-		return <Spinner size="large" />;
+		return <Spinner size='large' />;
 	}
 
 	return <Provider value={contextValue}>

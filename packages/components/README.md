@@ -70,6 +70,14 @@ function App() {
 }
 ```
 
+## Browser Support
+
+- Modern browsers with ES2020+ support
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+
+
 ## Imports
 
 The library supports both **top-level** imports and **component-level** imports.
@@ -94,21 +102,33 @@ import HAREntriesViewer from '@har-analyzer/components/har-entries-viewer';
 import HARFileUploader from '@har-analyzer/components/har-file-uploader';
 import ListHAREntries from '@har-analyzer/components/list-har-entries';
 import ViewHAREntry from '@har-analyzer/components/view-har-entry';
+
+// Advanced/Internal exports from list-har-entries
+import ListHAREntriesProvider from '@har-analyzer/components/list-har-entries';
+import ListHAREntriesTable from '@har-analyzer/components/list-har-entries';
+import ListHAREntriesTableHeader from '@har-analyzer/components/list-har-entries';
 ```
 
 ## Components
 
-Below are the available exports and their usage examples:
+### Feature Components
 
-### HARAnalyzer ([Demo](https://theallanjoshua.github.io/har-analyzer/))
+#### **HARAnalyzer**
+Complete standalone application with integrated file upload and viewer. Perfect for drop-in usage.
 
-```jsx
+```tsx
 import HARAnalyzer from '@har-analyzer/components/har-analyzer';
 
-function App() {
-  return <HARAnalyzer appName="HAR Analyzer" />;
-}
+<HARAnalyzer logo={<MyLogo />} appName="Network Inspector" />
 ```
+
+**Features:**
+- File upload via drag-and-drop
+- Integrated network table
+- Detail panel viewer
+- Theme switcher (dark/light mode)
+- Content width toggle
+- Persistent preferences
 
 **Props:**
 
@@ -119,17 +139,26 @@ function App() {
 
 ---
 
-### HAREntriesViewer
+#### **HAREntriesViewer**
+Customizable multi-panel dashboard for viewing and comparing HAR entries. Manages its own board layout with resizable panels.
 
-```jsx
+```tsx
 import HAREntriesViewer from '@har-analyzer/components/har-entries-viewer';
 
-function App() {
-  return (
-    <HAREntriesViewer tableTitle="Requests" harEntries={yourHarEntriesArray} />
-  );
-}
+<HAREntriesViewer
+  harEntries={entries}
+  tableTitle="Network Requests"
+/>
 ```
+
+**Features:**
+- Board layout with resizable, draggable panels
+- Network request table (left panel)
+- Multiple detail panels (right side, configurable)
+- Side-by-side comparison mode
+- Multi-select entries
+- Entry headers customization
+- Auto-cleanup of stale panels
 
 **Props:**
 
@@ -140,70 +169,104 @@ function App() {
 
 ---
 
-### ListHAREntries
+#### **ListHAREntries**
+Network request table with advanced filtering and sorting capabilities.
 
-Displays an enhanced table representing a list of HAR entries.
-
-```jsx
+```tsx
 import ListHAREntries from '@har-analyzer/components/list-har-entries';
 
-function App() {
-  return (
-    <ListHAREntries
-      title="Requests"
-      harEntries={yourHarEntriesArray}
-      selectedHAREntries={[]}
-      onSelectionChange={(entries) => console.log('Selected:', entries)}
-    />
-  );
-}
+<ListHAREntries
+  harEntries={entries}
+  selectedHAREntries={selected}
+  onSelectionChange={setSelected}
+/>
 ```
+
+**Features:**
+- Columns: URL, Method, Status (with status indicators), MIME type, Time, Size
+- Content type filtering
+- Error status filtering
+- Column visibility preferences
+- Sortable columns
+- Multi-select support
+- Row-level detail access
 
 **Props:**
 
 | Name                | Type                                      | Required | Description                              |
 |---------------------|-------------------------------------------|----------|------------------------------------------|
-| title               | string                                    | No       | Optional title for the list.             |
 | harEntries          | HAREntry[]                                | Yes      | The entries to display in the table.     |
 | selectedHAREntries  | HAREntry[]                                | Yes      | Entries to remain selected in the table. |
 | onSelectionChange   | (selectedHAREntries: HAREntry[]) => void  | Yes      | Callback when entries are selected.      |
+| title               | string                                    | No       | Optional title for the list.             |
 
 ---
 
-### ViewHAREntry
+##### Advanced Exports
 
-Displays details for a single selected network entry.
+For advanced use cases, the following internal components are also exported:
 
-```jsx
+**`ListHAREntriesProvider`** — Context provider for managing HAR entries state and filtering logic.
+
+**`ListHAREntriesTable`** — The underlying enhanced table component for displaying entries.
+
+**`ListHAREntriesTableHeader`** — Configurable header component with filtering options for content types and error statuses.
+
+---
+
+#### **ViewHAREntry**
+Tabbed inspector for detailed request/response analysis.
+
+```tsx
 import ViewHAREntry from '@har-analyzer/components/view-har-entry';
 
-function App() {
-  return <ViewHAREntry harEntry={yourHarEntry} />;
-}
+<ViewHAREntry
+  harEntry={entry}
+  initialSelectedTabId="request-headers"
+  onSelectedTabIdChange={handleTabChange}
+/>
 ```
+
+**Tabs:**
+- **Request Headers** — URL, method, status, custom headers
+- **Request Payload** — Query parameters and request body with syntax highlighting
+- **Response Headers** — Status code, cookies, custom headers
+- **Response Payload** — Response body with syntax highlighting
+- **Raw** — Full HAR entry in JSON view (lazy-loaded)
+
+**Features:**
+- Lazy-loaded tab content (reduces initial bundle)
+- Syntax highlighting (JSON, HTML, JS, CSS)
+- Base64 decoding for images and encoded content
+- Copy-to-clipboard for header values
 
 **Props:**
 
-| Name      | Type      | Required | Description                          |
-|-----------|-----------|----------|--------------------------------------|
-| harEntry  | HAREntry  | Yes      | The HAR entry to display details for.|
-
+| Name                   | Type      | Required | Description                                    |
+|------------------------|-----------|----------|------------------------------------------------|
+| harEntry               | HAREntry  | Yes      | The HAR entry to display details for.          |
+| initialSelectedTabId   | string    | No       | The ID of the initially selected tab.          |
+| onSelectedTabIdChange  | (tabId: string) => void | No | Callback when the selected tab changes. |
 
 ---
 
-### HARFileUploader
+#### **HARFileUploader**
+Drag-and-drop file uploader with validation.
 
-```jsx
+```tsx
 import HARFileUploader from '@har-analyzer/components/har-file-uploader';
 
-function App() {
-  return (
-    <HARFileUploader
-      onChange={({ harEntries, harFileName }) => console.log(harEntries, harFileName)}
-    />
-  );
-}
+<HARFileUploader onChange={({ harEntries, harFileName }) => {
+  console.log(`Loaded ${harEntries.length} entries from ${harFileName}`);
+}} />
 ```
+
+**Features:**
+- Drag-and-drop interface
+- File type validation (`.har` only)
+- Error display with helpful messages
+- Async file reading
+- Returns parsed HAR entries array
 
 **Props:**
 
@@ -213,45 +276,53 @@ function App() {
 
 ---
 
-### HARAnalyzerPreferencesStore
+### Context Providers
 
-Provides a persistent context for managing user preferences (like theme, content width, table preferences, and board layouts). You must wrap your application in `HARAnalyzerPreferencesStore` and provide a `userPreferencesStore` object that bridges external async storage (like browser storage APIs or Chrome Extensions API) into the library.
+#### **HARAnalyzerPreferencesStore**
+Pluggable storage backend for user preferences (themes, table settings, etc.).
 
 ```tsx
 import HARAnalyzerPreferencesStore, { type UserPreferencesStore } from '@har-analyzer/components/har-analyzer-preferences-store';
 
-const myStorage: UserPreferencesStore = {
-  getPreference: async (key) => localStorage.getItem(key) || undefined,
-  setPreference: async (key, value) => { localStorage.setItem(key, value); }
+const storage: UserPreferencesStore = {
+  getPreference: async (key) => localStorage.getItem(key),
+  setPreference: async (key, value) => localStorage.setItem(key, value),
 };
 
-function App() {
-  return (
-      <HARAnalyzerPreferencesStore userPreferencesStore={myStorage}>
-        ...your HAR Analyzer components
-      </HARAnalyzerPreferencesStore>
-  );
-}
+<HARAnalyzerPreferencesStore userPreferencesStore={storage}>
+  {/* All child components can now use preferences */}
+</HARAnalyzerPreferencesStore>
 ```
 
----
+**Usage:**
+Provides a persistent context for managing user preferences (like theme, content width, table preferences, and board layouts). You must wrap your application in `HARAnalyzerPreferencesStore` and provide a `userPreferencesStore` object that bridges external async storage (like browser storage APIs or Chrome Extensions API) into the library.
 
-## HAR Utilities
+## Type & Utility Exports
 
-Various types and utilities for working with HTTP Archive (.har) files are directly exported.
+The library exports utility types and helper functions for type-safe integration and consumer logic:
 
-```typescript
+```tsx
+import type { HAREntry, HARContent, ContentTypeGroup } from '@har-analyzer/components';
+
 import {
   getHARContentFromFile,
   getHAREntriesFilteredByContentType,
   getHAREntriesWithErrorResponse,
   getHAREntryId,
   isErrorResponse,
-  type HARContent,
-  type HAREntry,
-  type ContentTypeGroup
+  getContentTypeGroup,
+  getFormattedDateTime,
+  prettyBytes,
 } from '@har-analyzer/components';
 ```
+
+### Types
+
+- **`HAREntry`** — Standard HTTP Archive entry object
+- **`HARContent`** — HTTP Archive content structure
+- **`ContentTypeGroup`** — Categorized content type (e.g., `'JSON'`, `'XML'`, `'JS'`, `'CSS'`, `'HTML'`, `'Doc'`, `'Img'`, `'Font'`, `'Media'`, `'Other'`)
+
+### Functions
 
 ### `getHARContentFromFile(fileContent: unknown): HARContent`
 Parses a JSON string into a structured `HARContent` object. Throws an error if the content is not a valid JSON string.
@@ -259,25 +330,104 @@ Parses a JSON string into a structured `HARContent` object. Throws an error if t
 ### `getHAREntriesFilteredByContentType(harEntries: HAREntry[], contentTypeFilters: ContentTypeGroup[]): HAREntry[]`
 Filters an array of HAR entries by their response MIME types mapped to high-level content type groups (e.g., `'JSON'`, `'XML'`, `'JS'`, `'CSS'`, `'HTML'`, `'Doc'`, `'Img'`, `'Font'`, `'Media'`, `'Other'`).
 
-### `isErrorResponse(harEntry: HAREntry): boolean`
-Returns `true` if the HAR entry's response has a status code less than 200 or greater than or equal to 400.
-
 ### `getHAREntriesWithErrorResponse(harEntries: HAREntry[]): HAREntry[]`
 Returns a filtered array of HAR entries containing only those that resulted in an error (based on `isErrorResponse`).
 
 ### `getHAREntryId(harEntry: HAREntry): string`
 Generates a unique deterministic ID for a given HAR entry using a combination of `startedDateTime`, `time`, and `request.url`.
 
----
+### `isErrorResponse(harEntry: HAREntry): boolean`
+Returns `true` if the HAR entry's response has a status code less than 200 or greater than or equal to 400.
 
-## Development
+### `getContentTypeGroup(mimeType: string): ContentTypeGroup`
+Categorizes a MIME type into a high-level content type group for filtering and display purposes.
 
-- Run `pnpm dev` to start development in watch mode.
-- Run `pnpm build` to build the package.
+### `getFormattedDateTime(dateString: string, format?: string): string`
+Formats a date string with timezone support using date-fns.
+
+### `prettyBytes(bytes: number): string`
+Converts byte size to human-readable format (e.g., `1024` → `"1 KB"`).
+
 
 ## Contributing
 
 Contributions are welcome! Please open issues or pull requests on [GitHub](https://github.com/theallanjoshua/har-analyzer).
+
+
+## Development
+
+### Getting Started
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start development in watch mode
+pnpm dev
+
+# Build for production
+pnpm validate
+```
+
+### Development Commands
+
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start watch mode for development |
+| `pnpm validate` | Build the production-ready library |
+| `pnpm lint` | Run ESLint to check code quality |
+| `pnpm check-types` | Type check all TypeScript files |
+
+### Project Structure
+
+This package is part of a monorepo managed by Turbo. Key directories:
+
+```
+lib/
+├── components/              # Reusable UI building blocks
+│   ├── enhanced-board/      # Configurable dashboard layout (grid-based panels)
+│   ├── enhanced-table/      # Advanced table with filtering, sorting, preferences
+│   ├── error-boundary.tsx   # Error handling HOC wrapper
+│   ├── json-viewer.tsx      # Syntax-highlighted JSON display
+│   ├── lazy-load.tsx        # Suspense fallback wrapper
+│   ├── collapsible-*.tsx    # Collapsible sections and key-value lists
+│   └── [spacing]            # Layout utilities (gaps, padding, alignment)
+├── features/                # Feature modules (complete, composable)
+│   ├── har-analyzer/                      # Standalone app component
+│   ├── har-entries-viewer/                # Multi-panel dashboard viewer
+│   ├── list-har-entries/                  # Network requests table
+│   ├── view-har-entry/                    # Detailed entry inspector
+│   ├── har-file-uploader/                 # File upload handler
+│   └── har-analyzer-preferences-store/    # Preferences management context
+├── context/                 # State management (React Context)
+│   ├── user-preferences/          # Theme & UI preferences
+│   └── user-preferences-store/    # Pluggable storage backend
+├── hooks/                   # Custom React hooks
+│   └── remaining-view-port-height.tsx  # Dynamic height calculation
+└── utils/                   # Utility functions and helpers
+    ├── har.ts                  # HAR parsing, filtering, ID generation
+    ├── content-type.ts         # MIME type categorization & highlighting
+    ├── file-upload.ts          # File validation & reading
+    ├── date.ts                 # Date formatting with timezone support
+    ├── json.ts                 # JSON serialization/deserialization
+    ├── array.ts                # Array manipulation helpers
+    └── common.ts               # General utilities
+```
+
+### Before Submitting a PR
+
+1. Ensure build & tests pass: `pnpm validate`
+2. Verify no breaking changes to the public API
+3. Include changes to type definitions if modifying components
+
+### Performance Considerations
+
+When adding new features:
+- Use `useMemo` for expensive calculations
+- Use `useCallback` for event handlers passed to library components
+- Prefer lazy loading for heavy components
+- Keep dependency arrays minimal to avoid stale closures
+- Use Set-based lookups for O(1) filtering operations
 
 ## License
 

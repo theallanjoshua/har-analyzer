@@ -1,10 +1,10 @@
 import type { BoardItemProps, BoardProps } from '@cloudscape-design/board-components';
 
-interface EnhancedBoardItemData {
+export interface EnhancedBoardItemData {
 	componentType: string;
 	instanceId: string;
 }
-export type EnhancedBoardDefinition = Omit<BoardProps.Item<EnhancedBoardItemData>, 'id'>;
+export type EnhancedBoardDefinition = BoardProps.Item<EnhancedBoardItemData>;
 export type EnhancedBoardDefinitions = ReadonlyArray<EnhancedBoardDefinition>;
 
 export const boardItemI18nStrings = {

@@ -6,10 +6,10 @@ export default function withCustomErrorBoundary<P>(Component: React.ComponentTyp
 	return withErrorBoundary(Component, {
 		fallbackRender: ({ error, resetErrorBoundary }) => (
 			<Alert
-				type="error"
-				header="Oops! Something went wrong."
+				type='error'
+				header='Oops! Something went wrong.'
 				action={
-					<Button iconName="refresh" onClick={resetErrorBoundary}>
+					<Button iconName='refresh' onClick={resetErrorBoundary}>
 						Try again
 					</Button>
 				}

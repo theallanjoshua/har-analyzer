@@ -5,8 +5,6 @@ import { applyMode, Mode } from '@cloudscape-design/global-styles';
 import { useEffect } from 'react';
 import { HARAnalyzerPreferencesStore, HAREntriesViewer } from '@har-analyzer/components';
 import HorizontalGap from '~/components/horizontal-gap';
-import SpaceBetween from '~/components/space-between';
-import VerticalGap from '~/components/vertical-gap';
 import ClearHAREntries from './components/clear-har-entries';
 import DownloadHARFile from './components/download-har-file';
 import ReloadHAREntries from './components/reload-har-entries';
@@ -33,22 +31,16 @@ export default function HARAnalyzerPanel() {
 	return <I18nProvider locale="en" messages={[enMessages]}>
 		<HARAnalyzerPreferencesStore userPreferencesStore={userPreferencesStore}>
 			<Box padding={'s'}>
-				<VerticalGap>
-					<SpaceBetween>
-						<HorizontalGap>
-							<ReloadHAREntries />
-							<ClearHAREntries onClear={() => { setHAREntries([]); }} />
-						</HorizontalGap>
-						<HorizontalGap>
-							<UploadHARFile />
-							<DownloadHARFile harEntries={harEntries} />
-						</HorizontalGap>
-					</SpaceBetween>
-					<HAREntriesViewer
-						tableTitle="Requests"
-						harEntries={harEntries}
-					/>
-				</VerticalGap>
+				<HAREntriesViewer
+					tableTitle="Requests"
+					harEntries={harEntries}
+					additionalActions={<HorizontalGap>
+						<ReloadHAREntries />
+						<ClearHAREntries onClear={() => { setHAREntries([]); }} />
+						<UploadHARFile />
+						<DownloadHARFile harEntries={harEntries} />
+					</HorizontalGap>}
+				/>
 			</Box>
 		</HARAnalyzerPreferencesStore>
 	</I18nProvider>;

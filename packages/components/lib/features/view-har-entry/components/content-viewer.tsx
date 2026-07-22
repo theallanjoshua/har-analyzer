@@ -24,7 +24,7 @@ export default function ContentViewer({
 		return (
 			<img
 				src={`data:${mimeType};base64,${content}`}
-				alt="HAR entry content"
+				alt='HAR entry content'
 				style={{ maxWidth: '100%', maxHeight: 400 }}
 			/>
 		);
@@ -52,7 +52,7 @@ export default function ContentViewer({
 			wrapLines
 			content={decodedContent}
 			highlight={highlight}
-			actions={<CopyToClipboard copyErrorText="Copy failed" copySuccessText="Copied" textToCopy={decodedContent} />}
+			actions={<CopyToClipboard copyErrorText='Copy failed' copySuccessText='Copied' textToCopy={decodedContent} />}
 		/>
 	);
 }

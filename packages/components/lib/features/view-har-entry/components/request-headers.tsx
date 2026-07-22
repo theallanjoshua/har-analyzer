@@ -32,7 +32,7 @@ export default function RequestHeaders({ harEntry }: { harEntry: HAREntry }) {
 	return (
 		<CollapsibleKeyValueList
 			items={items}
-			sectionTitle="Headers"
+			sectionTitle='Request Headers'
 		/>
 	);
 }

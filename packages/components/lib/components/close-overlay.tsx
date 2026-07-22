@@ -15,8 +15,8 @@ export default function CloseOverlay(props: CloseOverlayProps) {
 			zIndex: 1,
 		}}>
 		<Button
-			variant="icon"
-			iconName="close"
+			variant='icon'
+			iconName='close'
 			onClick={onClose}
 		/>
 	</div>;

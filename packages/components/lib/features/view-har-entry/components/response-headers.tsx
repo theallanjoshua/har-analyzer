@@ -11,7 +11,7 @@ export default function ResponseHeaders({ harEntry }: { harEntry: HAREntry }) {
 	return (
 		<CollapsibleKeyValueList
 			items={items}
-			sectionTitle="Headers"
+			sectionTitle='Response Headers'
 		/>
 	);
 }

@@ -133,11 +133,11 @@ export default function ListHAREntriesTable({
 	return <TablePreferencesProvider>
 		<EnhancedTable
 			useTablePreferences={useTablePreferences}
-			contentDensity="compact"
+			contentDensity='compact'
 			columnsDefinition={columnsDefinition}
 			items={filteredHAREntries}
 			getRowId={getHAREntryId}
-			empty="No HAR entries found"
+			empty='No HAR entries found'
 			selectionType={enableMultiSelect ? 'multi' : 'single'}
 			isEntireRowSelectable
 			selectedItems={selectedHAREntries}

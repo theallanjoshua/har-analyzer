@@ -1,4 +1,5 @@
 import type { PropertyFilterProperty } from '@cloudscape-design/collection-hooks';
+import type { NonCancelableCustomEvent } from '@cloudscape-design/components';
 import type { CollectionPreferencesProps } from '@cloudscape-design/components/collection-preferences';
 import type { TableProps } from '@cloudscape-design/components/table';
 import type { ReactNode } from 'react';
@@ -6,7 +7,7 @@ import { useCollection } from '@cloudscape-design/collection-hooks';
 import CollectionPreferences from '@cloudscape-design/components/collection-preferences';
 import PropertyFilter from '@cloudscape-design/components/property-filter';
 import Table from '@cloudscape-design/components/table';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { objectEntries } from '~/utils/common';
 import type { EnhancedTablePreferences } from './preferences';
 import { DEFAULT_ENHANCED_TABLE_PREFERENCES } from './preferences';
@@ -194,7 +195,7 @@ function getTableCollectionPreferencesWithoutStaleColumns<TItem>(
 	};
 }
 
-interface EnhancedTableProps<TItem> {
+export interface EnhancedTableProps<TItem> {
 	items: TItem[];
 	getRowId: (item: TItem) => string;
 	columnsDefinition: EnhancedTableColumnsDefinition<TItem>;
@@ -264,21 +265,21 @@ export default function EnhancedTable<TItem>({
 		[columnDefinitions, preferredColumnWidths],
 	);
 
-	const onCollectionPreferencesChange = (collectionPreferences: EnhancedTablePreferences['collectionPreferences']) => {
+	const onCollectionPreferencesChange = useCallback((collectionPreferences: EnhancedTablePreferences['collectionPreferences']) => {
 		setTablePreferences({
 			collectionPreferences,
 			preferredColumnWidths,
 		});
-	};
+	}, [setTablePreferences, preferredColumnWidths]);
 
-	const onPreferredColumnWidthsChange = (preferredColumnWidths: EnhancedTablePreferences['preferredColumnWidths']) => {
+	const onPreferredColumnWidthsChange = useCallback((preferredColumnWidths: EnhancedTablePreferences['preferredColumnWidths']) => {
 		setTablePreferences({
 			collectionPreferences,
 			preferredColumnWidths,
 		});
-	};
+	}, [setTablePreferences, collectionPreferences]);
 
-	const onRowClick: TableProps['onRowClick'] = ({ detail: { item } }) => {
+	const onRowClick = useCallback(({ detail: { item } }: NonCancelableCustomEvent<TableProps.OnRowClickDetail<EnhancedTableItem<TItem>>>) => {
 		if (!onSelectionChange || !selectionType)
 			return;
 
@@ -296,9 +297,29 @@ export default function EnhancedTable<TItem>({
 		} else {
 			onSelectionChange([...selectedItems, originalItem]);
 		}
-	};
+	}, [onSelectionChange, selectionType, selectedItems, getRowId]);
 
-	const trackBy = (item: EnhancedTableItem<TItem>) => getRowId(item.__originalItem__);
+	const onColumnWidthsChange = useCallback(({ detail }: NonCancelableCustomEvent<TableProps.ColumnWidthsChangeDetail>) => {
+		const newPreferredColumnWidths = columnDefinitions.map(({ id }, index) => ({
+			id,
+			width: detail.widths[index],
+		}));
+		onPreferredColumnWidthsChange(newPreferredColumnWidths);
+	}, [onPreferredColumnWidthsChange, columnDefinitions]);
+
+	const onTableSelectionChange = useCallback(({ detail }: NonCancelableCustomEvent<TableProps.SelectionChangeDetail<EnhancedTableItem<TItem>>>) => {
+		if (!onSelectionChange)
+			return;
+
+		const selectedOriginalItems = detail.selectedItems.map((item) => item.__originalItem__);
+		onSelectionChange(selectedOriginalItems);
+	}, [onSelectionChange]);
+
+	const onCollectionPreferencesConfirm = useCallback(({ detail }: NonCancelableCustomEvent<CollectionPreferencesProps.Preferences>) => {
+		onCollectionPreferencesChange(detail);
+	}, [onCollectionPreferencesChange]);
+
+	const trackBy = useCallback((item: EnhancedTableItem<TItem>) => getRowId(item.__originalItem__), [getRowId]);
 
 	const filteringProperties = useMemo(
 		() => getFilteringProperties(enhancedColumnDefinitions),
@@ -330,24 +351,14 @@ export default function EnhancedTable<TItem>({
 			wrapLines={tableCollectionPreferencesWithoutStaleColumns.wrapLines}
 			columnDefinitions={columnDefinitionsWithPreferredWidths}
 			columnDisplay={tableCollectionPreferencesWithoutStaleColumns.contentDisplay}
-			onColumnWidthsChange={({ detail }) => {
-				const newPreferredColumnWidths = columnDefinitions.map(({ id }, index) => ({
-					id,
-					width: detail.widths[index],
-				}));
-				onPreferredColumnWidthsChange(newPreferredColumnWidths);
-			}}
+			onColumnWidthsChange={onColumnWidthsChange}
 			items={items}
 			trackBy={trackBy}
 			empty={empty}
 			selectionType={selectionType}
 			onRowClick={isEntireRowSelectable ? onRowClick : undefined}
 			selectedItems={enhancedSelectedTableItems}
-			onSelectionChange={(event) => {
-				if (onSelectionChange) {
-					onSelectionChange(event.detail.selectedItems.map((item) => item.__originalItem__));
-				}
-			}}
+			onSelectionChange={onTableSelectionChange}
 			filter={
 				<PropertyFilter
 					countText={filteredItemsCount ? `${filteredItemsCount} matches` : undefined}
@@ -359,7 +370,7 @@ export default function EnhancedTable<TItem>({
 					wrapLinesPreference={{}}
 					contentDisplayPreference={{ options: columnDisplayPreferenceOptions, enableColumnFiltering: true }}
 					preferences={tableCollectionPreferencesWithoutStaleColumns}
-					onConfirm={({ detail }) => { onCollectionPreferencesChange(detail); }}
+					onConfirm={onCollectionPreferencesConfirm}
 				/>
 			}
 		/>

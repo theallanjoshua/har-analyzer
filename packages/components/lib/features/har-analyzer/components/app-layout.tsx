@@ -31,6 +31,7 @@ export default function AppLayout({
 			toolsHide
 			maxContentWidth={isFullContentWidth ? Number.MAX_VALUE : undefined}
 			content={content}
+			contentType='dashboard'
 		/>
 	</>;
 }

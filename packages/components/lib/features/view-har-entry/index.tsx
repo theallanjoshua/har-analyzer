@@ -1,8 +1,11 @@
+import type { NonCancelableCustomEvent } from '@cloudscape-design/components';
 import type { TabsProps } from '@cloudscape-design/components/tabs';
 import type { PropsWithChildren } from 'react';
+import Box from '@cloudscape-design/components/box';
 import Tabs from '@cloudscape-design/components/tabs';
 import {
 	lazy,
+	useCallback,
 	useMemo,
 	useState,
 } from 'react';
@@ -19,6 +22,15 @@ function TabContent({ children }: PropsWithChildren) {
 	return <LazyLoad>
 		{children}
 	</LazyLoad>;
+};
+
+function TabActionContent({ children }: PropsWithChildren) {
+	return <Box
+		fontSize='body-s'
+		fontWeight='light'
+	>
+		{children}
+	</Box>;
 };
 
 export const DEFAULT_SELECTED_TAB_ID = 'request-headers';
@@ -39,45 +51,51 @@ export default function ViewHAREntry(props: ViewHAREntryProps) {
 
 	const stringifiedHAREntry = useMemo(() => JSON.stringify(harEntry), [harEntry]);
 
-	const onActiveTabIdChange: TabsProps['onChange'] = ({ detail }) => {
+	const onActiveTabIdChange = useCallback(({ detail }: NonCancelableCustomEvent<TabsProps.ChangeDetail>) => {
 		const { activeTabId } = detail;
 		setActiveTabId(activeTabId);
 		if (onSelectedTabIdChange) {
 			onSelectedTabIdChange(activeTabId);
 		}
-	};
+	}, [onSelectedTabIdChange]);
+
+	const tabs = useMemo(() => [
+		{
+			label: 'Headers',
+			id: DEFAULT_SELECTED_TAB_ID,
+			content: <TabContent><RequestHeaders harEntry={harEntry} /></TabContent>,
+			action: <TabActionContent>(req)</TabActionContent>,
+		},
+		{
+			label: 'Payload',
+			id: 'request-payload',
+			content: <TabContent><RequestPayload harEntry={harEntry} /></TabContent>,
+			action: <TabActionContent>(req)</TabActionContent>,
+		},
+		{
+			label: 'Headers',
+			id: 'response-headers',
+			content: <TabContent><ResponseHeaders harEntry={harEntry} /></TabContent>,
+			action: <TabActionContent>(res)</TabActionContent>,
+		},
+		{
+			label: 'Payload',
+			id: 'response-payload',
+			content: <TabContent><ResponsePayload harEntry={harEntry} /></TabContent>,
+			action: <TabActionContent>(res)</TabActionContent>,
+		},
+		{
+			label: 'Raw',
+			id: 'har-entry',
+			content: <TabContent><ContentViewer content={stringifiedHAREntry} mimeType='json' /></TabContent>,
+		},
+	], [harEntry, stringifiedHAREntry]);
 
 	return (
 		<Tabs
 			activeTabId={activeTabId}
 			onChange={onActiveTabIdChange}
-			tabs={[
-				{
-					label: 'Request Headers',
-					id: DEFAULT_SELECTED_TAB_ID,
-					content: <TabContent><RequestHeaders harEntry={harEntry} /></TabContent>,
-				},
-				{
-					label: 'Request Payload',
-					id: 'request-payload',
-					content: <TabContent><RequestPayload harEntry={harEntry} /></TabContent>,
-				},
-				{
-					label: 'Response Headers',
-					id: 'response-headers',
-					content: <TabContent><ResponseHeaders harEntry={harEntry} /></TabContent>,
-				},
-				{
-					label: 'Response Payload',
-					id: 'response-payload',
-					content: <TabContent><ResponsePayload harEntry={harEntry} /></TabContent>,
-				},
-				{
-					label: 'HAR Entry',
-					id: 'har-entry',
-					content: <TabContent><ContentViewer content={stringifiedHAREntry} mimeType="json" /></TabContent>,
-				},
-			]}
+			tabs={tabs}
 		/>
 	);
 }

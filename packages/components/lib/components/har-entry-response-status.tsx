@@ -7,7 +7,7 @@ export function HAREntryResponseStatus({ harEntry }: { harEntry: HAREntry }) {
 	const error = harEntry.response._error;
 
 	const ErrorResponseContent = (
-		<StatusIndicator type="error">
+		<StatusIndicator type='error'>
 			{status} {error && `(${error})`}
 		</StatusIndicator>
 	);
@@ -18,7 +18,7 @@ export function HAREntryResponseStatus({ harEntry }: { harEntry: HAREntry }) {
 
 	if (status >= 300) {
 		return (
-			<StatusIndicator type="warning">
+			<StatusIndicator type='warning'>
 				{status}
 			</StatusIndicator>
 		);
@@ -26,7 +26,7 @@ export function HAREntryResponseStatus({ harEntry }: { harEntry: HAREntry }) {
 
 	if (status >= 200) {
 		return (
-			<StatusIndicator type="success">
+			<StatusIndicator type='success'>
 				{status}
 			</StatusIndicator>
 		);

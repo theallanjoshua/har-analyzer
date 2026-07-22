@@ -12,7 +12,10 @@ export default function ThemeSwitcher() {
 	}, [isDarkTheme]);
 
 	return (
-		<Toggle onChange={({ detail }) => { setIsDarkTheme(detail.checked); }} checked={isDarkTheme}>
+		<Toggle
+			onChange={({ detail }) => { setIsDarkTheme(detail.checked); }}
+			checked={isDarkTheme}
+		>
 			Use dark theme
 		</Toggle>
 	);

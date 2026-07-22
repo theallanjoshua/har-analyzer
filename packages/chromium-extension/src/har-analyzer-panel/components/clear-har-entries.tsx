@@ -5,5 +5,8 @@ interface ClearHAREntriesProps {
 }
 
 export default function ClearHAREntries({ onClear }: ClearHAREntriesProps) {
-	return <Button onClick={onClear} iconName="remove">Clear</Button>;
+	return <Button
+		onClick={onClear}
+		iconName="remove"
+	/>;
 }

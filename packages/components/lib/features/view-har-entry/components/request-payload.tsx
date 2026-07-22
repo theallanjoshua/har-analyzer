@@ -21,10 +21,10 @@ export default function RequestPayload({ harEntry }: RequestPayloadProps) {
 	return (
 		<VerticalGap>
 			<CollapsibleKeyValueList
-				sectionTitle="Query Parameters"
+				sectionTitle='Query Parameters'
 				items={items}
 			/>
-			<CollapsibleSection title="Payload">
+			<CollapsibleSection title='Request Payload'>
 				<ContentViewer content={content} mimeType={mimeType} />
 			</CollapsibleSection>
 		</VerticalGap>

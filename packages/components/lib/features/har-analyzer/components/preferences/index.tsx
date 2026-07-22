@@ -19,21 +19,21 @@ export default function AppPreferences() {
 
 	return (
 		<>
-			<Button iconName="settings" variant="icon" onClick={showModal} />
+			<Button iconName='settings' variant='icon' onClick={showModal} />
 			<Modal
 				visible={isVisible}
 				onDismiss={hideModal}
-				header="Manage your preferences"
+				header='Manage your preferences'
 				footer={
-					<Box float="right">
-						<Button variant="primary" onClick={hideModal}>
+					<Box float='right'>
+						<Button variant='primary' onClick={hideModal}>
 							Ok
 						</Button>
 					</Box>
 				}
 			>
 				<Box margin={{ top: 'm' }} />
-				<VerticalGap size="m">
+				<VerticalGap size='m'>
 					<ThemeSwitcher />
 					<ContentWidthSwitcher />
 				</VerticalGap>

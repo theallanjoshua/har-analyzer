@@ -5,7 +5,10 @@ export default function ContentWidthSwitcher() {
 	const [isFullContentWidth, setFullContentWidth] = useAppContentWidthPreference();
 
 	return (
-		<Toggle onChange={({ detail }) => { setFullContentWidth(detail.checked); }} checked={isFullContentWidth}>
+		<Toggle
+			onChange={({ detail }) => { setFullContentWidth(detail.checked); }}
+			checked={isFullContentWidth}
+		>
 			Use entire screen width
 		</Toggle>
 	);

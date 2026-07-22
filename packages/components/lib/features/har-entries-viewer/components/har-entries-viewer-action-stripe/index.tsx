@@ -5,7 +5,7 @@ import SpaceBetween from '~/components/space-between';
 import CompareModeSwitcher from './compare-mode-switcher';
 import HAREntryHeaderPicker from './har-entry-header-picker';
 
-interface HAREntriesViewerActionStripeProps {
+export interface HAREntriesViewerActionStripeProps {
 	harEntries: HAREntry[];
 	additionalActions?: ReactNode;
 }

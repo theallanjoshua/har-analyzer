@@ -1,4 +1,4 @@
-import TokenGroup from '@cloudscape-design/components/token-group';
+import KeyValuePairs from '@cloudscape-design/components/key-value-pairs';
 import { useMemo } from 'react';
 import type { HAREntry } from '~/utils/har';
 import { getHAREntryAttributesToValuesMap } from '~/utils/har';
@@ -17,26 +17,36 @@ export default function ViewHAREntryHeader(props: ViewHAREntryHeaderProps) {
 	const [harEntryHeadersPreference] = useHAREntryHeadersPreference();
 
 	const items = harEntryHeadersPreference.flatMap((attribute) => {
+		const DEFAULT_ITEM = [{
+			label: attribute,
+			value: '-',
+		}];
+
 		if (!harEntryAttributesToValuesMap[attribute]) {
-			return [];
+			return DEFAULT_ITEM;
 		}
+
 		const values = harEntryAttributesToValuesMap[attribute](harEntry);
 
-		if (Array.isArray(values)) {
-			return values.map((value) => ({
-				label: value,
-				description: attribute,
-			}));
+		if (!Array.isArray(values)) {
+			return [{
+				label: attribute,
+				value: String(values),
+			}];
 		}
 
-		return [{
-			label: String(values),
-			description: attribute,
-		}];
+		if (!values.length) {
+			return DEFAULT_ITEM;
+		}
+
+		return values.map((value) => ({
+			label: attribute,
+			value,
+		}));
 	});
 
-	return <TokenGroup
+	return <KeyValuePairs
 		items={items}
-		disableOuterPadding
+		columns={Math.min(items.length, 3)}
 	/>;
 }

@@ -12,22 +12,28 @@ type ContentTypeFilterOptions = typeof CONTENT_TYPE_FILTER_OPTIONS;
 export default function ContentTypeFilter() {
 	const [contentTypeFilters, setContentTypeFilters] = useContentTypeFiltersPreference();
 
-	const selectedContentTypeFilterOptions = CONTENT_TYPE_FILTER_OPTIONS.filter(({ value }) =>
+	const selectedOptions = CONTENT_TYPE_FILTER_OPTIONS.filter(({ value }) =>
 		contentTypeFilters.includes(value),
 	);
 
-	const onContentTypeFilterChange = (newSelectedContentTypeFilterOptions: ContentTypeFilterOptions) => {
-		const contentTypeFilters = newSelectedContentTypeFilterOptions.map(({ value }) => value);
+	const onContentTypeFilterChange = (newSelectedOptions: ContentTypeFilterOptions) => {
+		const contentTypeFilters = newSelectedOptions.map(({ value }) => value);
 		setContentTypeFilters(contentTypeFilters);
 	};
+
+	let placeholder = 'Filter by content type';
+
+	if (selectedOptions.length) {
+		placeholder = `(${selectedOptions.length}) content types selected`;
+	}
 
 	return (
 		<Multiselect
 			enableSelectAll
-			inlineTokens
-			placeholder={'Filter by content type'}
+			hideTokens
+			placeholder={placeholder}
 			options={CONTENT_TYPE_FILTER_OPTIONS}
-			selectedOptions={selectedContentTypeFilterOptions}
+			selectedOptions={selectedOptions}
 			onChange={({ detail }) => { onContentTypeFilterChange(detail.selectedOptions as ContentTypeFilterOptions); }}
 		/>
 	);
