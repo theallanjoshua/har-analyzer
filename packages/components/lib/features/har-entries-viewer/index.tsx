@@ -7,8 +7,8 @@ import {
 import type { EnhancedBoardProps } from '~/components/enhanced-board';
 import type { HAREntry } from '~/utils/har';
 import EnhancedBoard from '~/components/enhanced-board';
-import { HorizontalPadding } from '~/components/horizontal-padding';
-import VerticalGap from '~/components/vertical-gap';
+import { HorizontalPadding } from '~/components/spacing/horizontal-padding';
+import VerticalGap from '~/components/spacing/vertical-gap';
 import { ListHAREntriesTable, ListHAREntriesTableHeader } from '~/features/list-har-entries';
 import ViewHAREntry from '~/features/view-har-entry';
 import { useRemainingViewportHeight } from '~/hooks/remaining-view-port-height';

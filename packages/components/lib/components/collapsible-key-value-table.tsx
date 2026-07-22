@@ -2,33 +2,34 @@ import type { ReactNode } from 'react';
 import Box from '@cloudscape-design/components/box';
 import { useMemo } from 'react';
 import CollapsibleSection from '~/components/collapsible-section';
-import type { EnhancedTableProps } from './enhanced-table';
-import EnhancedTable from './enhanced-table';
+import type { EnhancedTableProps } from './enhanced-table/index';
+import EnhancedTable from './enhanced-table/index';
 import InlineCopyToClipboard from './inline-copy-to-clipboard';
 
-interface CollapsibleKeyValueListItem {
+interface CollapsibleKeyValueTableItem {
 	id: string;
 	name: string;
 	value: string;
 	content?: ReactNode;
 }
 
-interface CollapsibleKeyValueListProps {
-	items: CollapsibleKeyValueListItem[];
+interface CollapsibleKeyValueTableProps extends Pick<EnhancedTableProps<CollapsibleKeyValueTableItem>, 'useTablePreferences'> {
+	items: CollapsibleKeyValueTableItem[];
 	sectionTitle: string;
 	keyTitle?: string;
 	valueTitle?: string;
 }
 
-export default function CollapsibleKeyValueList(props: CollapsibleKeyValueListProps) {
+export default function CollapsibleKeyValueTable(props: CollapsibleKeyValueTableProps) {
 	const {
 		items,
 		sectionTitle,
 		keyTitle = 'Name',
 		valueTitle = 'Value',
+		useTablePreferences,
 	} = props;
 
-	const columnsDefinition: EnhancedTableProps<CollapsibleKeyValueListItem>['columnsDefinition'] = useMemo(() => ({
+	const columnsDefinition: EnhancedTableProps<CollapsibleKeyValueTableItem>['columnsDefinition'] = useMemo(() => ({
 		key: {
 			header: keyTitle,
 			cell: ({ name }) => {
@@ -62,6 +63,7 @@ export default function CollapsibleKeyValueList(props: CollapsibleKeyValueListPr
 				items={items}
 				getRowId={({ id }) => id}
 				columnsDefinition={columnsDefinition}
+				useTablePreferences={useTablePreferences}
 			/>
 		</CollapsibleSection>
 	);

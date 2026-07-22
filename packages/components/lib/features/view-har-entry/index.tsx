@@ -49,8 +49,6 @@ export default function ViewHAREntry(props: ViewHAREntryProps) {
 
 	const [activeTabId, setActiveTabId] = useState(initialSelectedTabId);
 
-	const stringifiedHAREntry = useMemo(() => JSON.stringify(harEntry), [harEntry]);
-
 	const onActiveTabIdChange = useCallback(({ detail }: NonCancelableCustomEvent<TabsProps.ChangeDetail>) => {
 		const { activeTabId } = detail;
 		setActiveTabId(activeTabId);
@@ -59,37 +57,44 @@ export default function ViewHAREntry(props: ViewHAREntryProps) {
 		}
 	}, [onSelectedTabIdChange]);
 
-	const tabs = useMemo(() => [
-		{
-			label: 'Headers',
-			id: DEFAULT_SELECTED_TAB_ID,
-			content: <TabContent><RequestHeaders harEntry={harEntry} /></TabContent>,
-			action: <TabActionContent>(req)</TabActionContent>,
-		},
-		{
-			label: 'Payload',
-			id: 'request-payload',
-			content: <TabContent><RequestPayload harEntry={harEntry} /></TabContent>,
-			action: <TabActionContent>(req)</TabActionContent>,
-		},
-		{
-			label: 'Headers',
-			id: 'response-headers',
-			content: <TabContent><ResponseHeaders harEntry={harEntry} /></TabContent>,
-			action: <TabActionContent>(res)</TabActionContent>,
-		},
-		{
-			label: 'Payload',
-			id: 'response-payload',
-			content: <TabContent><ResponsePayload harEntry={harEntry} /></TabContent>,
-			action: <TabActionContent>(res)</TabActionContent>,
-		},
-		{
-			label: 'Raw',
-			id: 'har-entry',
-			content: <TabContent><ContentViewer content={stringifiedHAREntry} mimeType='json' /></TabContent>,
-		},
-	], [harEntry, stringifiedHAREntry]);
+	const tabs: TabsProps.Tab[] = useMemo(() => {
+		const stringifiedHAREntry = JSON.stringify(harEntry);
+
+		return [
+			{
+				label: 'Headers',
+				id: DEFAULT_SELECTED_TAB_ID,
+				content: <TabContent><RequestHeaders harEntry={harEntry} /></TabContent>,
+				action: <TabActionContent>(req)</TabActionContent>,
+			},
+			{
+				label: 'Payload',
+				id: 'request-payload',
+				content: <TabContent><RequestPayload harEntry={harEntry} /></TabContent>,
+				action: <TabActionContent>(req)</TabActionContent>,
+			},
+			{
+				label: 'Headers',
+				id: 'response-headers',
+				content: <TabContent><ResponseHeaders harEntry={harEntry} /></TabContent>,
+				action: <TabActionContent>(res)</TabActionContent>,
+			},
+			{
+				label: 'Payload',
+				id: 'response-payload',
+				content: <TabContent><ResponsePayload harEntry={harEntry} /></TabContent>,
+				action: <TabActionContent>(res)</TabActionContent>,
+			},
+			{
+				label: 'Raw',
+				id: 'har-entry',
+				content: <TabContent><ContentViewer content={stringifiedHAREntry} mimeType='json' /></TabContent>,
+			},
+		].map((tab) => ({
+			...tab,
+			contentRenderStrategy: 'lazy',
+		}));
+	}, [harEntry]);
 
 	return (
 		<Tabs

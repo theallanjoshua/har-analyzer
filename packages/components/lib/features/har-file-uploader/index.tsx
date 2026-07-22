@@ -3,7 +3,7 @@ import FileDropzone from '@cloudscape-design/components/file-dropzone';
 import FileInput from '@cloudscape-design/components/file-input';
 import { useState } from 'react';
 import type { HAREntry } from '~/utils/har';
-import VerticalGap from '~/components/vertical-gap';
+import VerticalGap from '~/components/spacing/vertical-gap';
 import {
 	getFilesErrors,
 	readFileContents,

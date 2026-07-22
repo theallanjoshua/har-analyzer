@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { HAREntry } from '~/utils/har';
-import HorizontalGap from '~/components/horizontal-gap';
-import SpaceBetween from '~/components/space-between';
+import HorizontalGap from '~/components/spacing/horizontal-gap';
+import SpaceBetween from '~/components/spacing/space-between';
 import CompareModeSwitcher from './compare-mode-switcher';
 import HAREntryHeaderPicker from './har-entry-header-picker';
 

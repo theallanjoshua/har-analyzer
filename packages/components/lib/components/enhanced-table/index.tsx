@@ -7,7 +7,11 @@ import { useCollection } from '@cloudscape-design/collection-hooks';
 import CollectionPreferences from '@cloudscape-design/components/collection-preferences';
 import PropertyFilter from '@cloudscape-design/components/property-filter';
 import Table from '@cloudscape-design/components/table';
-import { useCallback, useMemo } from 'react';
+import {
+	useCallback,
+	useMemo,
+	useState,
+} from 'react';
 import { objectEntries } from '~/utils/common';
 import type { EnhancedTablePreferences } from './preferences';
 import { DEFAULT_ENHANCED_TABLE_PREFERENCES } from './preferences';
@@ -130,8 +134,8 @@ function getFilteringProperties<TItem>(
 	});
 }
 
-function getColumnDefinitions<TItem>(enhancedColumnDefinitions: EnhancedTableColumnsDefinition<TItem>) {
-	return objectEntries(enhancedColumnDefinitions).map(([id, {
+function getColumnDefinitions<TItem>(enhancedColumnsDefinition: EnhancedTableColumnsDefinition<TItem>) {
+	return objectEntries(enhancedColumnsDefinition).map(([id, {
 		header,
 		width,
 		isSortable = true,
@@ -159,8 +163,8 @@ function getColumnDefinitions<TItem>(enhancedColumnDefinitions: EnhancedTableCol
 	});
 }
 
-function getColumnDisplayPreferenceOptions<TItem>(columnsDefinition: EnhancedTableColumnsDefinition<TItem>) {
-	return objectEntries(columnsDefinition).map(([column, { header, isVisibleByDefault = true }]) => ({
+function getColumnDisplayPreferenceOptions<TItem>(enhancedColumnsDefinition: EnhancedTableColumnsDefinition<TItem>) {
+	return objectEntries(enhancedColumnsDefinition).map(([column, { header, isVisibleByDefault = true }]) => ({
 		id: column,
 		label: header,
 		visible: isVisibleByDefault,
@@ -213,9 +217,8 @@ export interface EnhancedTableProps<TItem> {
 export default function EnhancedTable<TItem>({
 	items: originalItems,
 	getRowId,
-	columnsDefinition: enhancedColumnDefinitions,
-	// eslint-disable-next-line react/no-unnecessary-use-prefix
-	useTablePreferences = () => [DEFAULT_ENHANCED_TABLE_PREFERENCES, () => { }],
+	columnsDefinition: enhancedColumnsDefinition,
+	useTablePreferences = () => useState(DEFAULT_ENHANCED_TABLE_PREFERENCES),
 	empty,
 	selectionType,
 	isEntireRowSelectable = false,
@@ -225,12 +228,9 @@ export default function EnhancedTable<TItem>({
 	header,
 	variant = 'borderless',
 }: EnhancedTableProps<TItem>) {
-	const enhancedTableItems = useMemo(
-		() => getEnhancedTableItems(originalItems, enhancedColumnDefinitions),
-		[originalItems, enhancedColumnDefinitions],
-	);
+	const enhancedTableItems = useMemo(() => getEnhancedTableItems(originalItems, enhancedColumnsDefinition), [originalItems, enhancedColumnsDefinition]);
 
-	const columnDefinitions = useMemo(() => getColumnDefinitions(enhancedColumnDefinitions), [enhancedColumnDefinitions]);
+	const columnDefinitions = useMemo(() => getColumnDefinitions(enhancedColumnsDefinition), [enhancedColumnsDefinition]);
 
 	const enhancedSelectedTableItems = useMemo(
 		() => {
@@ -244,8 +244,8 @@ export default function EnhancedTable<TItem>({
 	);
 
 	const columnDisplayPreferenceOptions = useMemo(
-		() => getColumnDisplayPreferenceOptions(enhancedColumnDefinitions),
-		[enhancedColumnDefinitions],
+		() => getColumnDisplayPreferenceOptions(enhancedColumnsDefinition),
+		[enhancedColumnsDefinition],
 	);
 
 	const initialCollectionPreferences = useMemo(() => ({
@@ -322,8 +322,8 @@ export default function EnhancedTable<TItem>({
 	const trackBy = useCallback((item: EnhancedTableItem<TItem>) => getRowId(item.__originalItem__), [getRowId]);
 
 	const filteringProperties = useMemo(
-		() => getFilteringProperties(enhancedColumnDefinitions),
-		[enhancedColumnDefinitions],
+		() => getFilteringProperties(enhancedColumnsDefinition),
+		[enhancedColumnsDefinition],
 	);
 
 	const {

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import type { HARFileUploaderProps } from '~/features/har-file-uploader';
 import type { HAREntry } from '~/utils/har';
-import VerticalGap from '~/components/vertical-gap';
+import VerticalGap from '~/components/spacing/vertical-gap';
 import HAREntriesViewer from '~/features/har-entries-viewer';
 import HARFileUploader from '~/features/har-file-uploader';
 import AppLayout from './components/app-layout';

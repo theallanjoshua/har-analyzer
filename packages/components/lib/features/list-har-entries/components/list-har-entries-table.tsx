@@ -113,7 +113,7 @@ export default function ListHAREntriesTable({
 }: ListHAREntriesTableProps) {
 	const columnsDefinition = useMemo(() => {
 		const harEntryHeadersToValuesMap = getHAREntryHeadersToValuesMap(harEntries);
-		return objectEntries(harEntryHeadersToValuesMap).reduce((acc, [key, getValue]) => {
+		const headersColumnsDefinition = objectEntries(harEntryHeadersToValuesMap).reduce<typeof DEFAULT_COLUMNS_DEFINITION>((acc, [key, getValue]) => {
 			acc[key] = {
 				header: key,
 				width: 200,
@@ -125,7 +125,11 @@ export default function ListHAREntriesTable({
 				},
 			};
 			return acc;
-		}, DEFAULT_COLUMNS_DEFINITION);
+		}, {});
+		return {
+			...DEFAULT_COLUMNS_DEFINITION,
+			...headersColumnsDefinition,
+		};
 	}, [harEntries]);
 
 	const filteredHAREntries = useFilteredHAREntries(harEntries);

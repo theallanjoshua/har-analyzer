@@ -2,7 +2,7 @@ import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
 import Modal from '@cloudscape-design/components/modal';
 import { useState } from 'react';
-import VerticalGap from '~/components/vertical-gap';
+import VerticalGap from '~/components/spacing/vertical-gap';
 import ContentWidthSwitcher from './components/content-width-switcher';
 import ThemeSwitcher from './components/theme-switcher';
 

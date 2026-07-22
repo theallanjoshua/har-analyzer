@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import type { HAREntry } from '~/utils/har';
-import CollapsibleKeyValueList from '~/components/collapsible-key-value-list';
+import CollapsibleKeyValueTable from '~/components/collapsible-key-value-table';
+import { ResponseHeadersTablePreferencesProvider, useResponseHeadersTablePreferences } from '../context/preferences';
 
 export default function ResponseHeaders({ harEntry }: { harEntry: HAREntry }) {
 	const items = useMemo(() => harEntry.response.headers.map((item, index) => ({
@@ -8,10 +9,11 @@ export default function ResponseHeaders({ harEntry }: { harEntry: HAREntry }) {
 		id: `${index}`,
 	})), [harEntry.response.headers]);
 
-	return (
-		<CollapsibleKeyValueList
+	return <ResponseHeadersTablePreferencesProvider>
+		<CollapsibleKeyValueTable
 			items={items}
 			sectionTitle='Response Headers'
+			useTablePreferences={useResponseHeadersTablePreferences}
 		/>
-	);
+	</ResponseHeadersTablePreferencesProvider>;
 }

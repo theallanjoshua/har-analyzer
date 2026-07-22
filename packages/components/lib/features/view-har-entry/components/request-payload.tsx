@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import type { HAREntry } from '~/utils/har';
-import CollapsibleKeyValueList from '~/components/collapsible-key-value-list';
+import CollapsibleKeyValueTable from '~/components/collapsible-key-value-table';
 import CollapsibleSection from '~/components/collapsible-section';
-import VerticalGap from '~/components/vertical-gap';
+import VerticalGap from '~/components/spacing/vertical-gap';
+import { RequestQueryParamsTablePreferencesProvider, useRequestQueryParamsTablePreferences } from '../context/preferences';
 import ContentViewer from './content-viewer';
 
 interface RequestPayloadProps {
@@ -20,10 +21,13 @@ export default function RequestPayload({ harEntry }: RequestPayloadProps) {
 
 	return (
 		<VerticalGap>
-			<CollapsibleKeyValueList
-				sectionTitle='Query Parameters'
-				items={items}
-			/>
+			<RequestQueryParamsTablePreferencesProvider>
+				<CollapsibleKeyValueTable
+					sectionTitle='Query Parameters'
+					items={items}
+					useTablePreferences={useRequestQueryParamsTablePreferences}
+				/>
+			</RequestQueryParamsTablePreferencesProvider>
 			<CollapsibleSection title='Request Payload'>
 				<ContentViewer content={content} mimeType={mimeType} />
 			</CollapsibleSection>

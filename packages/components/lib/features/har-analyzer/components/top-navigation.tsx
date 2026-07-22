@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import Header from '@cloudscape-design/components/header';
 import { borderWidthAlert, colorBorderDividerDefault } from '@cloudscape-design/design-tokens';
-import HorizontalGap from '~/components/horizontal-gap';
+import HorizontalGap from '~/components/spacing/horizontal-gap';
 
 export const TOP_NAVIGATION_ID = 'top-navigation';
 

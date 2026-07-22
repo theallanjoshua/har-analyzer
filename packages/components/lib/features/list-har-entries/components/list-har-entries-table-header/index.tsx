@@ -1,6 +1,6 @@
 import Header from '@cloudscape-design/components/header';
 import type { HAREntry } from '~/utils/har';
-import HorizontalGap from '~/components/horizontal-gap';
+import HorizontalGap from '~/components/spacing/horizontal-gap';
 import { useFilteredHAREntries } from '../../hooks/filter-har-entries';
 import ContentTypeFilter from './content-type-filter';
 import ErrorsFilter from './errors-filter';
