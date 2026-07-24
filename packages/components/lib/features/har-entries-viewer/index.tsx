@@ -1,3 +1,4 @@
+import Header from '@cloudscape-design/components/header';
 import {
 	useCallback,
 	useEffect,
@@ -9,16 +10,20 @@ import type { HAREntry } from '~/utils/har';
 import EnhancedBoard from '~/components/enhanced-board';
 import { HorizontalPadding } from '~/components/spacing/horizontal-padding';
 import VerticalGap from '~/components/spacing/vertical-gap';
-import { ListHAREntriesTable, ListHAREntriesTableHeader } from '~/features/list-har-entries';
+import HAREntriesFilters, { HAREntriesFiltersProvider, useFilteredHAREntries } from '~/features/har-entries-filters';
+import ListHAREntries from '~/features/list-har-entries';
 import ViewHAREntry from '~/features/view-har-entry';
 import { useRemainingViewportHeight } from '~/hooks/remaining-view-port-height';
 import { removeUndefined } from '~/utils/array';
 import { getHAREntryId } from '~/utils/har';
 import type { HAREntriesViewerActionStripeProps } from './components/har-entries-viewer-action-stripe';
 import HAREntriesViewerActionStripe from './components/har-entries-viewer-action-stripe';
-import HAREntriesViewerProvider from './components/har-entries-viewer-provider';
 import ViewHAREntryHeader from './components/view-har-entry-header';
-import { useCompareModePreference } from './context/preferences';
+import {
+	CompareModePreferenceProvider,
+	HAREntryHeadersPreferenceProvider,
+	useCompareModePreference,
+} from './user-preferences';
 
 const DEFAULT_BOARD_ITEM_DEFINITION = {
 	rowSpan: 4,
@@ -39,13 +44,17 @@ const DEFAULT_BOARD_DEFINITIONS: EnhancedBoardProps['definitions'] = [
 	},
 ];
 
-interface HAREntriesViewerProps {
+interface HAREntriesViewerProps extends HAREntriesViewerActionStripeProps {
 	harEntries: HAREntry[];
 	tableTitle?: string;
 }
 
 function HAREntriesViewer(props: HAREntriesViewerProps) {
-	const { harEntries, tableTitle } = props;
+	const {
+		harEntries,
+		tableTitle,
+		additionalActions,
+	} = props;
 
 	const [selectedHAREntries, setSelectedHAREntries] = useState<HAREntry[]>([]);
 	const [definitions, setDefinitions] = useState<EnhancedBoardProps['definitions']>(DEFAULT_BOARD_DEFINITIONS);
@@ -53,6 +62,7 @@ function HAREntriesViewer(props: HAREntriesViewerProps) {
 
 	const { elementRef, remainingHeight } = useRemainingViewportHeight<HTMLDivElement>();
 
+	// HANDLES ENHANCED BOARD HEIGHT: On mount, stretch the board item definitions vertically to fill the remaining height of the viewport
 	useEffect(() => {
 		if (!remainingHeight) {
 			return;
@@ -71,6 +81,7 @@ function HAREntriesViewer(props: HAREntriesViewerProps) {
 
 	const [isCompareMode] = useCompareModePreference();
 
+	// HANDLES COMPARE MODE TOGGLE: If the user switches from compare mode to single view mode, clear the selected HAR entries if there are more than one selected
 	useEffect(() => {
 		if (!isCompareMode && selectedHAREntries.length > 1) {
 			// eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
@@ -78,6 +89,7 @@ function HAREntriesViewer(props: HAREntriesViewerProps) {
 		}
 	}, [isCompareMode, selectedHAREntries.length]);
 
+	// HANDLES SELECTED HAR ENTRIES VALIDATION: If the selected HAR entries are no longer present in the list of HAR entries, remove them from the selected HAR entries
 	useEffect(() => {
 		const harEntryIds = new Set(harEntries.map(getHAREntryId));
 		// eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
@@ -98,6 +110,7 @@ function HAREntriesViewer(props: HAREntriesViewerProps) {
 		});
 	}, [harEntries]);
 
+	// HANDLES SELECTED HAR ENTRIES TO DEFINITIONS SYNC: If the selected HAR entries change, update the board item definitions to match the selected HAR entries
 	useEffect(() => {
 		const selectedHAREntryIds = selectedHAREntries.map(getHAREntryId);
 		const validDefinitionInstanceIds = new Set([...selectedHAREntryIds, COMPONENT_TYPE_LIST_HAR_ENTRIES]);
@@ -159,15 +172,19 @@ function HAREntriesViewer(props: HAREntriesViewerProps) {
 		);
 	}, []);
 
+	const filteredHAREntries = useFilteredHAREntries(harEntries);
+
 	const components: EnhancedBoardProps['components'] = useMemo(() => ({
 		[COMPONENT_TYPE_LIST_HAR_ENTRIES]: {
-			header: <ListHAREntriesTableHeader
-				harEntries={harEntries}
-				title={tableTitle}
-			/>,
+			header: <Header
+				counter={`(${filteredHAREntries.length}/${harEntries.length})`}
+				actions={<HAREntriesFilters />}
+			>
+				{tableTitle}
+			</Header>,
 			content: <HorizontalPadding>
-				<ListHAREntriesTable
-					harEntries={harEntries}
+				<ListHAREntries
+					harEntries={filteredHAREntries}
 					selectedHAREntries={selectedHAREntries}
 					onSelectionChange={setSelectedHAREntries}
 					enableMultiSelect={isCompareMode}
@@ -202,31 +219,29 @@ function HAREntriesViewer(props: HAREntriesViewerProps) {
 				onRemove,
 			};
 		},
-	}), [harEntries, selectedHAREntries, isCompareMode, initialSelectedTabId, tableTitle, removeSelectedHAREntry]);
+	}), [filteredHAREntries, harEntries, selectedHAREntries, isCompareMode, initialSelectedTabId, tableTitle, removeSelectedHAREntry]);
 
 	return <>
 		<div ref={elementRef} />
-		<EnhancedBoard
-			components={components}
-			definitions={definitions}
-			onDefinitionsChange={setDefinitions}
-		/>
+		<VerticalGap>
+			<HAREntriesViewerActionStripe harEntries={harEntries} additionalActions={additionalActions} />
+			<EnhancedBoard
+				components={components}
+				definitions={definitions}
+				onDefinitionsChange={setDefinitions}
+			/>
+		</VerticalGap>
 	</>;
 }
 
-export interface HAREntriesViewerWithProviderProps extends HAREntriesViewerProps, HAREntriesViewerActionStripeProps {}
+export interface HAREntriesViewerWithProvidersProps extends HAREntriesViewerProps {};
 
-export default function HAREntriesViewerWithProvider(props: HAREntriesViewerWithProviderProps) {
-	const {
-		harEntries,
-		additionalActions,
-		...remainingProps
-	} = props;
-
-	return <HAREntriesViewerProvider>
-		<VerticalGap>
-			<HAREntriesViewerActionStripe harEntries={harEntries} additionalActions={additionalActions} />
-			<HAREntriesViewer harEntries={harEntries} {...remainingProps} />
-		</VerticalGap>
-	</HAREntriesViewerProvider>;
+export default function HAREntriesViewerWithProviders(props: HAREntriesViewerWithProvidersProps) {
+	return <HAREntriesFiltersProvider>
+		<CompareModePreferenceProvider>
+			<HAREntryHeadersPreferenceProvider>
+				<HAREntriesViewer {...props} />
+			</HAREntryHeadersPreferenceProvider>
+		</CompareModePreferenceProvider>
+	</HAREntriesFiltersProvider>;
 }

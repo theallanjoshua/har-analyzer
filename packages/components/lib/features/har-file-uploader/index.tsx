@@ -10,7 +10,7 @@ import {
 	SUPPORT_FILE_EXT,
 } from '~/utils/file-upload';
 import { getHARContentFromFile } from '~/utils/har';
-import FileUploadError from './file-upload-error';
+import FileUploadError from './components/file-upload-error';
 
 export interface HARFileUploaderProps {
 	onChange: (args: { harEntries: HAREntry[]; harFileName?: string }) => void;

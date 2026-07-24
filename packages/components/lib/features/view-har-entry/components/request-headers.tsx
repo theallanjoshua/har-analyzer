@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import type { HAREntry } from '~/utils/har';
-import CollapsibleKeyValueTable from '~/components/collapsible-key-value-table';
 import { HAREntryResponseStatus } from '~/components/har-entry-response-status';
-import { RequestHeadersTablePreferencesProvider, useRequestHeadersTablePreferences } from '../context/preferences';
+import KeyValueTable from '~/components/key-value-table';
+import { HorizontalPadding } from '~/components/spacing/horizontal-padding';
+import { RequestHeadersTablePreferencesProvider, useRequestHeadersTablePreferences } from '../user-preferences';
 
 export default function RequestHeaders({ harEntry }: { harEntry: HAREntry }) {
 	const items = useMemo(() => {
@@ -30,11 +31,12 @@ export default function RequestHeaders({ harEntry }: { harEntry: HAREntry }) {
 		}));
 	}, [harEntry]);
 
-	return <RequestHeadersTablePreferencesProvider>
-		<CollapsibleKeyValueTable
-			items={items}
-			sectionTitle='Request Headers'
-			useTablePreferences={useRequestHeadersTablePreferences}
-		/>
-	</RequestHeadersTablePreferencesProvider>;
+	return <HorizontalPadding>
+		<RequestHeadersTablePreferencesProvider>
+			<KeyValueTable
+				items={items}
+				useTablePreferences={useRequestHeadersTablePreferences}
+			/>
+		</RequestHeadersTablePreferencesProvider>
+	</HorizontalPadding>;
 }

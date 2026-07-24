@@ -2,7 +2,7 @@ import KeyValuePairs from '@cloudscape-design/components/key-value-pairs';
 import { useMemo } from 'react';
 import type { HAREntry } from '~/utils/har';
 import { getHAREntryAttributesToValuesMap } from '~/utils/har';
-import { useHAREntryHeadersPreference } from '../context/preferences';
+import { useHAREntryHeadersPreference } from '../user-preferences';
 
 interface ViewHAREntryHeaderProps {
 	harEntries: HAREntry[];

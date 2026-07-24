@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import HarAnalyzerPanel from './app';
 import '@cloudscape-design/global-styles/index.css';
-import HarAnalyzerPanel from '~/har-analyzer-panel';
 import './index.scss';
 
 const ROOT_ID = 'root';

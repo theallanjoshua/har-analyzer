@@ -11,6 +11,7 @@ import {
 } from 'react';
 import type { HAREntry } from '~/utils/har';
 import LazyLoad from '~/components/lazy-load';
+import { HorizontalPadding } from '~/components/spacing/horizontal-padding';
 
 const RequestHeaders = lazy(() => import('./components/request-headers'));
 const RequestPayload = lazy(() => import('./components/request-payload'));
@@ -88,7 +89,11 @@ export default function ViewHAREntry(props: ViewHAREntryProps) {
 			{
 				label: 'Raw',
 				id: 'har-entry',
-				content: <TabContent><ContentViewer content={stringifiedHAREntry} mimeType='json' /></TabContent>,
+				content: <TabContent>
+					<HorizontalPadding>
+						<ContentViewer content={stringifiedHAREntry} mimeType='json' />
+					</HorizontalPadding>
+				</TabContent>,
 			},
 		].map((tab) => ({
 			...tab,

@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import type { HAREntry } from '~/utils/har';
 import { objectKeys } from '~/utils/common';
 import { getHAREntryAttributesToValuesMap } from '~/utils/har';
-import { useHAREntryHeadersPreference } from '../../context/preferences';
+import { useHAREntryHeadersPreference } from '../../user-preferences';
 
 interface HAREntryHeaderPickerProps {
 	harEntries: HAREntry[];

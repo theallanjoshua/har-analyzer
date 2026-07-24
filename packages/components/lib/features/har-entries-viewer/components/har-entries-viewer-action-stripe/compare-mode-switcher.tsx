@@ -1,5 +1,5 @@
 import SegmentedControl from '@cloudscape-design/components/segmented-control';
-import { useCompareModePreference } from '../../context/preferences';
+import { useCompareModePreference } from '../../user-preferences';
 
 const SINGLE_OPTION = 'Single';
 const COMPARE_OPTION = 'Compare';

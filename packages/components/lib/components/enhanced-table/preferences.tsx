@@ -1,5 +1,5 @@
 import type { CollectionPreferencesProps } from '@cloudscape-design/components/collection-preferences';
-import { createUserPreferencesContext } from '~/context/user-preferences';
+import { createExternalState } from '~/features/external-state/factory';
 
 export interface EnhancedTablePreferences {
 	collectionPreferences: CollectionPreferencesProps.Preferences | undefined;
@@ -11,8 +11,8 @@ export const DEFAULT_ENHANCED_TABLE_PREFERENCES: EnhancedTablePreferences = {
 	preferredColumnWidths: [],
 };
 
-export function createTablePreferencesContext(key: string) {
-	return createUserPreferencesContext(
+export function createTablePreferencesExternalState(key: string) {
+	return createExternalState(
 		key,
 		DEFAULT_ENHANCED_TABLE_PREFERENCES,
 	);
