@@ -3,7 +3,7 @@ import type { EnhancedTableColumnsDefinition } from '~/components/enhanced-table
 import type { HAREntry } from '~/utils/har';
 import EnhancedTable from '~/components/enhanced-table';
 import { HorizontalPadding } from '~/components/spacing/horizontal-padding';
-import { getFormattedDateTime } from '~/utils/date';
+import { getFormattedCurrentTimeZone, getFormattedDateTime } from '~/utils/date';
 import { CookiesTablePreferencesProvider, useCookiesTablePreferences } from '../user-preferences';
 
 type HAREntryCookie = HAREntry['request']['cookies'][number];
@@ -38,7 +38,7 @@ const COLUMNS_DEFINITION: EnhancedTableColumnsDefinition<HAREntryCookie> = {
 		},
 	},
 	expires: {
-		header: 'Expires',
+		header: `Expires (${getFormattedCurrentTimeZone()})`,
 		type: 'date',
 		cell: (item) => {
 			if (!item.expires) {

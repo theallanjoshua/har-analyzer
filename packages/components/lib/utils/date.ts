@@ -13,8 +13,9 @@ export function getFormattedCurrentTimeZone() {
 export function getFormattedDateTime(dateString: string, timeZone?: string) {
 	try {
 		if (timeZone) {
-			return formatInTimeZone(new Date(dateString), 'UTC', DEFAULT_DATE_TIME_FORMAT);
+			return formatInTimeZone(new Date(dateString), timeZone, DEFAULT_DATE_TIME_FORMAT);
 		}
+
 		const currentTimeZone = getCurrentTimeZone();
 
 		return formatInTimeZone(new Date(dateString), currentTimeZone, DEFAULT_DATE_TIME_FORMAT);
