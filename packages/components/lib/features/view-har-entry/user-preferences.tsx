@@ -16,3 +16,8 @@ export const {
 	useExternalState: useResponseHeadersTablePreferences,
 	Provider: ResponseHeadersTablePreferencesProvider,
 } = createTablePreferencesExternalState(`${PREFERENCES_GROUP_NAME}.responseHeadersTablePreferences`);
+
+export const {
+	useExternalState: useCookiesTablePreferences,
+	Provider: CookiesTablePreferencesProvider,
+} = createTablePreferencesExternalState(`${PREFERENCES_GROUP_NAME}.cookiesTablePreferences`);

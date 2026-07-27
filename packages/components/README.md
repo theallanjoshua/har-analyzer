@@ -255,6 +255,7 @@ Tabs:
 
 - Request headers.
 - Request payload.
+- Request cookies.
 - Response headers.
 - Response payload.
 - Raw HAR entry JSON.

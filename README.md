@@ -10,8 +10,8 @@ Try it out [here](https://theallanjoshua.github.io/har-analyzer/)
 
 - **Local Processing:** Upload and view `.har` files entirely in the browser (no data is sent to a server).
 - **Entry Comparison:** Compare multiple HAR entries side-by-side to easily spot differences in headers, payloads, and responses by simply selecting multiple rows in the network table.
-- **Advanced Filtering:** Filter and search network entries by content type, errors, and text.
-- **Deep Inspection:** Inspect request/response headers, cookies, and timings.
+- **Advanced Filtering:** Filter and search network entries with content-type/error filters and property-based table filtering.
+- **Deep Inspection:** Inspect request/response headers, cookies, query params, payloads, and raw HAR entry JSON.
 - **Syntax Highlighting:** View request payloads and response bodies with formatting for JSON, XML, HTML, CSS, and JavaScript.
 - **Customizable UI:** Responsive split-panel layout with user preferences for dark/light themes and content width.
 - **Browser Extension:** Inspect HTTP traffic directly within Chromium-based browsers using the dedicated developer tools extension.
@@ -49,7 +49,7 @@ This project is a monorepo managed with [pnpm](https://pnpm.io/) workspaces and 
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18 or higher recommended)
+- [Node.js](https://nodejs.org/) (v20 or higher recommended)
 - [pnpm](https://pnpm.io/)
 
 ### Installation
@@ -67,13 +67,13 @@ This project is a monorepo managed with [pnpm](https://pnpm.io/) workspaces and 
 
 ### Development
 
-Start the development servers for the packages in parallel:
+Start development tasks for all packages in parallel (website dev server + package watch builds):
 
 ```sh
 pnpm run dev
 ```
 
-The web application will be available at `http://localhost:3000`
+The website will be available at `http://localhost:3000`.
 
 #### Testing GitHub Actions Locally
 

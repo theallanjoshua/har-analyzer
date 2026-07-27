@@ -17,6 +17,7 @@ const RequestHeaders = lazy(() => import('./components/request-headers'));
 const RequestPayload = lazy(() => import('./components/request-payload'));
 const ResponseHeaders = lazy(() => import('./components/response-headers'));
 const ResponsePayload = lazy(() => import('./components/response-payload'));
+const Cookies = lazy(() => import('./components/cookies'));
 const ContentViewer = lazy(() => import('./components/content-viewer'));
 
 function TabContent({ children }: PropsWithChildren) {
@@ -73,6 +74,12 @@ export default function ViewHAREntry(props: ViewHAREntryProps) {
 				label: 'Payload',
 				id: 'request-payload',
 				content: <TabContent><RequestPayload harEntry={harEntry} /></TabContent>,
+				action: <TabActionContent>(req)</TabActionContent>,
+			},
+			{
+				label: 'Cookies',
+				id: 'request-cookies',
+				content: <TabContent><Cookies harEntry={harEntry} /></TabContent>,
 				action: <TabActionContent>(req)</TabActionContent>,
 			},
 			{
