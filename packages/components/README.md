@@ -79,6 +79,7 @@ import {
   HARAnalyzerWebsite,
   HARAnalyzerExtension,
   HAREntriesViewer,
+  HAREntriesFilters,
   HAREntriesFiltersProvider,
   useFilteredHAREntries,
   HARFileUploader,
@@ -103,7 +104,7 @@ import type {
   ExternalStore,
   HARAnalyzerExtensionProps,
   HARAnalyzerWebsiteProps,
-  HAREntriesViewerWithProvidersProps,
+  HAREntriesViewerProps,
   HARFileUploaderProps,
   ListHAREntriesProps,
   ViewHAREntryProps,
@@ -127,9 +128,9 @@ import type {
   - type `HARAnalyzerExtensionProps`
 - `har-entries-viewer`
   - default `HAREntriesViewer`
-  - type `HAREntriesViewerWithProvidersProps`
+  - type `HAREntriesViewerProps`
 - `har-entries-filters`
-  - default `HAREntriesFilters`
+  - `HAREntriesFilters`
   - `HAREntriesFiltersProvider`
   - `useFilteredHAREntries`
 - `har-file-uploader`
@@ -141,7 +142,6 @@ import type {
   - type `ListHAREntriesProps`
 - `view-har-entry`
   - default `ViewHAREntry`
-  - `DEFAULT_SELECTED_TAB_ID`
   - type `ViewHAREntryProps`
 
 ## Feature Modules
@@ -264,7 +264,7 @@ Props:
 | Name | Type | Required | Description |
 | --- | --- | --- | --- |
 | `harEntry` | `HAREntry` | Yes | Entry to inspect. |
-| `initialSelectedTabId` | `string` | No | Initial active tab id. |
+| `initialSelectedTabId` | `string` | No | Initial active tab id. Defaults to `request-headers`. |
 | `onSelectedTabIdChange` | `(tabId: string) => void` | No | Active tab change callback. |
 
 ---

@@ -34,7 +34,8 @@ function TabActionContent({ children }: PropsWithChildren) {
 	</Box>;
 };
 
-export const DEFAULT_SELECTED_TAB_ID = 'request-headers';
+const DEFAULT_SELECTED_TAB_ID = 'request-headers';
+
 export interface ViewHAREntryProps {
 	harEntry: HAREntry;
 	initialSelectedTabId?: string;

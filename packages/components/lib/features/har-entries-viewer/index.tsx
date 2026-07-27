@@ -10,7 +10,11 @@ import type { HAREntry } from '~/utils/har';
 import EnhancedBoard from '~/components/enhanced-board';
 import { HorizontalPadding } from '~/components/spacing/horizontal-padding';
 import VerticalGap from '~/components/spacing/vertical-gap';
-import HAREntriesFilters, { HAREntriesFiltersProvider, useFilteredHAREntries } from '~/features/har-entries-filters';
+import {
+	HAREntriesFilters,
+	HAREntriesFiltersProvider,
+	useFilteredHAREntries,
+} from '~/features/har-entries-filters';
 import ListHAREntries from '~/features/list-har-entries';
 import ViewHAREntry from '~/features/view-har-entry';
 import { useRemainingViewportHeight } from '~/hooks/remaining-view-port-height';
@@ -44,12 +48,12 @@ const DEFAULT_BOARD_DEFINITIONS: EnhancedBoardProps['definitions'] = [
 	},
 ];
 
-interface HAREntriesViewerProps extends HAREntriesViewerActionStripeProps {
+interface HAREntriesViewerComponentProps extends HAREntriesViewerActionStripeProps {
 	harEntries: HAREntry[];
 	tableTitle?: string;
 }
 
-function HAREntriesViewer(props: HAREntriesViewerProps) {
+function HAREntriesViewerComponent(props: HAREntriesViewerComponentProps) {
 	const {
 		harEntries,
 		tableTitle = 'Requests',
@@ -234,13 +238,13 @@ function HAREntriesViewer(props: HAREntriesViewerProps) {
 	</>;
 }
 
-export interface HAREntriesViewerWithProvidersProps extends HAREntriesViewerProps {};
+export interface HAREntriesViewerProps extends HAREntriesViewerComponentProps {};
 
-export default function HAREntriesViewerWithProviders(props: HAREntriesViewerWithProvidersProps) {
+export default function HAREntriesViewer(props: HAREntriesViewerProps) {
 	return <HAREntriesFiltersProvider>
 		<CompareModePreferenceProvider>
 			<HAREntryHeadersPreferenceProvider>
-				<HAREntriesViewer {...props} />
+				<HAREntriesViewerComponent {...props} />
 			</HAREntryHeadersPreferenceProvider>
 		</CompareModePreferenceProvider>
 	</HAREntriesFiltersProvider>;

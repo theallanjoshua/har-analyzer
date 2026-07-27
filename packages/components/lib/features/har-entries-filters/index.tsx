@@ -5,7 +5,7 @@ import ContentTypeFilter from './components/content-type-filter';
 import ErrorsFilter from './components/errors-filter';
 import { ContentTypeFiltersPreferenceProvider, ErrorsFilterPreferenceProvider } from './user-preferences';
 
-export default function HAREntriesFilters() {
+export function HAREntriesFilters() {
 	return <HorizontalGap>
 		<ErrorsFilter />
 		<ContentTypeFilter />
