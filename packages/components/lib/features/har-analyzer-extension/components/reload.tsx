@@ -4,7 +4,7 @@ import { useState } from 'react';
 import HorizontalGap from '~/components/spacing/horizontal-gap';
 
 export interface ReloadProps {
-	onReload: (args: { ignoreCache: boolean }) => void;
+	onReload: (ignoreCache: boolean) => void;
 }
 
 export default function Reload(props: ReloadProps) {
@@ -22,7 +22,7 @@ export default function Reload(props: ReloadProps) {
 		<Button
 			iconName="refresh"
 			onClick={() => {
-				onReload({ ignoreCache });
+				onReload(ignoreCache);
 			}}
 		/>
 	</HorizontalGap>;

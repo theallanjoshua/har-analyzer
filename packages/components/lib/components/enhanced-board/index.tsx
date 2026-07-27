@@ -10,10 +10,7 @@ import type {
 	EnhancedBoardDefinitions,
 	EnhancedBoardItemData,
 } from './i18n';
-import {
-	boardI18nStrings,
-	boardItemI18nStrings,
-} from './i18n';
+import { boardI18nStrings, boardItemI18nStrings } from './i18n';
 
 interface ComponentDefinition {
 	content: ReactNode;

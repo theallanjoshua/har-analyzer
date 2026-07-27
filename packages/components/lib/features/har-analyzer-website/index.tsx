@@ -1,10 +1,6 @@
 import type { ReactNode } from 'react';
-import { useState } from 'react';
-import type { HARFileUploaderProps } from '~/features/har-file-uploader';
-import type { HAREntry } from '~/utils/har';
-import VerticalGap from '~/components/spacing/vertical-gap';
 import HAREntriesViewer from '~/features/har-entries-viewer';
-import HARFileUploader from '~/features/har-file-uploader';
+import { HARFileUploader, useFileHAREntries } from '~/features/har-file-uploader';
 import AppLayout from './components/app-layout';
 import { AppContentWidthPreferenceProvider, ThemePreferenceProvider } from './user-preferences';
 
@@ -14,13 +10,7 @@ export interface HARAnalyzerWebsiteProps {
 }
 
 export default function HARAnalyzerWebsite({ logo, appName = 'HAR Analyzer' }: HARAnalyzerWebsiteProps) {
-	const [harFileName, setHARFileName] = useState<string>();
-	const [harEntries, setHAREntries] = useState<HAREntry[]>([]);
-
-	const onHARUpload: HARFileUploaderProps['onChange'] = ({ harEntries, harFileName }) => {
-		setHAREntries(harEntries);
-		setHARFileName(harFileName);
-	};
+	const [{ harEntries }, { onUpload, onRemove }] = useFileHAREntries();
 
 	return <AppContentWidthPreferenceProvider>
 		<ThemePreferenceProvider>
@@ -28,13 +18,13 @@ export default function HARAnalyzerWebsite({ logo, appName = 'HAR Analyzer' }: H
 				logo={logo}
 				appName={appName}
 				content={
-					<VerticalGap>
-						<HARFileUploader onChange={onHARUpload} />
-						<HAREntriesViewer
-							tableTitle={harFileName}
-							harEntries={harEntries}
-						/>
-					</VerticalGap>
+					<HAREntriesViewer
+						harEntries={harEntries}
+						additionalActions={<HARFileUploader
+							onUpload={onUpload}
+							onRemove={onRemove}
+						/>}
+					/>
 				}
 			/>
 		</ThemePreferenceProvider>

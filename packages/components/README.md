@@ -6,6 +6,8 @@
 
 Reusable React components and feature modules for HAR Analyzer.
 
+[Checkout the demo here](https://theallanjoshua.github.io/har-analyzer/)
+
 ## What This Package Includes
 
 - Ready-made dashboard modules for both web apps and browser extensions.
@@ -77,14 +79,15 @@ import {
   HARAnalyzerWebsite,
   HARAnalyzerExtension,
   HAREntriesViewer,
-  HAREntriesFilters.
   HAREntriesFiltersProvider,
   useFilteredHAREntries,
   HARFileUploader,
+  useFileHAREntries,
   ListHAREntries,
   ViewHAREntry,
   ExternalStoreProvider,
   createExternalState,
+  DEFAULT_HAR_ENTRY_ATTRIBUTES_TO_VALUE_MAP,
   getHARContentFromFile,
   getHAREntriesFilteredByContentType,
   getHAREntriesWithErrorResponse,
@@ -98,6 +101,12 @@ import {
 
 import type {
   ExternalStore,
+  HARAnalyzerExtensionProps,
+  HARAnalyzerWebsiteProps,
+  HAREntriesViewerWithProvidersProps,
+  HARFileUploaderProps,
+  ListHAREntriesProps,
+  ViewHAREntryProps,
   HAREntry,
   HARContent,
   ContentTypeGroup,
@@ -112,20 +121,28 @@ import type {
   - type `ExternalStore`
 - `har-analyzer-website`
   - default `HARAnalyzerWebsite`
+  - type `HARAnalyzerWebsiteProps`
 - `har-analyzer-extension`
   - default `HARAnalyzerExtension`
+  - type `HARAnalyzerExtensionProps`
 - `har-entries-viewer`
   - default `HAREntriesViewer`
+  - type `HAREntriesViewerWithProvidersProps`
 - `har-entries-filters`
   - default `HAREntriesFilters`
   - `HAREntriesFiltersProvider`
   - `useFilteredHAREntries`
 - `har-file-uploader`
-  - default `HARFileUploader`
+  - `HARFileUploader`
+  - `useFileHAREntries`
+  - type `HARFileUploaderProps`
 - `list-har-entries`
   - default `ListHAREntries`
+  - type `ListHAREntriesProps`
 - `view-har-entry`
   - default `ViewHAREntry`
+  - `DEFAULT_SELECTED_TAB_ID`
+  - type `ViewHAREntryProps`
 
 ## Feature Modules
 
@@ -161,10 +178,9 @@ Props:
 
 | Name | Type | Required | Description |
 | --- | --- | --- | --- |
-| `harEntries` | `HAREntry[]` | Yes | Entries rendered in the viewer. |
-| `tableTitle` | `string` | No | Table header title. |
+| `pageHAREntries` | `HAREntry[]` | Yes | Entries captured from the active page/session. |
 | `onClear` | `() => void` | Yes | Called when user clicks clear. |
-| `onReload` | `(args: { ignoreCache: boolean }) => void` | Yes | Called when user clicks reload. |
+| `onReload` | `(ignoreCache: boolean) => void` | Yes | Called when user clicks reload. |
 
 ---
 
@@ -204,7 +220,8 @@ Props:
 
 | Name | Type | Required | Description |
 | --- | --- | --- | --- |
-| `onChange` | `(args: { harEntries: HAREntry[]; harFileName?: string }) => void` | Yes | Called after parse success. |
+| `onUpload` | `(args: { harEntries: HAREntry[]; harFileName: string }) => void` | Yes | Called after parse success. |
+| `onRemove` | `() => void` | Yes | Called when the uploaded file is removed. |
 
 ---
 
@@ -287,6 +304,7 @@ Top-level utility exports include:
 - `getHAREntryAttributesToValuesMap`
 - `getHAREntryId`
 - `HAR_HEADER_TYPES`
+- `DEFAULT_HAR_ENTRY_ATTRIBUTES_TO_VALUE_MAP`
 - Types: `HARContent`, `HAREntry`, `ContentTypeGroup`
 
 ## Development

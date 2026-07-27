@@ -52,7 +52,7 @@ interface HAREntriesViewerProps extends HAREntriesViewerActionStripeProps {
 function HAREntriesViewer(props: HAREntriesViewerProps) {
 	const {
 		harEntries,
-		tableTitle,
+		tableTitle = 'Requests',
 		additionalActions,
 	} = props;
 
@@ -68,7 +68,7 @@ function HAREntriesViewer(props: HAREntriesViewerProps) {
 			return;
 		}
 
-		const rowSpan = Math.floor(remainingHeight / 116) || DEFAULT_BOARD_ITEM_DEFINITION.rowSpan;
+		const rowSpan = Math.floor(remainingHeight / 118) || DEFAULT_BOARD_ITEM_DEFINITION.rowSpan;
 
 		// eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
 		setDefinitions((prevDefinitions) => {

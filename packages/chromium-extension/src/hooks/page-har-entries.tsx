@@ -1,4 +1,5 @@
 import {
+	useCallback,
 	useEffect,
 	useState,
 } from 'react';
@@ -26,12 +27,19 @@ function getHAREntry(networkRequest: ChromeNetworkRequest): Promise<HAREntry> {
 	});
 }
 
-export default function useHAREntries() {
+export default function usePageHAREntries() {
 	const [harEntries, setHarEntries] = useState<HAREntry[]>([]);
 
-	const loadHAREntries = () => {
-		// eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
-		setHarEntries(() => []);
+	const onClear = useCallback(() => {
+		setHarEntries([]);
+	}, []);
+
+	const onReload = useCallback((ignoreCache: boolean) => {
+		chrome.devtools.inspectedWindow.reload({ ignoreCache });
+	}, []);
+
+	const loadHAREntries = useCallback(() => {
+		onClear();
 		chrome.devtools.network.getHAR(async (harLog) => {
 			const { entries } = harLog;
 			const harEntries = await Promise.all(
@@ -39,16 +47,16 @@ export default function useHAREntries() {
 			);
 			setHarEntries((prevEntries) => [...prevEntries, ...harEntries]);
 		});
-	};
+	}, [onClear]);
+
+	const addHAREntry = useCallback(async (networkRequest: ChromeNetworkRequest) => {
+		const harEntry = await getHAREntry(networkRequest);
+		setHarEntries((prevEntries) => [...prevEntries, harEntry]);
+	}, []);
 
 	useEffect(() => {
 		loadHAREntries();
-	}, []);
-
-	const addHAREntry = async (networkRequest: ChromeNetworkRequest) => {
-		const harEntry = await getHAREntry(networkRequest);
-		setHarEntries((prevEntries) => [...prevEntries, harEntry]);
-	};
+	}, [loadHAREntries]);
 
 	useEffect(() => {
 		chrome.devtools.network.onRequestFinished.addListener(addHAREntry);
@@ -58,7 +66,13 @@ export default function useHAREntries() {
 			chrome.devtools.network.onRequestFinished.removeListener(addHAREntry);
 			chrome.devtools.network.onNavigated.removeListener(loadHAREntries);
 		};
-	}, []);
+	}, [loadHAREntries, addHAREntry]);
 
-	return [harEntries, setHarEntries] as const;
+	return [
+		harEntries,
+		{
+			onClear,
+			onReload,
+		},
+	] as const;
 }

@@ -1,57 +1,6 @@
-import Box from '@cloudscape-design/components/box';
-import FileDropzone from '@cloudscape-design/components/file-dropzone';
-import FileInput from '@cloudscape-design/components/file-input';
-import { useState } from 'react';
-import type { HAREntry } from '~/utils/har';
-import VerticalGap from '~/components/spacing/vertical-gap';
-import {
-	getFilesErrors,
-	readFileContents,
-	SUPPORT_FILE_EXT,
-} from '~/utils/file-upload';
-import { getHARContentFromFile } from '~/utils/har';
-import FileUploadError from './components/file-upload-error';
+/* eslint-disable react-refresh/only-export-components */
+export { default as HARFileUploader } from './component';
+export type * from './component';
 
-export interface HARFileUploaderProps {
-	onChange: (args: { harEntries: HAREntry[]; harFileName?: string }) => void;
-}
-
-export default function HARFileUploader({ onChange }: HARFileUploaderProps) {
-	const [filesErrors, setFilesErrors] = useState<string[]>([]);
-
-	const onUpload = async (files: File[]) => {
-		setFilesErrors([]);
-		const errors = getFilesErrors(files);
-		if (errors.length > 0) {
-			setFilesErrors(errors);
-			return;
-		}
-
-		try {
-			const file = files[0];
-			const harFileName = file?.name;
-			const fileContents = await readFileContents(file);
-			const harContent = getHARContentFromFile(fileContents);
-			const harEntries = harContent.log.entries;
-			onChange({ harEntries, harFileName });
-		} catch (error) {
-			const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-			setFilesErrors([errorMessage]);
-		}
-	};
-
-	return (
-		<VerticalGap>
-			<FileUploadError errors={filesErrors} />
-			<FileDropzone onChange={({ detail }) => onUpload(detail.value)}>
-				<VerticalGap alignItems='center' size='s'>
-					<Box color='inherit'>Drop your .har file here</Box>
-					<Box color='inherit'>or</Box>
-					<FileInput accept={SUPPORT_FILE_EXT} value={[]} onChange={({ detail }) => onUpload(detail.value)}>
-						Choose file
-					</FileInput>
-				</VerticalGap>
-			</FileDropzone>
-		</VerticalGap>
-	);
-}
+export { default as useFileHAREntries } from './hook';
+export type * from './hook';
